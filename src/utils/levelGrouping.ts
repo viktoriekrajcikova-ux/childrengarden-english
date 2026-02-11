@@ -66,20 +66,7 @@ export function calculateGroups(
     if (isComplete) completedGroupsCount++;
   });
 
-  // Compute locking - cumulative
-  let unlockedSoFar = 0;
-  groups.forEach((group, idx) => {
-    if (idx === 0) {
-      group.isLocked = false;
-    } else {
-      group.isLocked = idx > unlockedSoFar + 1;
-      // Actually: group N needs N-1 groups completed before it
-      group.isLocked = idx > completedGroupsCount;
-    }
-    // Count completed groups up to this index for proper sequential unlock
-  });
-
-  // Re-calculate: group is locked if groupNumber > completedGroupsCount + 1
+  // Group is locked if groupNumber > completedGroupsCount + 1
   groups.forEach((group) => {
     group.isLocked = group.groupNumber > completedGroupsCount + 1;
   });
