@@ -34,14 +34,14 @@
 }
 .mapGrid {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: center;
   gap: 20px;
   margin-top: 30px;
   padding: 20px;
   max-width: 1400px;
   margin-left: auto;
   margin-right: auto;
-  justify-content: center;
 }
 .levelGroup {
   display: grid;
