@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import ErrorBoundary from './components/shared/ErrorBoundary';
 import DifficultyPage from './pages/DifficultyPage';
 import MapPage from './pages/MapPage';
 import LevelPage from './pages/LevelPage';
@@ -7,6 +8,7 @@ import VictoryPage from './pages/VictoryPage';
 
 export default function App() {
   return (
+    <ErrorBoundary>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<DifficultyPage />} />
@@ -17,5 +19,6 @@ export default function App() {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
+    </ErrorBoundary>
   );
 }
