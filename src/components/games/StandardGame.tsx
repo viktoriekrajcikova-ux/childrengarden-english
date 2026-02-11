@@ -5,7 +5,7 @@ import type { StandardLevel, LevelItem } from '../../types';
 import PlayButton from '../layout/PlayButton';
 import MessageDisplay from '../shared/MessageDisplay';
 import ItemCard from '../shared/ItemCard';
-import styles from './StandardGame.module.css';
+import styles from '../../styles/grid.module.css';
 
 interface Props {
   level: StandardLevel;

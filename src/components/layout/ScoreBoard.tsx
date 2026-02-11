@@ -1,5 +1,6 @@
 import { useAtomValue } from 'jotai';
 import { scoreAtom } from '../../store/atoms';
+import { cn } from '../../utils/cn';
 import styles from './ScoreBoard.module.css';
 
 interface Props {
@@ -9,7 +10,7 @@ interface Props {
 export default function ScoreBoard({ variant = 'game' }: Props) {
   const score = useAtomValue(scoreAtom);
   return (
-    <div className={variant === 'map' ? styles.scoreBoardMap : styles.scoreBoard}>
+    <div className={cn(styles.base, variant === 'map' ? styles.scoreBoardMap : styles.scoreBoard)}>
       Skóre: <span>{score}</span> bodů
     </div>
   );

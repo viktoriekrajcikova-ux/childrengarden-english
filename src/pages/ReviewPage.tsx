@@ -14,7 +14,8 @@ import PlayButton from '../components/layout/PlayButton';
 import MessageDisplay from '../components/shared/MessageDisplay';
 import ItemCard from '../components/shared/ItemCard';
 import Button from '../components/shared/Button';
-import styles from './ReviewPage.module.css';
+import reviewStyles from './ReviewPage.module.css';
+import gridStyles from '../styles/grid.module.css';
 
 const REVIEW_ROUNDS = 5;
 
@@ -172,8 +173,8 @@ export default function ReviewPage() {
 
   return (
     <GameLayout title="🔄 Opakování">
-      <div className={styles.reviewIndicator}>🔄 Režim opakování</div>
-      <div className={styles.grid}>
+      <div className={reviewStyles.reviewIndicator}>🔄 Režim opakování</div>
+      <div className={gridStyles.grid}>
         {currentItems.map((item) => (
           <ItemCard
             key={item.name}

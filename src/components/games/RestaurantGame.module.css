@@ -3,12 +3,6 @@
   padding: 20px;
   min-height: 500px;
 }
-.title {
-  color: var(--color-text);
-  font-size: 2em;
-  margin-bottom: 10px;
-  margin-top: 40px;
-}
 .progress {
   font-size: 1.3em;
   color: var(--color-primary);

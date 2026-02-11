@@ -42,17 +42,3 @@
 .secondary:hover {
   background: var(--color-gray-dark);
 }
-
-.control {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.95);
-  font-size: 28px;
-  box-shadow: var(--shadow-sm);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0;
-  padding: 0;
-}
