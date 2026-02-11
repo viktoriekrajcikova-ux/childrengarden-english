@@ -15,10 +15,9 @@ import PlayButton from '../components/layout/PlayButton';
 import MessageDisplay from '../components/shared/MessageDisplay';
 import ItemCard from '../components/shared/ItemCard';
 import Button from '../components/shared/Button';
+import { REVIEW_ROUNDS, SCORE_CORRECT, SCORE_PENALTY, DELAY_FEEDBACK, DELAY_WRONG, DELAY_TRANSITION } from '../constants';
 import reviewStyles from './ReviewPage.module.css';
 import gridStyles from '../styles/grid.module.css';
-
-const REVIEW_ROUNDS = 5;
 
 export default function ReviewPage() {
   const difficulty = useAtomValue(difficultyAtom);
@@ -127,18 +126,16 @@ export default function ReviewPage() {
     if (itemName === currentTarget.name) {
       // Correct answer
       setCardStates((prev) => ({ ...prev, [itemName]: 'correct' }));
-      addScore(10);
+      addScore(SCORE_CORRECT);
       setMessage('🎉 Správně! +10 bodů');
       playFanfare();
 
       roundsRef.current += 1;
       const newRounds = roundsRef.current;
 
-      // Hide correct card after 1s
       setTimer(() => {
         setCardStates((prev) => ({ ...prev, [itemName]: 'hidden' }));
 
-        // After another 1s, check completion or start next round
         setTimer(() => {
           if (mode === 'auto' && newRounds >= REVIEW_ROUNDS) {
             setMessage('🎊 Opakování dokončeno!');
@@ -152,24 +149,24 @@ export default function ReviewPage() {
           if (mode === 'practice' && newRounds >= REVIEW_ROUNDS) {
             setMessage('🎊 Opakování dokončeno!');
             setFinished(true);
-            setTimer(() => navigate('/map'), 2000);
+            setTimer(() => navigate('/map'), DELAY_TRANSITION);
             return;
           }
 
           initRound();
-        }, 1000);
-      }, 1000);
+        }, DELAY_FEEDBACK);
+      }, DELAY_FEEDBACK);
     } else {
       // Wrong answer
       setCardStates((prev) => ({ ...prev, [itemName]: 'wrong' }));
-      subtractScore(5);
+      subtractScore(SCORE_PENALTY);
       setMessage('❌ Špatně! -5 bodů. Zkus to znovu.');
       playErrorSound();
 
       setTimer(() => {
         setCardStates((prev) => ({ ...prev, [itemName]: 'idle' }));
         setPlayDisabled(false);
-      }, 1500);
+      }, DELAY_WRONG);
     }
   };
 

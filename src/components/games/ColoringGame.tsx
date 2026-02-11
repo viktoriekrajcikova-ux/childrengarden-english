@@ -8,6 +8,7 @@ import { cn } from '../../utils/cn';
 import PlayButton from '../layout/PlayButton';
 import GameHeader from '../shared/GameHeader';
 import MessageDisplay from '../shared/MessageDisplay';
+import { SCORE_CORRECT, DELAY_SHORT, DELAY_WRONG } from '../../constants';
 import styles from './ColoringGame.module.css';
 
 interface Props {
@@ -38,7 +39,7 @@ export default function ColoringGame({ level, levelIndex }: Props) {
     if (colors.length === 0) {
       setMessage('🎨 Skvělá práce! Level dokončen!');
       playFanfare();
-      setTimer(() => completeLevel(levelIndex), 500);
+      setTimer(() => completeLevel(levelIndex), DELAY_SHORT);
       return;
     }
 
@@ -110,21 +111,21 @@ export default function ColoringGame({ level, levelIndex }: Props) {
     if (selectedColor.name !== targetColor.name) {
       setMessage('❌ Špatná barva! Zkus to znovu.');
       playErrorSound();
-      setTimer(() => setPlayDisabled(false), 1500);
+      setTimer(() => setPlayDisabled(false), DELAY_WRONG);
       return;
     }
 
     if (shape.name !== targetShape.name) {
       setMessage('❌ Špatný tvar! Zkus to znovu.');
       playErrorSound();
-      setTimer(() => setPlayDisabled(false), 1500);
+      setTimer(() => setPlayDisabled(false), DELAY_WRONG);
       return;
     }
 
     // Correct
     setColoredShapeStyles((prev) => ({ ...prev, [shape.name]: selectedColor.color }));
     setColoredShapeSet((prev) => new Set([...prev, `${shape.name}-${selectedColor.name}`]));
-    addScore(10);
+    addScore(SCORE_CORRECT);
     setMessage('🎉 Skvěle! +10 bodů');
     playFanfare();
 
@@ -136,7 +137,7 @@ export default function ColoringGame({ level, levelIndex }: Props) {
 
     setTimer(() => {
       loadNextShape(newRemaining);
-    }, 1500);
+    }, DELAY_WRONG);
   };
 
   const getShapeClass = (shapeName: string) => {

@@ -7,6 +7,7 @@ import type { RestaurantLevel, DrinkItem } from '../../types';
 import { cn } from '../../utils/cn';
 import GameHeader from '../shared/GameHeader';
 import MessageDisplay from '../shared/MessageDisplay';
+import { SCORE_CORRECT, SCORE_PENALTY, DELAY_SHORT, DELAY_WRONG, DELAY_TRANSITION } from '../../constants';
 import styles from './RestaurantGame.module.css';
 
 interface Props {
@@ -39,7 +40,7 @@ export default function RestaurantGame({ level, levelIndex }: Props) {
     setDrinks(shuffleArray([...filteredDrinks]));
     setServedEmoji(null);
 
-    setTimer(() => speak(`I want ${drink.name}`, 0.9), 500);
+    setTimer(() => speak(`I want ${drink.name}`, 0.9), DELAY_SHORT);
   }, [difficulty, level, speak]);
 
   useEffect(() => {
@@ -62,7 +63,7 @@ export default function RestaurantGame({ level, levelIndex }: Props) {
     if (!drink || !currentDrink) return;
 
     if (drink.name === currentDrink.name) {
-      addScore(10);
+      addScore(SCORE_CORRECT);
       setMessage('🎉 Správně! +10 bodů');
       playFanfare();
       setServedEmoji(currentDrink.emoji);
@@ -75,12 +76,12 @@ export default function RestaurantGame({ level, levelIndex }: Props) {
         setTimer(() => {
           setMessage('🎊 Level dokončen!');
           completeLevel(levelIndex);
-        }, 1500);
+        }, DELAY_WRONG);
       } else {
-        setTimer(loadCustomer, 2000);
+        setTimer(loadCustomer, DELAY_TRANSITION);
       }
     } else {
-      subtractScore(5);
+      subtractScore(SCORE_PENALTY);
       setMessage(`❌ Špatně! Zákazník chtěl ${currentDrink.czech}. -5 bodů`);
       playErrorSound();
     }

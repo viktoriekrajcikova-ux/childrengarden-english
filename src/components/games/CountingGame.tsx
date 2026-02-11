@@ -6,14 +6,13 @@ import type { CountingLevel, CountingObject } from '../../types';
 import { cn } from '../../utils/cn';
 import GameHeader from '../shared/GameHeader';
 import MessageDisplay from '../shared/MessageDisplay';
+import { ROUNDS_REQUIRED, SCORE_CORRECT, SCORE_PENALTY, DELAY_SHORT, DELAY_WRONG, DELAY_TRANSITION, DELAY_WRONG_LONG } from '../../constants';
 import styles from './CountingGame.module.css';
 
 interface Props {
   level: CountingLevel;
   levelIndex: number;
 }
-
-const ROUNDS_REQUIRED = 3;
 
 export default function CountingGame({ level, levelIndex }: Props) {
   const { difficulty, addScore, subtractScore, playFanfare, playErrorSound, speak, completeLevel } = useGameSetup();
@@ -63,7 +62,7 @@ export default function CountingGame({ level, levelIndex }: Props) {
     setDisabled(false);
 
     const name = count === 1 ? obj.nameSingular : obj.name;
-    setTimer(() => speak(`How many ${name} can you see?`, 0.9), 500);
+    setTimer(() => speak(`How many ${name} can you see?`, 0.9), DELAY_SHORT);
   }, [level.countingObjects, difficulty, speak]);
 
   useEffect(() => {
@@ -75,7 +74,7 @@ export default function CountingGame({ level, levelIndex }: Props) {
 
     if (selected === correctCount) {
       setButtonStates((prev) => ({ ...prev, [selected]: 'correct' }));
-      addScore(10);
+      addScore(SCORE_CORRECT);
       playFanfare();
       speak(String(correctCount));
 
@@ -84,18 +83,18 @@ export default function CountingGame({ level, levelIndex }: Props) {
 
       if (newRounds >= ROUNDS_REQUIRED) {
         setMessage('🎊 Level dokončen! +10 bodů');
-        setTimer(() => completeLevel(levelIndex), 1500);
+        setTimer(() => completeLevel(levelIndex), DELAY_WRONG);
       } else {
         const left = ROUNDS_REQUIRED - newRounds;
         setMessage(`🎉 Správně! +10 bodů (Zbývá ${left} ${left === 1 ? 'kolo' : 'kola'})`);
-        setTimer(loadRound, 2000);
+        setTimer(loadRound, DELAY_TRANSITION);
       }
     } else {
       setButtonStates((prev) => ({ ...prev, [selected]: 'incorrect', [correctCount]: 'correct' }));
-      subtractScore(5);
+      subtractScore(SCORE_PENALTY);
       setMessage(`❌ Špatně! Správná odpověď je ${correctCount}. -5 bodů`);
       playErrorSound();
-      setTimer(loadRound, 2500);
+      setTimer(loadRound, DELAY_WRONG_LONG);
     }
   };
 

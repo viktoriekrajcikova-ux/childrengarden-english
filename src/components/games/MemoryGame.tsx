@@ -8,6 +8,7 @@ import type { LevelItem } from '../../types';
 import { cn } from '../../utils/cn';
 import GameHeader from '../shared/GameHeader';
 import MessageDisplay from '../shared/MessageDisplay';
+import { SCORE_CORRECT_DOUBLE, DELAY_SHORT, DELAY_FEEDBACK, DELAY_WRONG } from '../../constants';
 import styles from './MemoryGame.module.css';
 
 interface Props {
@@ -72,7 +73,7 @@ export default function MemoryGame({ levelIndex }: Props) {
         if (first.item.name === second.item.name) {
           setTimer(() => {
             setMatched((prev) => new Set([...prev, first.item.name]));
-            addScore(20);
+            addScore(SCORE_CORRECT_DOUBLE);
             setMessage('🎉 Skvělé! Našel jsi pár! +20 bodů');
             playFanfare();
 
@@ -81,12 +82,12 @@ export default function MemoryGame({ levelIndex }: Props) {
               setTimer(() => {
                 setMessage('🎊 Level dokončen!');
                 completeLevel(levelIndex);
-              }, 1000);
+              }, DELAY_FEEDBACK);
             }
 
             setFlipped([]);
             canFlipRef.current = true;
-          }, 500);
+          }, DELAY_SHORT);
         } else {
           setMessage('❌ Neshodují se, zkus znovu!');
           playErrorSound();
@@ -94,7 +95,7 @@ export default function MemoryGame({ levelIndex }: Props) {
             setFlipped([]);
             canFlipRef.current = true;
             setMessage('Klikni na karty a najdi stejné dvojice!');
-          }, 1500);
+          }, DELAY_WRONG);
         }
       }
     },

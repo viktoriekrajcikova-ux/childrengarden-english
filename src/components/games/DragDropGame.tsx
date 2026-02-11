@@ -7,6 +7,7 @@ import type { DragDropLevel, DragDropItem } from '../../types';
 import { cn } from '../../utils/cn';
 import GameHeader from '../shared/GameHeader';
 import MessageDisplay from '../shared/MessageDisplay';
+import { SCORE_CORRECT, SCORE_PENALTY, DELAY_SHORT, DELAY_FEEDBACK } from '../../constants';
 import styles from './DragDropGame.module.css';
 
 interface Props {
@@ -31,7 +32,7 @@ export default function DragDropGame({ level, levelIndex }: Props) {
       if (items.length === 0) {
         setMessage('🎊 Level dokončen!');
         playFanfare();
-        setTimer(() => completeLevel(levelIndex), 500);
+        setTimer(() => completeLevel(levelIndex), DELAY_SHORT);
         return;
       }
       const count = Math.min(level.itemsPerRound || 3, items.length);
@@ -78,7 +79,7 @@ export default function DragDropGame({ level, levelIndex }: Props) {
     if (!item) return;
 
     if (zoneName === item.belongsTo) {
-      addScore(10);
+      addScore(SCORE_CORRECT);
       setMessage('🎉 Správně! +10 bodů');
       playFanfare();
 
@@ -93,10 +94,10 @@ export default function DragDropGame({ level, levelIndex }: Props) {
       setCurrentRound(newRound);
 
       if (newRound.length === 0) {
-        setTimer(() => loadRound(newRemaining), 1000);
+        setTimer(() => loadRound(newRemaining), DELAY_FEEDBACK);
       }
     } else {
-      subtractScore(5);
+      subtractScore(SCORE_PENALTY);
       setMessage('❌ Špatně! Zkus jiné místo. -5 bodů');
       playErrorSound();
     }

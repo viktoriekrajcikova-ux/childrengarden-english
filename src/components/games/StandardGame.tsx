@@ -6,6 +6,7 @@ import type { StandardLevel, LevelItem } from '../../types';
 import PlayButton from '../layout/PlayButton';
 import MessageDisplay from '../shared/MessageDisplay';
 import ItemCard from '../shared/ItemCard';
+import { SCORE_CORRECT, SCORE_PENALTY, DELAY_FEEDBACK, DELAY_WRONG } from '../../constants';
 import styles from '../../styles/grid.module.css';
 
 interface Props {
@@ -74,7 +75,7 @@ export default function StandardGame({ level, levelIndex }: Props) {
 
       if (itemName === currentTarget.name) {
         setCardStates((prev) => ({ ...prev, [itemName]: 'correct' }));
-        addScore(10);
+        addScore(SCORE_CORRECT);
         setMessage('🎉 Správně! +10 bodů');
         playFanfare();
 
@@ -88,21 +89,21 @@ export default function StandardGame({ level, levelIndex }: Props) {
             setTimer(() => {
               setMessage('🎊 Level dokončen!');
               completeLevel(levelIndex);
-            }, 1000);
+            }, DELAY_FEEDBACK);
           } else {
             setPlayDisabled(false);
           }
-        }, 1000);
+        }, DELAY_FEEDBACK);
       } else {
         setCardStates((prev) => ({ ...prev, [itemName]: 'wrong' }));
-        subtractScore(5);
+        subtractScore(SCORE_PENALTY);
         setMessage('❌ Špatně! -5 bodů. Zkus to znovu.');
         playErrorSound();
 
         setTimer(() => {
           setCardStates((prev) => ({ ...prev, [itemName]: 'idle' }));
           setPlayDisabled(false);
-        }, 1500);
+        }, DELAY_WRONG);
       }
     },
     [canClick, currentTarget, remaining, cardStates, addScore, subtractScore, playFanfare, playErrorSound, completeLevel, levelIndex]

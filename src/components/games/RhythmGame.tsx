@@ -8,13 +8,12 @@ import type { LevelItem } from '../../types';
 import { cn } from '../../utils/cn';
 import GameHeader from '../shared/GameHeader';
 import MessageDisplay from '../shared/MessageDisplay';
+import { ROUNDS_REQUIRED, SCORE_CORRECT_DOUBLE, SCORE_PENALTY, DELAY_SHORT, DELAY_FEEDBACK, DELAY_WRONG, DELAY_TRANSITION } from '../../constants';
 import styles from './RhythmGame.module.css';
 
 interface Props {
   levelIndex: number;
 }
-
-const ROUNDS_REQUIRED = 3;
 
 export default function RhythmGame({ levelIndex }: Props) {
   const { difficulty, addScore, subtractScore, playFanfare, playErrorSound, speak, completeLevel } = useGameSetup();
@@ -95,7 +94,7 @@ export default function RhythmGame({ levelIndex }: Props) {
       setTimer(() => {
         setPlayingIndex(index);
         speak(item.name);
-      }, index * 1000);
+      }, index * DELAY_FEEDBACK);
     });
 
     setTimer(() => {
@@ -103,7 +102,7 @@ export default function RhythmGame({ levelIndex }: Props) {
       setCanInput(true);
       setShowSubmit(true);
       setInstruction('Teď klikej na karty a zopakuj posloupnost!');
-    }, sequence.length * 1000 + 500);
+    }, sequence.length * DELAY_FEEDBACK + DELAY_SHORT);
   };
 
   const handleItemClick = (item: LevelItem) => {
@@ -134,7 +133,7 @@ export default function RhythmGame({ levelIndex }: Props) {
     if (isCorrect) {
       const newRounds = roundsCompleted + 1;
       setRoundsCompleted(newRounds);
-      addScore(20);
+      addScore(SCORE_CORRECT_DOUBLE);
       setInstruction('🎉 Perfektní! +20 bodů');
       setMessage('🎉 Správně!');
       playFanfare();
@@ -143,12 +142,12 @@ export default function RhythmGame({ levelIndex }: Props) {
         setTimer(() => {
           setMessage('🎊 Level dokončen!');
           completeLevel(levelIndex);
-        }, 1500);
+        }, DELAY_WRONG);
       } else {
-        setTimer(loadRound, 2000);
+        setTimer(loadRound, DELAY_TRANSITION);
       }
     } else {
-      subtractScore(5);
+      subtractScore(SCORE_PENALTY);
       setInstruction('Klikni na PLAY a poslouchej znovu!');
       setMessage('❌ Špatně! Poslechni si to znovu.');
       playErrorSound();
