@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useGameSetup } from '../../hooks/useGameSetup';
+import { useTimers } from '../../hooks/useTimers';
 import { getItemsForLevel } from '../../utils/difficultyFilter';
 import type { StandardLevel, LevelItem } from '../../types';
 import PlayButton from '../layout/PlayButton';
@@ -14,6 +15,7 @@ interface Props {
 
 export default function StandardGame({ level, levelIndex }: Props) {
   const { difficulty, addScore, subtractScore, playFanfare, playErrorSound, speak, completeLevel } = useGameSetup();
+  const setTimer = useTimers();
 
   const [items, setItems] = useState<LevelItem[]>([]);
   const [remaining, setRemaining] = useState<LevelItem[]>([]);
@@ -79,11 +81,11 @@ export default function StandardGame({ level, levelIndex }: Props) {
         const newRemaining = remaining.filter((item) => item.name !== itemName);
         setRemaining(newRemaining);
 
-        setTimeout(() => {
+        setTimer(() => {
           setCardStates((prev) => ({ ...prev, [itemName]: 'hidden' }));
 
           if (newRemaining.length === 0) {
-            setTimeout(() => {
+            setTimer(() => {
               setMessage('🎊 Level dokončen!');
               completeLevel(levelIndex);
             }, 1000);
@@ -97,7 +99,7 @@ export default function StandardGame({ level, levelIndex }: Props) {
         setMessage('❌ Špatně! -5 bodů. Zkus to znovu.');
         playErrorSound();
 
-        setTimeout(() => {
+        setTimer(() => {
           setCardStates((prev) => ({ ...prev, [itemName]: 'idle' }));
           setPlayDisabled(false);
         }, 1500);

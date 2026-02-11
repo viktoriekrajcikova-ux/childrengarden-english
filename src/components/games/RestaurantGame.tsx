@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useGameSetup } from '../../hooks/useGameSetup';
+import { useTimers } from '../../hooks/useTimers';
 import { filterByDifficulty } from '../../utils/difficultyFilter';
 import { shuffleArray } from '../../utils/shuffle';
 import type { RestaurantLevel, DrinkItem } from '../../types';
@@ -15,6 +16,7 @@ interface Props {
 
 export default function RestaurantGame({ level, levelIndex }: Props) {
   const { difficulty, addScore, subtractScore, playFanfare, playErrorSound, speak, completeLevel } = useGameSetup();
+  const setTimer = useTimers();
 
   const [served, setServed] = useState(0);
   const [currentDrink, setCurrentDrink] = useState<DrinkItem | null>(null);
@@ -37,7 +39,7 @@ export default function RestaurantGame({ level, levelIndex }: Props) {
     setDrinks(shuffleArray([...filteredDrinks]));
     setServedEmoji(null);
 
-    setTimeout(() => speak(`I want ${drink.name}`, 0.9), 500);
+    setTimer(() => speak(`I want ${drink.name}`, 0.9), 500);
   }, [difficulty, level, speak]);
 
   useEffect(() => {
@@ -70,12 +72,12 @@ export default function RestaurantGame({ level, levelIndex }: Props) {
       setServed(newServed);
 
       if (newServed >= level.customersToServe) {
-        setTimeout(() => {
+        setTimer(() => {
           setMessage('🎊 Level dokončen!');
           completeLevel(levelIndex);
         }, 1500);
       } else {
-        setTimeout(loadCustomer, 2000);
+        setTimer(loadCustomer, 2000);
       }
     } else {
       subtractScore(5);

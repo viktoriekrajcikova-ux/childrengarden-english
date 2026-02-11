@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useGameSetup } from '../../hooks/useGameSetup';
+import { useTimers } from '../../hooks/useTimers';
 import { shuffleArray } from '../../utils/shuffle';
 import type { CountingLevel, CountingObject } from '../../types';
 import { cn } from '../../utils/cn';
@@ -16,6 +17,7 @@ const ROUNDS_REQUIRED = 3;
 
 export default function CountingGame({ level, levelIndex }: Props) {
   const { difficulty, addScore, subtractScore, playFanfare, playErrorSound, speak, completeLevel } = useGameSetup();
+  const setTimer = useTimers();
 
   const [roundsCompleted, setRoundsCompleted] = useState(0);
   const [target, setTarget] = useState<CountingObject | null>(null);
@@ -61,7 +63,7 @@ export default function CountingGame({ level, levelIndex }: Props) {
     setDisabled(false);
 
     const name = count === 1 ? obj.nameSingular : obj.name;
-    setTimeout(() => speak(`How many ${name} can you see?`, 0.9), 500);
+    setTimer(() => speak(`How many ${name} can you see?`, 0.9), 500);
   }, [level.countingObjects, difficulty, speak]);
 
   useEffect(() => {
@@ -82,18 +84,18 @@ export default function CountingGame({ level, levelIndex }: Props) {
 
       if (newRounds >= ROUNDS_REQUIRED) {
         setMessage('🎊 Level dokončen! +10 bodů');
-        setTimeout(() => completeLevel(levelIndex), 1500);
+        setTimer(() => completeLevel(levelIndex), 1500);
       } else {
         const left = ROUNDS_REQUIRED - newRounds;
         setMessage(`🎉 Správně! +10 bodů (Zbývá ${left} ${left === 1 ? 'kolo' : 'kola'})`);
-        setTimeout(loadRound, 2000);
+        setTimer(loadRound, 2000);
       }
     } else {
       setButtonStates((prev) => ({ ...prev, [selected]: 'incorrect', [correctCount]: 'correct' }));
       subtractScore(5);
       setMessage(`❌ Špatně! Správná odpověď je ${correctCount}. -5 bodů`);
       playErrorSound();
-      setTimeout(loadRound, 2500);
+      setTimer(loadRound, 2500);
     }
   };
 

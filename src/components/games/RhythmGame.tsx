@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useGameSetup } from '../../hooks/useGameSetup';
+import { useTimers } from '../../hooks/useTimers';
 import { levels } from '../../data/levels';
 import { filterByDifficulty } from '../../utils/difficultyFilter';
 import { shuffleArray } from '../../utils/shuffle';
@@ -17,6 +18,7 @@ const ROUNDS_REQUIRED = 3;
 
 export default function RhythmGame({ levelIndex }: Props) {
   const { difficulty, addScore, subtractScore, playFanfare, playErrorSound, speak, completeLevel } = useGameSetup();
+  const setTimer = useTimers();
 
   const [roundsCompleted, setRoundsCompleted] = useState(0);
   const [sequence, setSequence] = useState<LevelItem[]>([]);
@@ -90,13 +92,13 @@ export default function RhythmGame({ levelIndex }: Props) {
     setInstruction('Poslouchej pozorně...');
 
     sequence.forEach((item, index) => {
-      setTimeout(() => {
+      setTimer(() => {
         setPlayingIndex(index);
         speak(item.name);
       }, index * 1000);
     });
 
-    setTimeout(() => {
+    setTimer(() => {
       setPlayingIndex(-1);
       setCanInput(true);
       setShowSubmit(true);
@@ -138,12 +140,12 @@ export default function RhythmGame({ levelIndex }: Props) {
       playFanfare();
 
       if (newRounds >= ROUNDS_REQUIRED) {
-        setTimeout(() => {
+        setTimer(() => {
           setMessage('🎊 Level dokončen!');
           completeLevel(levelIndex);
         }, 1500);
       } else {
-        setTimeout(loadRound, 2000);
+        setTimer(loadRound, 2000);
       }
     } else {
       subtractScore(5);

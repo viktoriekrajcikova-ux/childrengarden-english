@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useGameSetup } from '../../hooks/useGameSetup';
+import { useTimers } from '../../hooks/useTimers';
 import { filterByDifficulty } from '../../utils/difficultyFilter';
 import { shuffleArray } from '../../utils/shuffle';
 import type { DragDropLevel, DragDropItem } from '../../types';
@@ -15,6 +16,7 @@ interface Props {
 
 export default function DragDropGame({ level, levelIndex }: Props) {
   const { difficulty, addScore, subtractScore, playFanfare, playErrorSound, speak, completeLevel } = useGameSetup();
+  const setTimer = useTimers();
 
   const [remainingItems, setRemainingItems] = useState<DragDropItem[]>([]);
   const [currentRound, setCurrentRound] = useState<DragDropItem[]>([]);
@@ -36,7 +38,7 @@ export default function DragDropGame({ level, levelIndex }: Props) {
       if (items.length === 0) {
         setMessage('🎊 Level dokončen!');
         playFanfare();
-        setTimeout(() => completeLevel(levelIndex), 500);
+        setTimer(() => completeLevel(levelIndex), 500);
         return;
       }
       const count = Math.min(level.itemsPerRound || 3, items.length);
@@ -96,7 +98,7 @@ export default function DragDropGame({ level, levelIndex }: Props) {
       setCurrentRound(newRound);
 
       if (newRound.length === 0) {
-        setTimeout(() => loadRound(newRemaining), 1000);
+        setTimer(() => loadRound(newRemaining), 1000);
       }
     } else {
       subtractScore(5);

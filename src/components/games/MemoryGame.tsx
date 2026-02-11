@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useGameSetup } from '../../hooks/useGameSetup';
+import { useTimers } from '../../hooks/useTimers';
 import { levels } from '../../data/levels';
 import { filterByDifficulty } from '../../utils/difficultyFilter';
 import { shuffleArray } from '../../utils/shuffle';
@@ -20,6 +21,7 @@ interface MemoryCard {
 
 export default function MemoryGame({ levelIndex }: Props) {
   const { difficulty, addScore, playFanfare, playErrorSound, speak, completeLevel } = useGameSetup();
+  const setTimer = useTimers();
 
   const [cards, setCards] = useState<MemoryCard[]>([]);
   const [flipped, setFlipped] = useState<number[]>([]);
@@ -68,7 +70,7 @@ export default function MemoryGame({ levelIndex }: Props) {
         const second = cards.find((c) => c.id === newFlipped[1])!;
 
         if (first.item.name === second.item.name) {
-          setTimeout(() => {
+          setTimer(() => {
             setMatched((prev) => new Set([...prev, first.item.name]));
             addScore(20);
             setMessage('🎉 Skvělé! Našel jsi pár! +20 bodů');
@@ -76,7 +78,7 @@ export default function MemoryGame({ levelIndex }: Props) {
 
             matchedPairsRef.current++;
             if (matchedPairsRef.current === 8) {
-              setTimeout(() => {
+              setTimer(() => {
                 setMessage('🎊 Level dokončen!');
                 completeLevel(levelIndex);
               }, 1000);
@@ -88,7 +90,7 @@ export default function MemoryGame({ levelIndex }: Props) {
         } else {
           setMessage('❌ Neshodují se, zkus znovu!');
           playErrorSound();
-          setTimeout(() => {
+          setTimer(() => {
             setFlipped([]);
             canFlipRef.current = true;
             setMessage('Klikni na karty a najdi stejné dvojice!');

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useGameSetup } from '../../hooks/useGameSetup';
+import { useTimers } from '../../hooks/useTimers';
 import { filterByDifficulty } from '../../utils/difficultyFilter';
 import { shuffleArray } from '../../utils/shuffle';
 import type { ColoringLevel, ColorItem, ShapeItem } from '../../types';
@@ -16,6 +17,7 @@ interface Props {
 
 export default function ColoringGame({ level, levelIndex }: Props) {
   const { difficulty, addScore, playFanfare, playErrorSound, speak, completeLevel } = useGameSetup();
+  const setTimer = useTimers();
 
   const [targetColor, setTargetColor] = useState<ColorItem | null>(null);
   const [targetShape, setTargetShape] = useState<ShapeItem | null>(null);
@@ -36,7 +38,7 @@ export default function ColoringGame({ level, levelIndex }: Props) {
     if (colors.length === 0) {
       setMessage('🎨 Skvělá práce! Level dokončen!');
       playFanfare();
-      setTimeout(() => completeLevel(levelIndex), 500);
+      setTimer(() => completeLevel(levelIndex), 500);
       return;
     }
 
@@ -108,14 +110,14 @@ export default function ColoringGame({ level, levelIndex }: Props) {
     if (selectedColor.name !== targetColor.name) {
       setMessage('❌ Špatná barva! Zkus to znovu.');
       playErrorSound();
-      setTimeout(() => setPlayDisabled(false), 1500);
+      setTimer(() => setPlayDisabled(false), 1500);
       return;
     }
 
     if (shape.name !== targetShape.name) {
       setMessage('❌ Špatný tvar! Zkus to znovu.');
       playErrorSound();
-      setTimeout(() => setPlayDisabled(false), 1500);
+      setTimer(() => setPlayDisabled(false), 1500);
       return;
     }
 
@@ -132,7 +134,7 @@ export default function ColoringGame({ level, levelIndex }: Props) {
     setSelectedColor(null);
     setTransitioning(true);
 
-    setTimeout(() => {
+    setTimer(() => {
       loadNextShape(newRemaining);
     }, 1500);
   };

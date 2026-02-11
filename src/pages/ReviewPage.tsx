@@ -4,6 +4,7 @@ import { useAtomValue, useSetAtom } from 'jotai';
 import { difficultyAtom, completedLevelsAtom, addScoreAtom, subtractScoreAtom } from '../store/atoms';
 import { useAudio } from '../hooks/useAudio';
 import { useSpeech } from '../hooks/useSpeech';
+import { useTimers } from '../hooks/useTimers';
 import { useLevelCompletion } from '../hooks/useLevelCompletion';
 import { levels } from '../data/levels';
 import { filterByDifficulty } from '../utils/difficultyFilter';
@@ -28,6 +29,7 @@ export default function ReviewPage() {
   const [searchParams] = useSearchParams();
   const { playFanfare, playErrorSound } = useAudio();
   const { speak } = useSpeech();
+  const setTimer = useTimers();
   const { completeLevel } = useLevelCompletion();
 
   const mode = searchParams.get('mode') || 'practice';
@@ -133,11 +135,11 @@ export default function ReviewPage() {
       const newRounds = roundsRef.current;
 
       // Hide correct card after 1s
-      setTimeout(() => {
+      setTimer(() => {
         setCardStates((prev) => ({ ...prev, [itemName]: 'hidden' }));
 
         // After another 1s, check completion or start next round
-        setTimeout(() => {
+        setTimer(() => {
           if (mode === 'auto' && newRounds >= REVIEW_ROUNDS) {
             setMessage('🎊 Opakování dokončeno!');
             setFinished(true);
@@ -150,7 +152,7 @@ export default function ReviewPage() {
           if (mode === 'practice' && newRounds >= REVIEW_ROUNDS) {
             setMessage('🎊 Opakování dokončeno!');
             setFinished(true);
-            setTimeout(() => navigate('/map'), 2000);
+            setTimer(() => navigate('/map'), 2000);
             return;
           }
 
@@ -164,7 +166,7 @@ export default function ReviewPage() {
       setMessage('❌ Špatně! -5 bodů. Zkus to znovu.');
       playErrorSound();
 
-      setTimeout(() => {
+      setTimer(() => {
         setCardStates((prev) => ({ ...prev, [itemName]: 'idle' }));
         setPlayDisabled(false);
       }, 1500);
