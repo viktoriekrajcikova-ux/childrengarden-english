@@ -12,7 +12,7 @@ export default function App() {
   return (
     <ErrorBoundary>
     <BrowserRouter>
-      <Suspense>
+      <Suspense fallback={<div style={{ textAlign: 'center', paddingTop: '40vh', fontSize: '2em' }}>Nahrávám...</div>}>
       <Routes>
         <Route path="/" element={<DifficultyPage />} />
         <Route path="/map" element={<MapPage />} />

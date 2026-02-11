@@ -67,7 +67,7 @@ export default function LevelPage() {
       title={`Level ${levelIndex + 1}`}
       className={isRestaurant ? styles.restaurantBg : undefined}
     >
-      <Suspense>
+      <Suspense fallback={<div style={{ textAlign: 'center', padding: '40px', fontSize: '2em' }}>Nahrávám...</div>}>
         {renderGame()}
       </Suspense>
       <PracticeButton />
