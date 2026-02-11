@@ -1,18 +1,19 @@
-import { useEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAtomValue } from 'jotai';
 import { difficultyAtom } from '../store/atoms';
 import { levels } from '../data/levels';
 import GameLayout from '../components/layout/GameLayout';
-import StandardGame from '../components/games/StandardGame';
-import MemoryGame from '../components/games/MemoryGame';
-import ColoringGame from '../components/games/ColoringGame';
-import DragDropGame from '../components/games/DragDropGame';
-import CountingGame from '../components/games/CountingGame';
-import RestaurantGame from '../components/games/RestaurantGame';
-import RhythmGame from '../components/games/RhythmGame';
 import PracticeButton from '../components/shared/PracticeButton';
 import styles from './LevelPage.module.css';
+
+const StandardGame = lazy(() => import('../components/games/StandardGame'));
+const MemoryGame = lazy(() => import('../components/games/MemoryGame'));
+const ColoringGame = lazy(() => import('../components/games/ColoringGame'));
+const DragDropGame = lazy(() => import('../components/games/DragDropGame'));
+const CountingGame = lazy(() => import('../components/games/CountingGame'));
+const RestaurantGame = lazy(() => import('../components/games/RestaurantGame'));
+const RhythmGame = lazy(() => import('../components/games/RhythmGame'));
 
 export default function LevelPage() {
   const { id } = useParams<{ id: string }>();
@@ -66,7 +67,9 @@ export default function LevelPage() {
       title={`Level ${levelIndex + 1}`}
       className={isRestaurant ? styles.restaurantBg : undefined}
     >
-      {renderGame()}
+      <Suspense>
+        {renderGame()}
+      </Suspense>
       <PracticeButton />
     </GameLayout>
   );

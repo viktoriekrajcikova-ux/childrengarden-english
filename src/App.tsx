@@ -1,15 +1,18 @@
+import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import ErrorBoundary from './components/shared/ErrorBoundary';
-import DifficultyPage from './pages/DifficultyPage';
-import MapPage from './pages/MapPage';
-import LevelPage from './pages/LevelPage';
-import ReviewPage from './pages/ReviewPage';
-import VictoryPage from './pages/VictoryPage';
+
+const DifficultyPage = lazy(() => import('./pages/DifficultyPage'));
+const MapPage = lazy(() => import('./pages/MapPage'));
+const LevelPage = lazy(() => import('./pages/LevelPage'));
+const ReviewPage = lazy(() => import('./pages/ReviewPage'));
+const VictoryPage = lazy(() => import('./pages/VictoryPage'));
 
 export default function App() {
   return (
     <ErrorBoundary>
     <BrowserRouter>
+      <Suspense>
       <Routes>
         <Route path="/" element={<DifficultyPage />} />
         <Route path="/map" element={<MapPage />} />
@@ -18,6 +21,7 @@ export default function App() {
         <Route path="/victory" element={<VictoryPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      </Suspense>
     </BrowserRouter>
     </ErrorBoundary>
   );
