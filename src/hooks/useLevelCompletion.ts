@@ -3,13 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { completedLevelsAtom, completeLevelAtom } from '../store/atoms';
 import { useAudio } from './useAudio';
+import { useTimers } from './useTimers';
 import { levels } from '../data/levels';
 import { getCompletedGroupIndices } from '../utils/levelGrouping';
+import { DELAY_TRANSITION } from '../constants';
 
 export function useLevelCompletion() {
   const completedLevels = useAtomValue(completedLevelsAtom);
   const dispatchCompleteLevel = useSetAtom(completeLevelAtom);
   const { playFanfare, playVictoryFanfare } = useAudio();
+  const setTimer = useTimers();
   const navigate = useNavigate();
   const pendingModalRef = useRef<{ groupIndex: number } | null>(null);
 
@@ -33,13 +36,13 @@ export function useLevelCompletion() {
       }
 
       if (newCompleted.length === levels.length) {
-        setTimeout(() => navigate('/victory'), 2000);
+        setTimer(() => navigate('/victory'), DELAY_TRANSITION);
       } else {
         const nextLevel = levelIndex + 1 < levels.length ? levelIndex + 1 : levelIndex;
-        setTimeout(() => navigate(`/map?scrollTo=${nextLevel}`), 2000);
+        setTimer(() => navigate(`/map?scrollTo=${nextLevel}`), DELAY_TRANSITION);
       }
     },
-    [completedLevels, dispatchCompleteLevel, navigate, playFanfare, playVictoryFanfare]
+    [completedLevels, dispatchCompleteLevel, navigate, playFanfare, playVictoryFanfare, setTimer]
   );
 
   const getPendingModal = useCallback(() => {
