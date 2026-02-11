@@ -1,0 +1,13 @@
+.levelIndicator {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: white;
+  padding: 15px 30px;
+  border-radius: 50px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #667eea;
+  z-index: 1000;
+}

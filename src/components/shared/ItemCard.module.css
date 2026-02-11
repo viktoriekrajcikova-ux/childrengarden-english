@@ -1,0 +1,40 @@
+.card {
+  background: #f5f5f5;
+  border-radius: 15px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 3px solid transparent;
+}
+.card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+.clickable {
+  border-color: #667eea;
+  animation: pulse 1.5s infinite;
+}
+.correct {
+  border-color: #4CAF50;
+  background: #e8f5e9;
+}
+.wrong {
+  border-color: #f44336;
+  background: #ffebee;
+  animation: shake 0.5s;
+}
+.hidden {
+  opacity: 0;
+  transform: scale(0);
+  pointer-events: none;
+}
+.emoji {
+  font-size: 5em;
+  margin-bottom: 10px;
+}
+.name {
+  font-size: 1.2em;
+  color: #333;
+  font-weight: bold;
+}

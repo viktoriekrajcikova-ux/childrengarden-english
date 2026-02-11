@@ -1,0 +1,29 @@
+.playButton {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 20px 60px;
+  font-size: 1.5em;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(76,175,80,0.3);
+  z-index: 1000;
+}
+.playButton:hover {
+  background: #45a049;
+  transform: translateX(-50%) translateY(-2px);
+  box-shadow: 0 7px 20px rgba(76,175,80,0.4);
+}
+.playButton:active {
+  transform: translateX(-50%) translateY(0);
+}
+.playButton:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: translateX(-50%);
+}

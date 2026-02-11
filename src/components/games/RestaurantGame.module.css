@@ -1,0 +1,128 @@
+.wrapper {
+  text-align: center;
+  padding: 20px;
+  min-height: 500px;
+}
+.title {
+  color: #333;
+  font-size: 2em;
+  margin-bottom: 10px;
+  margin-top: 40px;
+}
+.progress {
+  font-size: 1.3em;
+  color: #667eea;
+  font-weight: bold;
+  margin-top: 20px;
+}
+.scene {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+.customer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  padding: 30px;
+  background: rgba(255,255,255,0.6);
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  animation: customerEnter 0.5s ease;
+}
+.avatar {
+  font-size: 6em;
+  animation: customerBounce 2s ease-in-out infinite;
+}
+.order { flex: 1; text-align: left; }
+.speechBubble {
+  position: relative;
+  background: white;
+  padding: 25px 30px;
+  border-radius: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  font-size: 1.8em;
+  font-weight: bold;
+  color: #667eea;
+}
+.speechBubble::before {
+  content: '';
+  position: absolute;
+  left: -20px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0; height: 0;
+  border-top: 15px solid transparent;
+  border-bottom: 15px solid transparent;
+  border-right: 20px solid white;
+}
+.dropZone {
+  min-height: 150px;
+  border: 3px dashed #667eea;
+  border-radius: 20px;
+  background: rgba(102,126,234,0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  margin-top: 20px;
+}
+.dropZoneOver {
+  background: rgba(102,126,234,0.2);
+  border-color: #4CAF50;
+  transform: scale(1.02);
+}
+.dropHint {
+  color: #667eea;
+  font-size: 1.3em;
+  font-weight: bold;
+}
+.bar {
+  background: linear-gradient(135deg, rgba(139,69,19,0.6) 0%, rgba(101,67,33,0.6) 100%);
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+.barTitle {
+  color: white;
+  font-size: 1.5em;
+  margin-bottom: 20px;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+.shelf {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.drinkItem {
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  cursor: move;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  min-width: 100px;
+  user-select: none;
+}
+.drinkItem:hover {
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+}
+.drinkDragging { opacity: 0.5; }
+.drinkEmoji { font-size: 3em; margin-bottom: 10px; }
+.drinkName { font-size: 1.1em; font-weight: bold; color: #333; }
+.servedEmoji { font-size: 3em; animation: drinkServed 1s ease; }
+
+@media (max-width: 768px) {
+  .avatar { font-size: 4em; }
+  .speechBubble { font-size: 1.3em; padding: 15px 20px; }
+  .drinkEmoji { font-size: 2.5em; }
+  .drinkName { font-size: 0.9em; }
+  .customer { flex-direction: column; gap: 15px; }
+  .order { text-align: center; }
+  .speechBubble::before { display: none; }
+}
