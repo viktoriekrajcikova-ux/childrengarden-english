@@ -1,3 +1,4 @@
+import { cn } from '../../utils/cn';
 import styles from './ItemCard.module.css';
 
 interface Props {
@@ -8,14 +9,17 @@ interface Props {
 }
 
 export default function ItemCard({ emoji, czech, state = 'idle', onClick }: Props) {
-  const classes = [styles.card];
-  if (state === 'clickable') classes.push(styles.clickable);
-  if (state === 'correct') classes.push(styles.correct);
-  if (state === 'wrong') classes.push(styles.wrong);
-  if (state === 'hidden') classes.push(styles.hidden);
-
   return (
-    <div className={classes.join(' ')} onClick={onClick}>
+    <div
+      className={cn(
+        styles.card,
+        state === 'clickable' && styles.clickable,
+        state === 'correct' && styles.correct,
+        state === 'wrong' && styles.wrong,
+        state === 'hidden' && styles.hidden,
+      )}
+      onClick={onClick}
+    >
       <div className={styles.emoji}>{emoji}</div>
       <div className={styles.name}>{czech}</div>
     </div>
