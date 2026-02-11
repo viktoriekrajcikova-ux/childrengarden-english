@@ -26,13 +26,6 @@ export default function DragDropGame({ level, levelIndex }: Props) {
   const draggedRef = useRef<DragDropItem | null>(null);
   const [draggingName, setDraggingName] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!difficulty) return;
-    const filtered = filterByDifficulty(level.items, difficulty);
-    setRemainingItems([...filtered]);
-    setDroppedItems({});
-  }, [level, difficulty]);
-
   const loadRound = useCallback(
     (items: DragDropItem[]) => {
       if (items.length === 0) {
@@ -46,14 +39,16 @@ export default function DragDropGame({ level, levelIndex }: Props) {
       setCurrentRound(shuffled.slice(0, count));
       setMessage('Přetáhni předměty na správná místa!');
     },
-    [level.itemsPerRound, playFanfare, completeLevel, levelIndex]
+    [level.itemsPerRound, playFanfare, completeLevel, levelIndex, setTimer]
   );
 
   useEffect(() => {
-    if (remainingItems.length > 0 && currentRound.length === 0) {
-      loadRound(remainingItems);
-    }
-  }, [remainingItems]); // eslint-disable-line react-hooks/exhaustive-deps
+    if (!difficulty) return;
+    const filtered = filterByDifficulty(level.items, difficulty);
+    setRemainingItems([...filtered]);
+    setDroppedItems({});
+    loadRound([...filtered]);
+  }, [level, difficulty, loadRound]);
 
   const handleDragStart = (item: DragDropItem, e: React.DragEvent) => {
     draggedRef.current = item;

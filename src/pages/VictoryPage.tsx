@@ -13,7 +13,7 @@ export default function VictoryPage() {
 
   useEffect(() => {
     playVictoryFanfare();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [playVictoryFanfare]);
 
   return (
     <div className={styles.container}>
