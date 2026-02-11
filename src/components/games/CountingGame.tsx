@@ -6,7 +6,7 @@ import type { CountingLevel, CountingObject } from '../../types';
 import { cn } from '../../utils/cn';
 import GameHeader from '../shared/GameHeader';
 import MessageDisplay from '../shared/MessageDisplay';
-import { ROUNDS_REQUIRED, SCORE_CORRECT, SCORE_PENALTY, DELAY_SHORT, DELAY_WRONG, DELAY_TRANSITION, DELAY_WRONG_LONG } from '../../constants';
+import { ROUNDS_REQUIRED, SCORE_CORRECT, SCORE_PENALTY, DELAY_SHORT, DELAY_WRONG, DELAY_TRANSITION, DELAY_WRONG_LONG, COUNTING_MAX_TARGET, COUNTING_TOTAL_MIN, COUNTING_TOTAL_EXTRA, COUNTING_OPTION_RANGE } from '../../constants';
 import styles from './CountingGame.module.css';
 
 interface Props {
@@ -33,10 +33,10 @@ export default function CountingGame({ level, levelIndex }: Props) {
     const obj = objects[Math.floor(Math.random() * objects.length)];
     setTarget(obj);
 
-    const count = Math.floor(Math.random() * 10);
+    const count = Math.floor(Math.random() * COUNTING_MAX_TARGET);
     setCorrectCount(count);
 
-    const totalObjects = 15 + Math.floor(Math.random() * 6);
+    const totalObjects = COUNTING_TOTAL_MIN + Math.floor(Math.random() * COUNTING_TOTAL_EXTRA);
     const otherCount = totalObjects - count;
     const others = objects.filter((o) => o.name !== obj.name);
 
@@ -54,8 +54,7 @@ export default function CountingGame({ level, levelIndex }: Props) {
     const opts = new Set<number>();
     opts.add(count);
     while (opts.size < numOpts) {
-      const range = 3;
-      let val = Math.max(0, Math.min(9, count + Math.floor(Math.random() * (range * 2 + 1)) - range));
+      let val = Math.max(0, Math.min(COUNTING_MAX_TARGET - 1, count + Math.floor(Math.random() * (COUNTING_OPTION_RANGE * 2 + 1)) - COUNTING_OPTION_RANGE));
       opts.add(val);
     }
     setOptions(shuffleArray([...opts]));
