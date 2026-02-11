@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useGameSetup } from '../../hooks/useGameSetup';
 import { useTimers } from '../../hooks/useTimers';
+import { useTouchDrag } from '../../hooks/useTouchDrag';
 import { filterByDifficulty } from '../../utils/difficultyFilter';
 import { shuffleArray } from '../../utils/shuffle';
 import type { RestaurantLevel, DrinkItem } from '../../types';
@@ -47,20 +48,8 @@ export default function RestaurantGame({ level, levelIndex }: Props) {
     loadCustomer();
   }, [loadCustomer]);
 
-  const handleDragStart = (drink: DrinkItem) => {
-    draggedRef.current = drink;
-    setDraggingDrink(drink.name);
-  };
-
-  const handleDragEnd = () => {
-    setDraggingDrink(null);
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setDropOver(false);
-    const drink = draggedRef.current;
-    if (!drink || !currentDrink) return;
+  const processDrop = useCallback((drink: DrinkItem) => {
+    if (!currentDrink) return;
 
     if (drink.name === currentDrink.name) {
       addScore(SCORE_CORRECT);
@@ -85,10 +74,33 @@ export default function RestaurantGame({ level, levelIndex }: Props) {
       setMessage(`❌ Špatně! Zákazník chtěl ${currentDrink.czech}. -5 bodů`);
       playErrorSound();
     }
+  }, [currentDrink, served, level.customersToServe, addScore, subtractScore, playFanfare, playErrorSound, speak, completeLevel, levelIndex, loadCustomer, setTimer]);
 
+  const handleDragStart = (drink: DrinkItem) => {
+    draggedRef.current = drink;
+    setDraggingDrink(drink.name);
+  };
+
+  const handleDragEnd = () => {
+    setDraggingDrink(null);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDropOver(false);
+    const drink = draggedRef.current;
+    if (!drink) return;
+    processDrop(drink);
     draggedRef.current = null;
     setDraggingDrink(null);
   };
+
+  const { getTouchHandlers } = useTouchDrag<DrinkItem>({
+    onDrop: (drink) => processDrop(drink),
+    onDragStart: (drink) => setDraggingDrink(drink.name),
+    onDragEnd: () => setDraggingDrink(null),
+    onDragOverZone: (zone) => setDropOver(zone === 'customer'),
+  });
 
   return (
     <div className={styles.wrapper}>
@@ -104,6 +116,7 @@ export default function RestaurantGame({ level, levelIndex }: Props) {
               {currentDrink ? `I want ${currentDrink.name}!` : ''}
             </div>
             <div
+              data-drop-zone="customer"
               className={cn(styles.dropZone, dropOver && styles.dropZoneOver)}
               onDragOver={(e) => { e.preventDefault(); setDropOver(true); }}
               onDragLeave={() => setDropOver(false)}
@@ -127,6 +140,7 @@ export default function RestaurantGame({ level, levelIndex }: Props) {
                 draggable
                 onDragStart={() => handleDragStart(drink)}
                 onDragEnd={handleDragEnd}
+                {...getTouchHandlers(drink)}
               >
                 <div className={styles.drinkEmoji}>{drink.emoji}</div>
                 <div className={styles.drinkName}>{drink.czech}</div>

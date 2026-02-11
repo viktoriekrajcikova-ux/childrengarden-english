@@ -101,6 +101,7 @@
   box-shadow: var(--shadow-sm);
   min-width: 100px;
   user-select: none;
+  touch-action: none;
 }
 .drinkItem:hover {
   transform: translateY(-5px) scale(1.05);

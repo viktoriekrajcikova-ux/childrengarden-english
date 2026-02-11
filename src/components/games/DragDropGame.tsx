@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useGameSetup } from '../../hooks/useGameSetup';
 import { useTimers } from '../../hooks/useTimers';
+import { useTouchDrag } from '../../hooks/useTouchDrag';
 import { filterByDifficulty } from '../../utils/difficultyFilter';
 import { shuffleArray } from '../../utils/shuffle';
 import type { DragDropLevel, DragDropItem } from '../../types';
@@ -51,6 +52,32 @@ export default function DragDropGame({ level, levelIndex }: Props) {
     loadRound([...filtered]);
   }, [level, difficulty, loadRound]);
 
+  const processDrop = useCallback((item: DragDropItem, zoneName: string) => {
+    if (zoneName === item.belongsTo) {
+      addScore(SCORE_CORRECT);
+      setMessage('🎉 Správně! +10 bodů');
+      playFanfare();
+
+      setDroppedItems((prev) => ({
+        ...prev,
+        [zoneName]: [...(prev[zoneName] || []), item.emoji],
+      }));
+
+      const newRemaining = remainingItems.filter((i) => i.name !== item.name);
+      setRemainingItems(newRemaining);
+      const newRound = currentRound.filter((i) => i.name !== item.name);
+      setCurrentRound(newRound);
+
+      if (newRound.length === 0) {
+        setTimer(() => loadRound(newRemaining), DELAY_FEEDBACK);
+      }
+    } else {
+      subtractScore(SCORE_PENALTY);
+      setMessage('❌ Špatně! Zkus jiné místo. -5 bodů');
+      playErrorSound();
+    }
+  }, [remainingItems, currentRound, addScore, subtractScore, playFanfare, playErrorSound, loadRound, setTimer]);
+
   const handleDragStart = (item: DragDropItem, e: React.DragEvent) => {
     draggedRef.current = item;
     setDraggingName(item.name);
@@ -77,34 +104,17 @@ export default function DragDropGame({ level, levelIndex }: Props) {
     setDragOverZone(null);
     const item = draggedRef.current;
     if (!item) return;
-
-    if (zoneName === item.belongsTo) {
-      addScore(SCORE_CORRECT);
-      setMessage('🎉 Správně! +10 bodů');
-      playFanfare();
-
-      setDroppedItems((prev) => ({
-        ...prev,
-        [zoneName]: [...(prev[zoneName] || []), item.emoji],
-      }));
-
-      const newRemaining = remainingItems.filter((i) => i.name !== item.name);
-      setRemainingItems(newRemaining);
-      const newRound = currentRound.filter((i) => i.name !== item.name);
-      setCurrentRound(newRound);
-
-      if (newRound.length === 0) {
-        setTimer(() => loadRound(newRemaining), DELAY_FEEDBACK);
-      }
-    } else {
-      subtractScore(SCORE_PENALTY);
-      setMessage('❌ Špatně! Zkus jiné místo. -5 bodů');
-      playErrorSound();
-    }
-
+    processDrop(item, zoneName);
     draggedRef.current = null;
     setDraggingName(null);
   };
+
+  const { getTouchHandlers } = useTouchDrag<DragDropItem>({
+    onDrop: processDrop,
+    onDragStart: (item) => { setDraggingName(item.name); speak(item.name); },
+    onDragEnd: () => setDraggingName(null),
+    onDragOverZone: (zone) => setDragOverZone(zone),
+  });
 
   return (
     <div className={styles.wrapper}>
@@ -113,6 +123,7 @@ export default function DragDropGame({ level, levelIndex }: Props) {
         {level.destinations.map((dest) => (
           <div
             key={dest.name}
+            data-drop-zone={dest.name}
             className={cn(
               styles.dropZone,
               styles[dest.cssClass as keyof typeof styles],
@@ -140,6 +151,7 @@ export default function DragDropGame({ level, levelIndex }: Props) {
             draggable
             onDragStart={(e) => handleDragStart(item, e)}
             onDragEnd={handleDragEnd}
+            {...getTouchHandlers(item)}
           >
             <div className={styles.draggableEmoji}>{item.emoji}</div>
             <div className={styles.draggableName}>{item.czech}</div>
