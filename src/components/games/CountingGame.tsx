@@ -29,6 +29,7 @@ export default function CountingGame({ level, levelIndex }: Props) {
 
   const loadRound = useCallback(() => {
     const objects = level.countingObjects;
+    if (objects.length === 0) return;
     const obj = objects[Math.floor(Math.random() * objects.length)];
     setTarget(obj);
 
