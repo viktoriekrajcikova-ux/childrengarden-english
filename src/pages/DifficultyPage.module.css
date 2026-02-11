@@ -4,7 +4,7 @@
   align-items: center;
   min-height: 100vh;
   width: 100%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--gradient-primary);
   padding: 20px;
   animation: fadeIn 0.5s ease;
 }
@@ -58,12 +58,12 @@
 .cardName {
   font-size: 2em;
   font-weight: bold;
-  color: #667eea;
+  color: var(--color-primary);
   margin-bottom: 15px;
 }
 .cardDescription {
   font-size: 1.1em;
-  color: #666;
+  color: var(--color-text-light);
   line-height: 1.6;
 }
 

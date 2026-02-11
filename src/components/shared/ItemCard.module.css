@@ -12,15 +12,15 @@
   box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 .clickable {
-  border-color: #667eea;
+  border-color: var(--color-primary);
   animation: pulse 1.5s infinite;
 }
 .correct {
-  border-color: #4CAF50;
+  border-color: var(--color-success);
   background: #e8f5e9;
 }
 .wrong {
-  border-color: #f44336;
+  border-color: var(--color-error);
   background: #ffebee;
   animation: shake 0.5s;
 }
@@ -35,6 +35,6 @@
 }
 .name {
   font-size: 1.2em;
-  color: #333;
+  color: var(--color-text);
   font-weight: bold;
 }
