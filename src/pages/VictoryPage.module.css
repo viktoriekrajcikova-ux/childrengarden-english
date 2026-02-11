@@ -1,38 +1,19 @@
 .container {
   background: white;
-  border-radius: 20px;
-  padding: 40px;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  border-radius: var(--radius-lg);
+  padding: 60px 20px;
+  box-shadow: var(--shadow-lg);
   max-width: 900px;
   width: 100%;
   text-align: center;
-  padding: 60px 20px;
 }
 .title {
   font-size: 3em;
-  color: #4CAF50;
+  color: var(--color-success);
   margin-bottom: 20px;
 }
 .text {
   font-size: 1.5em;
-  color: #667eea;
+  color: var(--color-primary);
   margin-bottom: 30px;
-}
-.button {
-  display: block;
-  margin: 20px auto 0;
-  padding: 15px 40px;
-  font-size: 1.2em;
-  background: #FF9800;
-  color: white;
-  border: none;
-  border-radius: 50px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 5px 15px rgba(255,152,0,0.3);
-}
-.button:hover {
-  background: #F57C00;
-  transform: translateY(-2px);
-  box-shadow: 0 7px 20px rgba(255,152,0,0.4);
 }

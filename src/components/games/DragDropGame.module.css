@@ -3,7 +3,7 @@
   padding: 20px;
 }
 .title {
-  color: #333;
+  color: var(--color-text);
   font-size: 2em;
   margin-bottom: 10px;
   margin-top: 40px;
@@ -20,7 +20,7 @@
   width: 250px;
   min-height: 300px;
   border: 4px dashed #ccc;
-  border-radius: 20px;
+  border-radius: var(--radius-lg);
   padding: 20px;
   transition: all 0.3s ease;
   display: flex;
@@ -28,7 +28,7 @@
   align-items: center;
 }
 .dropZoneHeader { font-size: 3em; margin-bottom: 10px; }
-.dropZoneName { font-size: 1.5em; font-weight: bold; color: #333; margin-bottom: 20px; }
+.dropZoneName { font-size: 1.5em; font-weight: bold; color: var(--color-text); margin-bottom: 20px; }
 .dropZoneItems { display: flex; flex-wrap: wrap; gap: 10px; width: 100%; justify-content: center; }
 .sky {
   background: linear-gradient(180deg, #87CEEB 0%, #E0F6FF 100%);
@@ -39,7 +39,7 @@
   border-color: #003D5C;
 }
 .dragOver {
-  border-color: #4CAF50;
+  border-color: var(--color-success);
   border-width: 6px;
   transform: scale(1.05);
   box-shadow: 0 10px 30px rgba(76,175,80,0.4);
@@ -56,26 +56,26 @@
   width: 100px;
   height: 100px;
   background: white;
-  border: 3px solid #667eea;
-  border-radius: 15px;
+  border: 3px solid var(--color-primary);
+  border-radius: var(--radius-md);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   cursor: grab;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  box-shadow: var(--shadow-sm);
   user-select: none;
 }
 .draggableItem:active { cursor: grabbing; }
 .draggableItem:hover { transform: scale(1.1); box-shadow: 0 6px 12px rgba(0,0,0,0.3); }
 .dragging { opacity: 0.5; transform: rotate(5deg); }
 .draggableEmoji { font-size: 3em; }
-.draggableName { font-size: 0.9em; color: #333; font-weight: bold; margin-top: 5px; }
+.draggableName { font-size: 0.9em; color: var(--color-text); font-weight: bold; margin-top: 5px; }
 .droppedItem {
   background: white;
   padding: 10px;
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   margin: 5px 0;
   font-size: 2em;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);

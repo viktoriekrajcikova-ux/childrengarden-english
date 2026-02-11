@@ -1,9 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useAtomValue, useSetAtom } from 'jotai';
-import { difficultyAtom, addScoreAtom, subtractScoreAtom } from '../../store/atoms';
-import { useAudio } from '../../hooks/useAudio';
-import { useSpeech } from '../../hooks/useSpeech';
-import { useLevelCompletion } from '../../hooks/useLevelCompletion';
+import { useGameSetup } from '../../hooks/useGameSetup';
 import { getItemsForLevel } from '../../utils/difficultyFilter';
 import type { StandardLevel, LevelItem } from '../../types';
 import PlayButton from '../layout/PlayButton';
@@ -17,12 +13,7 @@ interface Props {
 }
 
 export default function StandardGame({ level, levelIndex }: Props) {
-  const difficulty = useAtomValue(difficultyAtom);
-  const addScore = useSetAtom(addScoreAtom);
-  const subtractScore = useSetAtom(subtractScoreAtom);
-  const { playFanfare, playErrorSound } = useAudio();
-  const { speak } = useSpeech();
-  const { completeLevel } = useLevelCompletion();
+  const { difficulty, addScore, subtractScore, playFanfare, playErrorSound, speak, completeLevel } = useGameSetup();
 
   const [items, setItems] = useState<LevelItem[]>([]);
   const [remaining, setRemaining] = useState<LevelItem[]>([]);

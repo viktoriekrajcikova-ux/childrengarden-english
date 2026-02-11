@@ -1,12 +1,10 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { useAtomValue, useSetAtom } from 'jotai';
-import { difficultyAtom, addScoreAtom, subtractScoreAtom } from '../../store/atoms';
-import { useAudio } from '../../hooks/useAudio';
-import { useSpeech } from '../../hooks/useSpeech';
-import { useLevelCompletion } from '../../hooks/useLevelCompletion';
+import { useGameSetup } from '../../hooks/useGameSetup';
 import { filterByDifficulty } from '../../utils/difficultyFilter';
 import { shuffleArray } from '../../utils/shuffle';
 import type { DragDropLevel, DragDropItem } from '../../types';
+import { cn } from '../../utils/cn';
+import GameHeader from '../shared/GameHeader';
 import MessageDisplay from '../shared/MessageDisplay';
 import styles from './DragDropGame.module.css';
 
@@ -16,12 +14,7 @@ interface Props {
 }
 
 export default function DragDropGame({ level, levelIndex }: Props) {
-  const difficulty = useAtomValue(difficultyAtom);
-  const addScore = useSetAtom(addScoreAtom);
-  const subtractScore = useSetAtom(subtractScoreAtom);
-  const { playFanfare, playErrorSound } = useAudio();
-  const { speak } = useSpeech();
-  const { completeLevel } = useLevelCompletion();
+  const { difficulty, addScore, subtractScore, playFanfare, playErrorSound, speak, completeLevel } = useGameSetup();
 
   const [remainingItems, setRemainingItems] = useState<DragDropItem[]>([]);
   const [currentRound, setCurrentRound] = useState<DragDropItem[]>([]);
@@ -117,16 +110,16 @@ export default function DragDropGame({ level, levelIndex }: Props) {
 
   return (
     <div className={styles.wrapper}>
-      <h2 className={styles.title}>🎯 Kam to patří?</h2>
+      <GameHeader emoji="🎯" title="Kam to patří?" />
       <div className={styles.dropZones}>
         {level.destinations.map((dest) => (
           <div
             key={dest.name}
-            className={[
+            className={cn(
               styles.dropZone,
-              styles[dest.cssClass as keyof typeof styles] || '',
-              dragOverZone === dest.name ? styles.dragOver : '',
-            ].filter(Boolean).join(' ')}
+              styles[dest.cssClass as keyof typeof styles],
+              dragOverZone === dest.name && styles.dragOver,
+            )}
             onDragOver={(e) => handleDragOver(e, dest.name)}
             onDragLeave={handleDragLeave}
             onDrop={(e) => handleDrop(e, dest.name)}
@@ -145,7 +138,7 @@ export default function DragDropGame({ level, levelIndex }: Props) {
         {currentRound.map((item) => (
           <div
             key={item.name}
-            className={`${styles.draggableItem} ${draggingName === item.name ? styles.dragging : ''}`}
+            className={cn(styles.draggableItem, draggingName === item.name && styles.dragging)}
             draggable
             onDragStart={(e) => handleDragStart(item, e)}
             onDragEnd={handleDragEnd}

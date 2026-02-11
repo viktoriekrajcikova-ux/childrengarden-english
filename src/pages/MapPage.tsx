@@ -5,8 +5,10 @@ import { completedLevelsAtom, difficultyAtom, resetGameAtom } from '../store/ato
 import { useLevelGroups } from '../hooks/useLevelGroups';
 import { useLevelCompletion } from '../hooks/useLevelCompletion';
 import { getLevelIcon } from '../utils/levelGrouping';
+import { cn } from '../utils/cn';
 import ScoreBoard from '../components/layout/ScoreBoard';
 import GroupCompletionModal from '../components/shared/GroupCompletionModal';
+import MapTile from '../components/shared/MapTile';
 import styles from './MapPage.module.css';
 
 const difficultyIcons: Record<string, string> = {
@@ -82,7 +84,7 @@ export default function MapPage() {
     <ScoreBoard variant="map" />
     <div className={styles.mapScreen}>
       <div className={styles.controls}>
-        <div className={`${styles.inventory} ${completedGroupIndices.length === 0 ? styles.inventoryEmpty : ''}`}>
+        <div className={cn(styles.inventory, completedGroupIndices.length === 0 && styles.inventoryEmpty)}>
           <div className={styles.inventoryItems}>
             {completedGroupIndices.map((gi) => (
               <span key={gi} className={styles.inventoryItem}>
@@ -91,15 +93,15 @@ export default function MapPage() {
             ))}
           </div>
         </div>
-        <button className={`${styles.controlButton} ${styles.resetButton}`} onClick={handleReset} title="Reset hry">
+        <button className={cn(styles.controlButton, styles.resetButton)} onClick={handleReset} title="Reset hry">
           🔄
         </button>
         {completedLevels.length > 0 && (
-          <button className={`${styles.controlButton} ${styles.practiceButton}`} onClick={handlePractice} title="Procvičit vše">
+          <button className={cn(styles.controlButton, styles.practiceButton)} onClick={handlePractice} title="Procvičit vše">
             📚
           </button>
         )}
-        <button className={`${styles.controlButton} ${styles.difficultyButton}`} onClick={() => navigate('/')} title="Změnit obtížnost">
+        <button className={cn(styles.controlButton, styles.difficultyButton)} onClick={() => navigate('/')} title="Změnit obtížnost">
           <span>{difficultyIcons[difficulty || 'easy']}</span>
         </button>
       </div>
@@ -115,35 +117,26 @@ export default function MapPage() {
               </div>
             )}
             <div
-              className={[
+              className={cn(
                 styles.levelGroup,
                 getLevelGroupClass(group.levels.length),
-                group.isLocked ? styles.locked : '',
-                group.isCompleted ? styles.completed : '',
-                group.isCompleted && group.groupNumber <= 5 ? styles.crown : '',
-              ].filter(Boolean).join(' ')}
+                group.isLocked && styles.locked,
+                group.isCompleted && styles.completed,
+                group.isCompleted && group.groupNumber <= 5 && styles.crown,
+              )}
             >
-              {group.levels.map(({ level, index }) => {
-                const isCompleted = completedLevels.includes(index);
-                const icon = getLevelIcon(level, group.isLocked);
-
-                return (
-                  <div
-                    key={index}
-                    id={`level-tile-${index}`}
-                    className={[
-                      styles.mapTile,
-                      isCompleted ? styles.tileCompleted : '',
-                      group.isLocked ? styles.tileLocked : '',
-                    ].filter(Boolean).join(' ')}
-                    onClick={() => handleLevelClick(index, group.isLocked)}
-                  >
-                    <div className={styles.tileIcon}>{icon}</div>
-                    <div className={styles.tileNumber}>{index + 1}</div>
-                    <div className={styles.tileName}>{level.name}</div>
-                  </div>
-                );
-              })}
+              {group.levels.map(({ level, index }) => (
+                <MapTile
+                  key={index}
+                  id={`level-tile-${index}`}
+                  icon={getLevelIcon(level, group.isLocked)}
+                  number={index + 1}
+                  name={level.name}
+                  isCompleted={completedLevels.includes(index)}
+                  isLocked={group.isLocked}
+                  onClick={() => handleLevelClick(index, group.isLocked)}
+                />
+              ))}
             </div>
           </div>
         ))}

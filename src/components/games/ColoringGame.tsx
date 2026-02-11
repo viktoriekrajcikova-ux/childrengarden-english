@@ -1,13 +1,11 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { useAtomValue, useSetAtom } from 'jotai';
-import { difficultyAtom, addScoreAtom } from '../../store/atoms';
-import { useAudio } from '../../hooks/useAudio';
-import { useSpeech } from '../../hooks/useSpeech';
-import { useLevelCompletion } from '../../hooks/useLevelCompletion';
+import { useGameSetup } from '../../hooks/useGameSetup';
 import { filterByDifficulty } from '../../utils/difficultyFilter';
 import { shuffleArray } from '../../utils/shuffle';
 import type { ColoringLevel, ColorItem, ShapeItem } from '../../types';
+import { cn } from '../../utils/cn';
 import PlayButton from '../layout/PlayButton';
+import GameHeader from '../shared/GameHeader';
 import MessageDisplay from '../shared/MessageDisplay';
 import styles from './ColoringGame.module.css';
 
@@ -17,11 +15,7 @@ interface Props {
 }
 
 export default function ColoringGame({ level, levelIndex }: Props) {
-  const difficulty = useAtomValue(difficultyAtom);
-  const addScore = useSetAtom(addScoreAtom);
-  const { playFanfare, playErrorSound } = useAudio();
-  const { speak } = useSpeech();
-  const { completeLevel } = useLevelCompletion();
+  const { difficulty, addScore, playFanfare, playErrorSound, speak, completeLevel } = useGameSetup();
 
   const [targetColor, setTargetColor] = useState<ColorItem | null>(null);
   const [targetShape, setTargetShape] = useState<ShapeItem | null>(null);
@@ -163,14 +157,14 @@ export default function ColoringGame({ level, levelIndex }: Props) {
 
   return (
     <div className={styles.wrapper}>
-      <h2 className={styles.title}>🎨 Omalovánka</h2>
+      <GameHeader emoji="🎨" title="Omalovánka" />
       <div className={styles.palette}>
         {availableColors
           .filter((c) => !removedColors.has(c.name))
           .map((color) => (
             <div
               key={color.name}
-              className={`${styles.colorOption} ${selectedColor?.name === color.name ? styles.colorSelected : ''}`}
+              className={cn(styles.colorOption, selectedColor?.name === color.name && styles.colorSelected)}
               style={{ backgroundColor: color.color }}
               title={color.czech}
               onClick={() => handleColorSelect(color)}
@@ -181,7 +175,7 @@ export default function ColoringGame({ level, levelIndex }: Props) {
         {displayShapes.map((shape) => (
           <div
             key={shape.name}
-            className={`${styles.shape} ${getShapeClass(shape.name)} ${coloredShapeSet.size > 0 ? styles.colored : ''}`}
+            className={cn(styles.shape, getShapeClass(shape.name), coloredShapeSet.size > 0 && styles.colored)}
             style={getShapeStyle(shape.name)}
             onClick={() => handleShapeClick(shape)}
           />

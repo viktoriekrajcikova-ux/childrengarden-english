@@ -1,13 +1,11 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { useAtomValue, useSetAtom } from 'jotai';
-import { difficultyAtom, addScoreAtom, subtractScoreAtom } from '../../store/atoms';
-import { useAudio } from '../../hooks/useAudio';
-import { useSpeech } from '../../hooks/useSpeech';
-import { useLevelCompletion } from '../../hooks/useLevelCompletion';
+import { useGameSetup } from '../../hooks/useGameSetup';
 import { levels } from '../../data/levels';
 import { filterByDifficulty } from '../../utils/difficultyFilter';
 import { shuffleArray } from '../../utils/shuffle';
 import type { LevelItem } from '../../types';
+import { cn } from '../../utils/cn';
+import GameHeader from '../shared/GameHeader';
 import MessageDisplay from '../shared/MessageDisplay';
 import styles from './RhythmGame.module.css';
 
@@ -18,12 +16,7 @@ interface Props {
 const ROUNDS_REQUIRED = 3;
 
 export default function RhythmGame({ levelIndex }: Props) {
-  const difficulty = useAtomValue(difficultyAtom);
-  const addScore = useSetAtom(addScoreAtom);
-  const subtractScore = useSetAtom(subtractScoreAtom);
-  const { playFanfare, playErrorSound } = useAudio();
-  const { speak } = useSpeech();
-  const { completeLevel } = useLevelCompletion();
+  const { difficulty, addScore, subtractScore, playFanfare, playErrorSound, speak, completeLevel } = useGameSetup();
 
   const [roundsCompleted, setRoundsCompleted] = useState(0);
   const [sequence, setSequence] = useState<LevelItem[]>([]);
@@ -168,7 +161,7 @@ export default function RhythmGame({ levelIndex }: Props) {
 
   return (
     <div className={styles.wrapper}>
-      <h2 className={styles.title}>🎵 Rytmická hra</h2>
+      <GameHeader emoji="🎵" title="Rytmická hra" />
       <div className={styles.progress}>
         Kolo {roundsCompleted + 1} / {ROUNDS_REQUIRED}
       </div>
@@ -178,7 +171,7 @@ export default function RhythmGame({ levelIndex }: Props) {
         {sequence.map((item, idx) => (
           <div
             key={idx}
-            className={`${styles.sequenceItem} ${playingIndex === idx ? styles.playing : ''}`}
+            className={cn(styles.sequenceItem, playingIndex === idx && styles.playing)}
           >
             <div className={styles.sequenceEmoji}>{item.emoji}</div>
             <div className={styles.sequenceName}>{item.czech}</div>
@@ -197,7 +190,7 @@ export default function RhythmGame({ levelIndex }: Props) {
         )}
       </div>
 
-      <div className={`${styles.playerInput} ${playerSequence.length > 0 ? styles.hasItems : ''}`}>
+      <div className={cn(styles.playerInput, playerSequence.length > 0 && styles.hasItems)}>
         {playerSequence.length === 0 ? (
           <div className={styles.placeholder}>Klikej na karty níže a zopakuj posloupnost</div>
         ) : (
@@ -217,7 +210,7 @@ export default function RhythmGame({ levelIndex }: Props) {
         {displayItems.map((item) => (
           <div
             key={item.name}
-            className={`${styles.itemCard} ${usedNames.has(item.name) ? styles.itemCardUsed : ''}`}
+            className={cn(styles.itemCard, usedNames.has(item.name) && styles.itemCardUsed)}
             onClick={() => handleItemClick(item)}
           >
             <div className={styles.itemEmoji}>{item.emoji}</div>

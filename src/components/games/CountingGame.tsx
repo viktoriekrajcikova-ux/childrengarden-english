@@ -1,11 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useAtomValue, useSetAtom } from 'jotai';
-import { difficultyAtom, addScoreAtom, subtractScoreAtom } from '../../store/atoms';
-import { useAudio } from '../../hooks/useAudio';
-import { useSpeech } from '../../hooks/useSpeech';
-import { useLevelCompletion } from '../../hooks/useLevelCompletion';
+import { useGameSetup } from '../../hooks/useGameSetup';
 import { shuffleArray } from '../../utils/shuffle';
 import type { CountingLevel, CountingObject } from '../../types';
+import { cn } from '../../utils/cn';
+import GameHeader from '../shared/GameHeader';
 import MessageDisplay from '../shared/MessageDisplay';
 import styles from './CountingGame.module.css';
 
@@ -17,12 +15,7 @@ interface Props {
 const ROUNDS_REQUIRED = 3;
 
 export default function CountingGame({ level, levelIndex }: Props) {
-  const difficulty = useAtomValue(difficultyAtom);
-  const addScore = useSetAtom(addScoreAtom);
-  const subtractScore = useSetAtom(subtractScoreAtom);
-  const { playFanfare, playErrorSound } = useAudio();
-  const { speak } = useSpeech();
-  const { completeLevel } = useLevelCompletion();
+  const { difficulty, addScore, subtractScore, playFanfare, playErrorSound, speak, completeLevel } = useGameSetup();
 
   const [roundsCompleted, setRoundsCompleted] = useState(0);
   const [target, setTarget] = useState<CountingObject | null>(null);
@@ -110,7 +103,7 @@ export default function CountingGame({ level, levelIndex }: Props) {
 
   return (
     <div className={styles.wrapper}>
-      <h2 className={styles.title}>🔢 Kolik jich vidíš?</h2>
+      <GameHeader emoji="🔢" title="Kolik jich vidíš?" />
       <div className={styles.question}>{questionText}</div>
       <div className={styles.objectsArea}>
         {displayObjects.map((obj) => (
@@ -123,11 +116,11 @@ export default function CountingGame({ level, levelIndex }: Props) {
         {options.map((opt) => (
           <button
             key={opt}
-            className={[
+            className={cn(
               styles.answerButton,
-              buttonStates[opt] === 'correct' ? styles.correct : '',
-              buttonStates[opt] === 'incorrect' ? styles.incorrect : '',
-            ].filter(Boolean).join(' ')}
+              buttonStates[opt] === 'correct' && styles.correct,
+              buttonStates[opt] === 'incorrect' && styles.incorrect,
+            )}
             disabled={disabled}
             onClick={() => handleAnswer(opt)}
           >

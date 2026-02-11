@@ -1,0 +1,53 @@
+.mapTile {
+  background: var(--gradient-primary);
+  border: 3px solid var(--color-primary);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+.mapTile:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+.tileCompleted {
+  background: var(--gradient-success);
+  border-color: var(--color-success);
+}
+.tileCompleted::after {
+  content: '✓';
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+}
+.tileLocked {
+  background: linear-gradient(135deg, #999 0%, #666 100%);
+  border-color: #999;
+  cursor: not-allowed;
+  opacity: 0.9;
+}
+.tileNumber {
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+  margin-bottom: 5px;
+}
+.tileName {
+  font-size: 14px;
+  color: white;
+  font-weight: 500;
+}
+.tileIcon {
+  font-size: 40px;
+  margin-bottom: 10px;
+}

@@ -5,17 +5,17 @@
   transform: translateX(-50%);
   padding: 20px 60px;
   font-size: 1.5em;
-  background: #4CAF50;
+  background: var(--color-success);
   color: white;
   border: none;
-  border-radius: 50px;
+  border-radius: var(--radius-full);
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 5px 15px rgba(76,175,80,0.3);
   z-index: 1000;
 }
 .playButton:hover {
-  background: #45a049;
+  background: var(--color-success-dark);
   transform: translateX(-50%) translateY(-2px);
   box-shadow: 0 7px 20px rgba(76,175,80,0.4);
 }

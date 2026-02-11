@@ -1,13 +1,11 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { useAtomValue, useSetAtom } from 'jotai';
-import { difficultyAtom, addScoreAtom } from '../../store/atoms';
-import { useAudio } from '../../hooks/useAudio';
-import { useSpeech } from '../../hooks/useSpeech';
-import { useLevelCompletion } from '../../hooks/useLevelCompletion';
+import { useGameSetup } from '../../hooks/useGameSetup';
 import { levels } from '../../data/levels';
 import { filterByDifficulty } from '../../utils/difficultyFilter';
 import { shuffleArray } from '../../utils/shuffle';
 import type { LevelItem } from '../../types';
+import { cn } from '../../utils/cn';
+import GameHeader from '../shared/GameHeader';
 import MessageDisplay from '../shared/MessageDisplay';
 import styles from './MemoryGame.module.css';
 
@@ -21,11 +19,7 @@ interface MemoryCard {
 }
 
 export default function MemoryGame({ levelIndex }: Props) {
-  const difficulty = useAtomValue(difficultyAtom);
-  const addScore = useSetAtom(addScoreAtom);
-  const { playFanfare, playErrorSound } = useAudio();
-  const { speak } = useSpeech();
-  const { completeLevel } = useLevelCompletion();
+  const { difficulty, addScore, playFanfare, playErrorSound, speak, completeLevel } = useGameSetup();
 
   const [cards, setCards] = useState<MemoryCard[]>([]);
   const [flipped, setFlipped] = useState<number[]>([]);
@@ -107,7 +101,7 @@ export default function MemoryGame({ levelIndex }: Props) {
 
   return (
     <div className={styles.wrapper}>
-      <h2 className={styles.title}>🎮 Pexeso</h2>
+      <GameHeader emoji="🎮" title="Pexeso" />
       <div className={styles.grid}>
         {cards.map((card) => {
           const isFlipped = flipped.includes(card.id);
@@ -116,11 +110,11 @@ export default function MemoryGame({ levelIndex }: Props) {
           return (
             <div
               key={card.id}
-              className={[
+              className={cn(
                 styles.card,
-                isFlipped ? styles.flipped : '',
-                isMatched ? styles.matched : '',
-              ].filter(Boolean).join(' ')}
+                isFlipped && styles.flipped,
+                isMatched && styles.matched,
+              )}
               onClick={() => handleCardClick(card.id, card.item)}
             >
               <div className={styles.cardInner}>

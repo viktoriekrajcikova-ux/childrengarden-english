@@ -3,9 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAtomValue } from 'jotai';
 import { difficultyAtom } from '../store/atoms';
 import { levels } from '../data/levels';
-import LevelIndicator from '../components/layout/LevelIndicator';
-import ScoreBoard from '../components/layout/ScoreBoard';
-import BackToMapButton from '../components/layout/BackToMapButton';
+import GameLayout from '../components/layout/GameLayout';
 import StandardGame from '../components/games/StandardGame';
 import MemoryGame from '../components/games/MemoryGame';
 import ColoringGame from '../components/games/ColoringGame';
@@ -64,14 +62,12 @@ export default function LevelPage() {
   };
 
   return (
-    <>
-      <LevelIndicator text={`Level ${levelIndex + 1}`} />
-      <ScoreBoard />
-      <BackToMapButton />
-      <div className={`${styles.gameContainer} ${isRestaurant ? styles.restaurantBg : ''}`}>
-        {renderGame()}
-        <PracticeButton />
-      </div>
-    </>
+    <GameLayout
+      title={`Level ${levelIndex + 1}`}
+      className={isRestaurant ? styles.restaurantBg : undefined}
+    >
+      {renderGame()}
+      <PracticeButton />
+    </GameLayout>
   );
 }

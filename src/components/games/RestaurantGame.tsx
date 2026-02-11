@@ -1,12 +1,10 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { useAtomValue, useSetAtom } from 'jotai';
-import { difficultyAtom, addScoreAtom, subtractScoreAtom } from '../../store/atoms';
-import { useAudio } from '../../hooks/useAudio';
-import { useSpeech } from '../../hooks/useSpeech';
-import { useLevelCompletion } from '../../hooks/useLevelCompletion';
+import { useGameSetup } from '../../hooks/useGameSetup';
 import { filterByDifficulty } from '../../utils/difficultyFilter';
 import { shuffleArray } from '../../utils/shuffle';
 import type { RestaurantLevel, DrinkItem } from '../../types';
+import { cn } from '../../utils/cn';
+import GameHeader from '../shared/GameHeader';
 import MessageDisplay from '../shared/MessageDisplay';
 import styles from './RestaurantGame.module.css';
 
@@ -16,12 +14,7 @@ interface Props {
 }
 
 export default function RestaurantGame({ level, levelIndex }: Props) {
-  const difficulty = useAtomValue(difficultyAtom);
-  const addScore = useSetAtom(addScoreAtom);
-  const subtractScore = useSetAtom(subtractScoreAtom);
-  const { playFanfare, playErrorSound } = useAudio();
-  const { speak } = useSpeech();
-  const { completeLevel } = useLevelCompletion();
+  const { difficulty, addScore, subtractScore, playFanfare, playErrorSound, speak, completeLevel } = useGameSetup();
 
   const [served, setServed] = useState(0);
   const [currentDrink, setCurrentDrink] = useState<DrinkItem | null>(null);
@@ -96,7 +89,7 @@ export default function RestaurantGame({ level, levelIndex }: Props) {
 
   return (
     <div className={styles.wrapper}>
-      <h2 className={styles.title}>🍽️ Restaurace</h2>
+      <GameHeader emoji="🍽️" title="Restaurace" />
       <div className={styles.progress}>
         Zákazník {served + 1} / {level.customersToServe}
       </div>
@@ -108,7 +101,7 @@ export default function RestaurantGame({ level, levelIndex }: Props) {
               {currentDrink ? `I want ${currentDrink.name}!` : ''}
             </div>
             <div
-              className={`${styles.dropZone} ${dropOver ? styles.dropZoneOver : ''}`}
+              className={cn(styles.dropZone, dropOver && styles.dropZoneOver)}
               onDragOver={(e) => { e.preventDefault(); setDropOver(true); }}
               onDragLeave={() => setDropOver(false)}
               onDrop={handleDrop}
@@ -127,7 +120,7 @@ export default function RestaurantGame({ level, levelIndex }: Props) {
             {drinks.map((drink) => (
               <div
                 key={drink.name}
-                className={`${styles.drinkItem} ${draggingDrink === drink.name ? styles.drinkDragging : ''}`}
+                className={cn(styles.drinkItem, draggingDrink === drink.name && styles.drinkDragging)}
                 draggable
                 onDragStart={() => handleDragStart(drink)}
                 onDragEnd={handleDragEnd}

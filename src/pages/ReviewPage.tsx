@@ -9,12 +9,11 @@ import { levels } from '../data/levels';
 import { filterByDifficulty } from '../utils/difficultyFilter';
 import { shuffleArray } from '../utils/shuffle';
 import type { LevelItem } from '../types';
-import LevelIndicator from '../components/layout/LevelIndicator';
-import ScoreBoard from '../components/layout/ScoreBoard';
-import BackToMapButton from '../components/layout/BackToMapButton';
+import GameLayout from '../components/layout/GameLayout';
 import PlayButton from '../components/layout/PlayButton';
 import MessageDisplay from '../components/shared/MessageDisplay';
 import ItemCard from '../components/shared/ItemCard';
+import Button from '../components/shared/Button';
 import styles from './ReviewPage.module.css';
 
 const REVIEW_ROUNDS = 5;
@@ -172,29 +171,24 @@ export default function ReviewPage() {
   };
 
   return (
-    <>
-      <LevelIndicator text="🔄 Opakování" />
-      <ScoreBoard />
-      <BackToMapButton />
-      <div className={styles.gameContainer}>
-        <div className={styles.reviewIndicator}>🔄 Režim opakování</div>
-        <div className={styles.grid}>
-          {currentItems.map((item) => (
-            <ItemCard
-              key={item.name}
-              emoji={item.emoji}
-              czech={item.czech}
-              state={cardStates[item.name] || 'idle'}
-              onClick={() => handleItemClick(item.name)}
-            />
-          ))}
-        </div>
-        <MessageDisplay text={message} />
-        {!finished && <PlayButton onClick={handlePlay} disabled={playDisabled} />}
-        <button className={styles.exitButton} onClick={() => navigate('/map')}>
-          ← Zpět na levely
-        </button>
+    <GameLayout title="🔄 Opakování">
+      <div className={styles.reviewIndicator}>🔄 Režim opakování</div>
+      <div className={styles.grid}>
+        {currentItems.map((item) => (
+          <ItemCard
+            key={item.name}
+            emoji={item.emoji}
+            czech={item.czech}
+            state={cardStates[item.name] || 'idle'}
+            onClick={() => handleItemClick(item.name)}
+          />
+        ))}
       </div>
-    </>
+      <MessageDisplay text={message} />
+      {!finished && <PlayButton onClick={handlePlay} disabled={playDisabled} />}
+      <Button variant="secondary" onClick={() => navigate('/map')}>
+        ← Zpět na levely
+      </Button>
+    </GameLayout>
   );
 }

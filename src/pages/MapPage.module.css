@@ -48,7 +48,7 @@
   gap: 20px;
   padding: 30px;
   background: rgba(255,255,255,0.1);
-  border-radius: 20px;
+  border-radius: var(--radius-lg);
   border: 2px solid rgba(255,255,255,0.2);
   box-shadow: 0 8px 20px rgba(0,0,0,0.15);
   backdrop-filter: blur(10px);
@@ -91,59 +91,6 @@
   text-shadow: 0 4px 8px rgba(0,0,0,0.3);
   animation: arrowBounce 2s ease-in-out infinite;
 }
-.mapTile {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border: 3px solid #667eea;
-  border-radius: 15px;
-  padding: 20px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-  min-height: 120px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-}
-.mapTile:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-}
-.tileCompleted {
-  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
-  border-color: #4CAF50;
-}
-.tileCompleted::after {
-  content: '✓';
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  color: white;
-  font-size: 24px;
-  font-weight: bold;
-}
-.tileLocked {
-  background: linear-gradient(135deg, #999 0%, #666 100%);
-  border-color: #999;
-  cursor: not-allowed;
-  opacity: 0.9;
-}
-.tileNumber {
-  font-size: 24px;
-  font-weight: bold;
-  color: white;
-  margin-bottom: 5px;
-}
-.tileName {
-  font-size: 14px;
-  color: white;
-  font-weight: 500;
-}
-.tileIcon {
-  font-size: 40px;
-  margin-bottom: 10px;
-}
 .controls {
   position: fixed;
   top: 20px;
@@ -161,7 +108,7 @@
   background: rgba(255,255,255,0.95);
   font-size: 28px;
   cursor: pointer;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  box-shadow: var(--shadow-sm);
   transition: transform 0.2s, background 0.2s;
   display: flex;
   align-items: center;
@@ -183,7 +130,7 @@
   background: rgba(255,255,255,0.95);
   border-radius: 12px;
   padding: 8px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
   align-items: center;
