@@ -99,7 +99,7 @@ export default function MemoryGame({ levelIndex }: Props) {
         }
       }
     },
-    [flipped, matched, cards, addScore, playFanfare, playErrorSound, speak, completeLevel, levelIndex]
+    [flipped, matched, cards, addScore, playFanfare, playErrorSound, speak, completeLevel, levelIndex, setTimer]
   );
 
   return (

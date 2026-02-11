@@ -106,7 +106,7 @@ export default function StandardGame({ level, levelIndex }: Props) {
         }, DELAY_WRONG);
       }
     },
-    [canClick, currentTarget, remaining, cardStates, addScore, subtractScore, playFanfare, playErrorSound, completeLevel, levelIndex]
+    [canClick, currentTarget, remaining, cardStates, addScore, subtractScore, playFanfare, playErrorSound, completeLevel, levelIndex, setTimer]
   );
 
   return (

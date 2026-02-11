@@ -63,7 +63,7 @@ export default function CountingGame({ level, levelIndex }: Props) {
 
     const name = count === 1 ? obj.nameSingular : obj.name;
     setTimer(() => speak(`How many ${name} can you see?`, 0.9), DELAY_SHORT);
-  }, [level.countingObjects, difficulty, speak]);
+  }, [level.countingObjects, difficulty, speak, setTimer]);
 
   useEffect(() => {
     loadRound();

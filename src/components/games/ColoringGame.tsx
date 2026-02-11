@@ -57,7 +57,7 @@ export default function ColoringGame({ level, levelIndex }: Props) {
 
     setMessage('Klikni na PLAY a poslechni si barvu a tvar!');
     setPlayDisabled(false);
-  }, [level.shapes, difficulty, playFanfare, completeLevel, levelIndex]);
+  }, [level.shapes, difficulty, playFanfare, completeLevel, levelIndex, setTimer]);
 
   // Initialize level
   useEffect(() => {

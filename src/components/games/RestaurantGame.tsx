@@ -41,7 +41,7 @@ export default function RestaurantGame({ level, levelIndex }: Props) {
     setServedEmoji(null);
 
     setTimer(() => speak(`I want ${drink.name}`, 0.9), DELAY_SHORT);
-  }, [difficulty, level, speak]);
+  }, [difficulty, level, speak, setTimer]);
 
   useEffect(() => {
     loadCustomer();
