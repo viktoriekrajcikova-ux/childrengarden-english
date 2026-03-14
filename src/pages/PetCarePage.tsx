@@ -1,7 +1,10 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useSetAtom, useAtomValue } from 'jotai';
-import { subtractScoreAtom, scoreAtom } from '../store/atoms';
+import { useSetAtom, useAtomValue, useAtom } from 'jotai';
+import {
+  subtractScoreAtom, scoreAtom, addFedFoodAtom,
+  mutedAtom, lastSeenPetStageAtom, lastFedTimeAtom,
+} from '../store/atoms';
 import { useSpeech } from '../hooks/useSpeech';
 import { useAudio } from '../hooks/useAudio';
 import { useTimers } from '../hooks/useTimers';
@@ -11,9 +14,10 @@ import { getPetStage } from '../utils/petUtils';
 import {
   SHOP_GRAIN_PRICE, SHOP_APPLE_PRICE, SHOP_CAKE_PRICE,
   DELAY_PET_ACTION, DELAY_BULLDOZER, DELAY_SHOWER, DELAY_PET_REACTION,
+  PET_MIN_FED, PET_MAX_INVENTORY, PET_HUNGER_THRESHOLD,
 } from '../constants';
 import Pet from '../components/pet/Pet';
-import type { PetAnimation } from '../components/pet/Pet';
+import type { PetAnimation, PetMood } from '../components/pet/Pet';
 import SpeechBubble from '../components/pet/SpeechBubble';
 import Inventory from '../components/pet/Inventory';
 import type { FoodItem } from '../components/pet/Inventory';
@@ -21,6 +25,49 @@ import { cn } from '../utils/cn';
 import styles from './PetCarePage.module.css';
 
 type ActionPhase = 'idle' | 'shopping' | 'feeding' | 'shower' | 'poop';
+
+const IDLE_PHRASES = [
+  'Hi! What shall we do?',
+  'Yay, you are here!',
+  'I missed you so much!',
+  'Let\'s play together!',
+  'Hello friend!',
+  'I am so happy to see you!',
+  'What do you want to do?',
+  'Hey! I was waiting for you!',
+  'Hooray, you came back!',
+  'I love spending time with you!',
+];
+
+const SAD_PHRASES = [
+  'I am still hungry!',
+  'More food please!',
+  'My tummy is rumbling...',
+  'Can I have some more?',
+  'Feed me more, please!',
+];
+
+const TAP_PHRASES = [
+  'Hehe, that tickles!',
+  'I love you!',
+  'You are the best!',
+  'Yay!',
+  'More pets please!',
+];
+
+const CONFETTI_EMOJIS = ['🎉', '⭐', '✨', '🌟'];
+
+function randomPhrase() {
+  return IDLE_PHRASES[Math.floor(Math.random() * IDLE_PHRASES.length)];
+}
+
+function randomSadPhrase() {
+  return SAD_PHRASES[Math.floor(Math.random() * SAD_PHRASES.length)];
+}
+
+function randomTapPhrase() {
+  return TAP_PHRASES[Math.floor(Math.random() * TAP_PHRASES.length)];
+}
 
 interface ShopItem {
   emoji: string;
@@ -42,11 +89,15 @@ export default function PetCarePage() {
   const nextLevel = searchParams.get('nextLevel') || '0';
 
   const subtractScore = useSetAtom(subtractScoreAtom);
+  const addFedFood = useSetAtom(addFedFoodAtom);
   const score = useAtomValue(scoreAtom);
+  const [muted, setMuted] = useAtom(mutedAtom);
+  const [lastSeenPetStage, setLastSeenPetStage] = useAtom(lastSeenPetStageAtom);
+  const [lastFedTime, setLastFedTime] = useAtom(lastFedTimeAtom);
   const { speak } = useSpeech();
   const {
     playChirpHappy, playMunch, playWaterSplash,
-    playPoopSound, playBulldozer, playCashRegister,
+    playPoopSound, playBulldozer, playCashRegister, playFanfare,
   } = useAudio();
   const setTimer = useTimers();
   const { completedGroupIndices } = useLevelGroups();
@@ -56,13 +107,11 @@ export default function PetCarePage() {
   const [phase, setPhase] = useState<ActionPhase>('idle');
   const [inventory, setInventory] = useState<FoodItem[]>([]);
   const [petAnimation, setPetAnimation] = useState<PetAnimation>('idle');
-  const [speechText, setSpeechText] = useState('Hi! What shall we do?');
-  const [showSpeech, setShowSpeech] = useState(true);
-  const spokenInit = useRef(false);
-  if (!spokenInit.current) {
-    spokenInit.current = true;
-    setTimeout(() => speak('Hi! What shall we do?', 0.85, 1.8), 500);
-  }
+  const [mood, setMood] = useState<PetMood>('neutral');
+  const [fedCount, setFedCount] = useState(0);
+  const [speechText, setSpeechText] = useState('');
+  const [showSpeech, setShowSpeech] = useState(false);
+  const [speechFading, setSpeechFading] = useState(false);
   const [busy, setBusy] = useState(false);
   const [poopVisible, setPoopVisible] = useState(false);
   const [bulldozerVisible, setBulldozerVisible] = useState(false);
@@ -71,19 +120,78 @@ export default function PetCarePage() {
   const [dragOverZone, setDragOverZone] = useState<string | null>(null);
   const [draggingItem, setDraggingItem] = useState<string | null>(null);
   const draggedRef = useRef<string | null>(null);
+  const speechTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const speechFadeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const initDone = useRef(false);
 
+  // --- SPEECH BUBBLE AUTO-HIDE ---
   const say = useCallback((text: string) => {
+    // Clear previous timers
+    if (speechTimerRef.current) clearTimeout(speechTimerRef.current);
+    if (speechFadeTimerRef.current) clearTimeout(speechFadeTimerRef.current);
     setSpeechText(text);
     setShowSpeech(true);
+    setSpeechFading(false);
     speak(text, 0.85, 1.8);
+    // Start fade after 3.5s, hide after 4s
+    speechFadeTimerRef.current = setTimeout(() => setSpeechFading(true), 3500);
+    speechTimerRef.current = setTimeout(() => {
+      setShowSpeech(false);
+      setSpeechFading(false);
+    }, 4000);
   }, [speak]);
 
-  const goIdle = useCallback((text = 'Hi! What shall we do?') => {
+  const goIdle = useCallback((text?: string) => {
+    if (!text) text = randomPhrase();
     setPhase('idle');
     setPetAnimation('idle');
+    setMood('neutral');
     say(text);
     setBusy(false);
   }, [say]);
+
+  // --- INIT: hunger check + growth celebration ---
+  useEffect(() => {
+    if (initDone.current) return;
+    initDone.current = true;
+
+    // Check for growth celebration first
+    if (petStage !== lastSeenPetStage) {
+      // Pet has grown!
+      setMood('happy');
+      setPetAnimation('happy');
+      say("I'm growing up! Look at me!");
+      playFanfare();
+      setShowConfetti(true);
+      setBusy(true);
+      setTimeout(() => {
+        setLastSeenPetStage(petStage);
+        setShowConfetti(false);
+        goIdle();
+      }, 3000);
+      return;
+    }
+
+    // Check for hunger (24h since last fed)
+    if (lastFedTime > 0 && Date.now() - lastFedTime > PET_HUNGER_THRESHOLD) {
+      setMood('sad');
+      say("I haven't eaten in so long!");
+    } else {
+      say(randomPhrase());
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // --- TAP INTERACTION ---
+  const handlePetTap = useCallback(() => {
+    if (phase !== 'idle' || busy) return;
+    setBusy(true);
+    setMood('happy');
+    setPetAnimation('happy');
+    playChirpHappy();
+    say(randomTapPhrase());
+    setTimer(() => goIdle(), DELAY_PET_REACTION);
+  }, [phase, busy, playChirpHappy, say, setTimer, goIdle]);
 
   // --- SHOPPING ---
   const startShopping = useCallback(() => {
@@ -95,6 +203,11 @@ export default function PetCarePage() {
 
   const buyItem = useCallback((item: ShopItem) => {
     if (item.price > score) return;
+    // Max inventory check
+    if (inventory.length >= PET_MAX_INVENTORY) {
+      say('My bag is full!');
+      return;
+    }
     if (item.price > 0) subtractScore(item.price);
     playCashRegister();
     const foodItem: FoodItem = { id: `food-${++foodIdCounter}`, emoji: item.emoji, name: item.name };
@@ -106,7 +219,7 @@ export default function PetCarePage() {
       setPetAnimation('idle');
       say('Anything else?');
     }, DELAY_PET_REACTION);
-  }, [score, subtractScore, playCashRegister, playChirpHappy, say, setTimer]);
+  }, [score, inventory.length, subtractScore, playCashRegister, playChirpHappy, say, setTimer]);
 
   // --- FEEDING ---
   const startFeeding = useCallback(() => {
@@ -121,14 +234,53 @@ export default function PetCarePage() {
       setBusy(true);
       playMunch();
       setPetAnimation('eating');
-      setInventory(prev => prev.filter(f => f.id !== itemId));
-      say('That was so tasty!');
 
-      setTimer(() => {
-        goIdle();
-      }, DELAY_PET_ACTION);
+      // Capture the item emoji before removing from inventory
+      let droppedEmoji = '';
+      setInventory(prev => {
+        const item = prev.find(f => f.id === itemId);
+        if (item) {
+          droppedEmoji = item.emoji;
+          addFedFood(item.emoji);
+        }
+        return prev.filter(f => f.id !== itemId);
+      });
+
+      setFedCount(prev => {
+        const newCount = prev + 1;
+        if (newCount < PET_MIN_FED) {
+          say(randomSadPhrase());
+          setTimer(() => {
+            setMood('sad');
+            setPetAnimation('idle');
+            setBusy(false);
+          }, DELAY_PET_ACTION);
+        } else {
+          // Different reactions based on food type
+          let reaction = 'That was so tasty!';
+          if (droppedEmoji === '🌾') {
+            reaction = 'Thanks, that was okay.';
+          } else if (droppedEmoji === '🍎') {
+            reaction = 'Yummy apple, I love it!';
+          } else if (droppedEmoji === '🎂') {
+            reaction = 'WOW, cake! This is the BEST!';
+          }
+          say(reaction);
+          setTimer(() => {
+            setMood('happy');
+            setPetAnimation('happy');
+            setBusy(false);
+          }, DELAY_PET_ACTION);
+          setTimer(() => {
+            // Save last fed time
+            setLastFedTime(Date.now());
+            goIdle();
+          }, DELAY_PET_ACTION + DELAY_PET_REACTION);
+        }
+        return newCount;
+      });
     },
-    [busy, playMunch, say, setTimer, goIdle]
+    [busy, playMunch, addFedFood, say, setTimer, goIdle, setLastFedTime]
   );
 
   // HTML5 drag handlers for feeding
@@ -186,6 +338,7 @@ export default function PetCarePage() {
     setTimer(() => {
       setBubblesActive(false);
       say('Now I am all clean!');
+      setMood('happy');
       setPetAnimation('happy');
       playChirpHappy();
     }, DELAY_SHOWER + DELAY_PET_REACTION);
@@ -215,6 +368,7 @@ export default function PetCarePage() {
     setTimer(() => {
       setPoopVisible(false);
       setBulldozerVisible(false);
+      setMood('happy');
       setPetAnimation('relieved');
       say('That feels so much better!');
       playChirpHappy();
@@ -272,6 +426,28 @@ export default function PetCarePage() {
     </>
   );
 
+  const renderConfetti = () => {
+    if (!showConfetti) return null;
+    return (
+      <div className={styles.confettiContainer}>
+        {Array.from({ length: 20 }).map((_, i) => (
+          <span
+            key={`confetti-${i}`}
+            className={styles.confettiPiece}
+            style={{
+              left: `${5 + Math.random() * 90}%`,
+              animationDelay: `${Math.random() * 1.5}s`,
+            }}
+          >
+            {CONFETTI_EMOJIS[i % CONFETTI_EMOJIS.length]}
+          </span>
+        ))}
+      </div>
+    );
+  };
+
+  const inventoryFull = inventory.length >= PET_MAX_INVENTORY;
+
   const renderActionArea = () => {
     switch (phase) {
       case 'shopping':
@@ -279,7 +455,7 @@ export default function PetCarePage() {
           <div className={styles.actionArea}>
             <div className={styles.shopCards}>
               {SHOP_ITEMS.map((item) => {
-                const disabled = item.price > score;
+                const disabled = item.price > score || inventoryFull;
                 return (
                   <button
                     key={item.emoji}
@@ -296,6 +472,9 @@ export default function PetCarePage() {
                 );
               })}
             </div>
+            {inventoryFull && (
+              <div className={styles.backHint}>Bag is full!</div>
+            )}
             <button className={styles.backActionBtn} onClick={() => goIdle()}>
               Back
             </button>
@@ -362,18 +541,48 @@ export default function PetCarePage() {
 
   return (
     <div className={styles.wrapper}>
+      {/* Confetti overlay */}
+      {renderConfetti()}
+
       {/* Header */}
       <div className={styles.header}>
-        <button className={styles.backButton} onClick={() => navigate(`/map?scrollTo=${nextLevel}`)}>
-          ← Back
-        </button>
+        <div>
+          <button
+            className={styles.backButton}
+            onClick={() => navigate(`/map?scrollTo=${nextLevel}`)}
+            disabled={fedCount < PET_MIN_FED}
+          >
+            ← Back
+          </button>
+          {fedCount < PET_MIN_FED && (
+            <div className={styles.backHint}>
+              Feed me {PET_MIN_FED - fedCount} more time{PET_MIN_FED - fedCount !== 1 ? 's' : ''}!
+            </div>
+          )}
+        </div>
         <span className={styles.scoreDisplay}>⭐ {score}</span>
+        <button
+          className={styles.muteButton}
+          onClick={() => setMuted(!muted)}
+          aria-label={muted ? 'Unmute' : 'Mute'}
+        >
+          {muted ? '🔇' : '🔊'}
+        </button>
         <Inventory items={inventory} />
       </div>
 
+      {/* Feed progress hearts */}
+      {fedCount < PET_MIN_FED && (
+        <div className={styles.feedProgress}>
+          {Array.from({ length: PET_MIN_FED }).map((_, i) => (
+            <span key={i}>{i < fedCount ? '❤️' : '🤍'}</span>
+          ))}
+        </div>
+      )}
+
       {/* Pet area */}
       <div className={styles.petStage}>
-        <SpeechBubble text={speechText} visible={showSpeech} />
+        <SpeechBubble text={speechText} visible={showSpeech} fading={speechFading} />
         <div
           className={cn(
             styles.petContainer,
@@ -384,8 +593,9 @@ export default function PetCarePage() {
           onDragOver={phase === 'feeding' ? handleDragOver : undefined}
           onDragLeave={phase === 'feeding' ? handleDragLeave : undefined}
           onDrop={phase === 'feeding' ? handleDrop : undefined}
+          onClick={handlePetTap}
         >
-          <Pet stage={petStage} animation={petAnimation} />
+          <Pet stage={petStage} animation={petAnimation} mood={mood} />
           {renderShowerEffects()}
           {renderPoopEffects()}
         </div>

@@ -20,6 +20,7 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: 10px;
+  gap: 8px;
 }
 
 .backButton {
@@ -34,8 +35,21 @@
   transition: background 0.2s;
 }
 
-.backButton:hover {
+.backButton:hover:not(:disabled) {
   background: #efebe9;
+}
+
+.backButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  filter: grayscale(0.5);
+}
+
+.backHint {
+  font-size: 0.75em;
+  color: #999;
+  text-align: center;
+  margin-top: 4px;
 }
 
 .scoreDisplay {
@@ -46,6 +60,29 @@
   border-radius: var(--radius-md);
   padding: 6px 14px;
   box-shadow: var(--shadow-sm);
+}
+
+.muteButton {
+  background: white;
+  border-radius: var(--radius-md);
+  padding: 6px 12px;
+  box-shadow: var(--shadow-sm);
+  border: none;
+  font-size: 1.3em;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.muteButton:hover {
+  background: #efebe9;
+}
+
+/* Feed progress hearts */
+.feedProgress {
+  display: flex;
+  gap: 4px;
+  font-size: 1.4em;
+  margin-bottom: 4px;
 }
 
 /* Inventory */
@@ -60,6 +97,14 @@
 
 .inventoryItem {
   font-size: 1.4em;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+.inventoryCount {
+  font-size: 0.7em;
+  font-weight: 700;
+  color: #333;
 }
 
 /* Pet area */
@@ -76,6 +121,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 }
 
 .petDropZone {
@@ -115,9 +161,42 @@
   border-top: 10px solid white;
 }
 
+.speechBubbleFading {
+  animation: fadeOut 0.5s ease-out forwards;
+}
+
 @keyframes bubblePop {
   0% { transform: scale(0.5); opacity: 0; }
   100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes fadeOut {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Confetti */
+.confettiContainer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 100;
+  overflow: hidden;
+}
+
+.confettiPiece {
+  position: absolute;
+  top: -40px;
+  font-size: 1.8em;
+  animation: confettiFall 3s ease-in forwards;
+}
+
+@keyframes confettiFall {
+  0% { transform: translateY(-50px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(120vh) rotate(720deg); opacity: 0; }
 }
 
 /* Action area */
@@ -355,8 +434,8 @@
 
 @keyframes bulldozerDrive {
   0% { transform: translateX(0); }
-  40% { transform: translateX(calc(50% + 80px)); }
-  100% { transform: translateX(calc(100vw + 100px)); }
+  40% { transform: translateX(150px); }
+  100% { transform: translateX(500px); }
 }
 
 /* Responsive */

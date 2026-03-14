@@ -1,4 +1,6 @@
 import { useCallback } from 'react';
+import { useAtomValue } from 'jotai';
+import { mutedAtom } from '../store/atoms';
 
 let audioCtx: AudioContext | null = null;
 
@@ -35,11 +37,15 @@ function playMelody(
 }
 
 export function useAudio() {
+  const muted = useAtomValue(mutedAtom);
+
   const playFanfare = useCallback(() => {
+    if (muted) return;
     playMelody([523.25, 659.25, 783.99, 1046.5], 0.15);
-  }, []);
+  }, [muted]);
 
   const playErrorSound = useCallback(() => {
+    if (muted) return;
     const ctx = getAudioContext();
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
@@ -51,29 +57,35 @@ export function useAudio() {
     gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
     osc.start();
     osc.stop(ctx.currentTime + 0.3);
-  }, []);
+  }, [muted]);
 
   const playVictoryFanfare = useCallback(() => {
+    if (muted) return;
     playMelody([523.25, 659.25, 783.99, 1046.5, 783.99, 1046.5, 1318.51], 0.2);
-  }, []);
+  }, [muted]);
 
   const playGameStartSound = useCallback(() => {
+    if (muted) return;
     playMelody([392.0, 523.25, 659.25, 783.99], 0.15, 'triangle', 0.4);
-  }, []);
+  }, [muted]);
 
   const playChirpHappy = useCallback(() => {
+    if (muted) return;
     playMelody([880, 1100, 1320], 0.08, 'sine', 0.25);
-  }, []);
+  }, [muted]);
 
   const playChirpSad = useCallback(() => {
+    if (muted) return;
     playMelody([600, 440], 0.15, 'sine', 0.2);
-  }, []);
+  }, [muted]);
 
   const playMunch = useCallback(() => {
+    if (muted) return;
     playMelody([200, 250, 200], 0.1, 'square', 0.15);
-  }, []);
+  }, [muted]);
 
   const playWaterSplash = useCallback(() => {
+    if (muted) return;
     const ctx = getAudioContext();
     const bufferSize = ctx.sampleRate * 0.5;
     const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
@@ -94,9 +106,10 @@ export function useAudio() {
     gain.connect(ctx.destination);
     source.start();
     source.stop(ctx.currentTime + 0.5);
-  }, []);
+  }, [muted]);
 
   const playPoopSound = useCallback(() => {
+    if (muted) return;
     const ctx = getAudioContext();
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
@@ -109,15 +122,17 @@ export function useAudio() {
     gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
     osc.start();
     osc.stop(ctx.currentTime + 0.3);
-  }, []);
+  }, [muted]);
 
   const playBulldozer = useCallback(() => {
+    if (muted) return;
     playMelody([80, 90, 80, 90, 80], 0.15, 'sawtooth', 0.1);
-  }, []);
+  }, [muted]);
 
   const playCashRegister = useCallback(() => {
+    if (muted) return;
     playMelody([1200, 1600], 0.1, 'triangle', 0.25);
-  }, []);
+  }, [muted]);
 
   return {
     playFanfare, playErrorSound, playVictoryFanfare, playGameStartSound,

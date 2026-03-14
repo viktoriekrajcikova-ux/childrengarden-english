@@ -21,6 +21,7 @@ export const SCORE_CORRECT_DOUBLE = 20;
 export const SCORE_PENALTY = 5;
 
 // Pet care
+export const PET_MIN_FED = 3;
 export const PET_CARE_COST = 5;
 export const PET_GROWTH_MEDIUM = 2;
 export const PET_GROWTH_ADULT = 4;
@@ -35,5 +36,9 @@ export const SHOP_CAKE_PRICE = 20;
 // Pet action timing (ms)
 export const DELAY_PET_ACTION = 1500;
 export const DELAY_BULLDOZER = 2000;
-export const DELAY_SHOWER = 2500;
+export const DELAY_SHOWER = 1800;
 export const DELAY_PET_REACTION = 1000;
+
+// Pet limits
+export const PET_MAX_INVENTORY = 6;
+export const PET_HUNGER_THRESHOLD = 24 * 60 * 60 * 1000; // 24 hours in ms

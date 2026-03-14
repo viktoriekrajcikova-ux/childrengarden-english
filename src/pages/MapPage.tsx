@@ -142,11 +142,11 @@ export default function MapPage() {
                     <div className={styles.groupArrowIcon}>⬇</div>
                   </div>
                   <div
-                    className={styles.rewardTile}
-                    onClick={() => navigate(`/pet-care?nextLevel=${nextGroupFirstLevel}`)}
+                    className={cn(styles.rewardTile, !group.isCompleted && styles.rewardTileLocked)}
+                    onClick={group.isCompleted ? () => navigate(`/pet-care?nextLevel=${nextGroupFirstLevel}`) : undefined}
                   >
                     <span className={styles.rewardTileIcon}>
-                      {getPetEmoji(getPetStage(completedGroupIndices.length))}
+                      {group.isCompleted ? getPetEmoji(getPetStage(completedGroupIndices.length)) : '🔒'}
                     </span>
                     <span className={styles.rewardTileName}>Odměna</span>
                   </div>

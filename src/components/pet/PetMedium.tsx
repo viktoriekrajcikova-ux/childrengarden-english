@@ -1,5 +1,7 @@
+import type { PetMood } from './Pet';
+
 /** Young chick SVG — bigger ellipse, smaller eyes (proportionally), bigger beak, flapping wings, tail hint */
-export default function PetMedium() {
+export default function PetMedium({ mood = 'neutral' }: { mood?: PetMood }) {
   return (
     <svg viewBox="0 0 140 150" width="140" height="150" aria-label="Young chick">
       <style>{`
@@ -22,6 +24,8 @@ export default function PetMedium() {
           0%,40%,100% { transform: rotate(0deg); }
           20% { transform: rotate(8deg); }
         }
+        .beak-droop-m { transform-origin: 70px 73px; animation: beakDroopM 2s ease-in-out infinite; }
+        @keyframes beakDroopM { 0%,100% { transform: translateY(0); } 50% { transform: translateY(3px); } }
       `}</style>
 
       {/* Body — bigger ellipse */}
@@ -45,20 +49,48 @@ export default function PetMedium() {
         strokeWidth="1"
       />
 
-      {/* Left eye */}
-      <circle cx="56" cy="62" r="7" fill="#212121" />
-      <circle cx="58" cy="59" r="2.5" fill="white" />
-      <ellipse className="eyelid-m" cx="56" cy="62" rx="8" ry="7" fill="#FFD54F" />
+      {/* Eyes — mood dependent */}
+      {mood === 'happy' ? (
+        <>
+          {/* Happy eyes — upward arcs (˘ shape) */}
+          <path d="M48 64 Q56 55 64 64" stroke="#212121" strokeWidth="3" fill="none" strokeLinecap="round" />
+          <path d="M76 64 Q84 55 92 64" stroke="#212121" strokeWidth="3" fill="none" strokeLinecap="round" />
+        </>
+      ) : mood === 'sad' ? (
+        <>
+          {/* Sad eyes — normal eyes + tilted eyebrows */}
+          <circle cx="56" cy="62" r="7" fill="#212121" />
+          <circle cx="58" cy="59" r="2.5" fill="white" />
+          <circle cx="84" cy="62" r="7" fill="#212121" />
+          <circle cx="86" cy="59" r="2.5" fill="white" />
+          {/* Sad eyebrows */}
+          <line x1="47" y1="50" x2="61" y2="53" stroke="#212121" strokeWidth="2.5" strokeLinecap="round" />
+          <line x1="93" y1="50" x2="79" y2="53" stroke="#212121" strokeWidth="2.5" strokeLinecap="round" />
+        </>
+      ) : (
+        <>
+          {/* Neutral eyes — default */}
+          <circle cx="56" cy="62" r="7" fill="#212121" />
+          <circle cx="58" cy="59" r="2.5" fill="white" />
+          <ellipse className="eyelid-m" cx="56" cy="62" rx="8" ry="7" fill="#FFD54F" />
+          <circle cx="84" cy="62" r="7" fill="#212121" />
+          <circle cx="86" cy="59" r="2.5" fill="white" />
+          <ellipse className="eyelid-m" cx="84" cy="62" rx="8" ry="7" fill="#FFD54F" />
+        </>
+      )}
 
-      {/* Right eye */}
-      <circle cx="84" cy="62" r="7" fill="#212121" />
-      <circle cx="86" cy="59" r="2.5" fill="white" />
-      <ellipse className="eyelid-m" cx="84" cy="62" rx="8" ry="7" fill="#FFD54F" />
-
-      {/* Beak — upper half */}
-      <polygon className="beak-top-m" points="63,73 77,73 70,66" fill="#FF9800" />
-      {/* Beak — lower half */}
-      <polygon className="beak-bot-m" points="63,73 77,73 70,83" fill="#E65100" />
+      {/* Beak — droop animation when sad */}
+      {mood === 'sad' ? (
+        <>
+          <polygon points="63,73 77,73 70,66" fill="#FF9800" />
+          <polygon className="beak-droop-m" points="63,73 77,73 70,79" fill="#E65100" />
+        </>
+      ) : (
+        <>
+          <polygon className="beak-top-m" points="63,73 77,73 70,66" fill="#FF9800" />
+          <polygon className="beak-bot-m" points="63,73 77,73 70,83" fill="#E65100" />
+        </>
+      )}
 
       {/* Tail hint */}
       <path

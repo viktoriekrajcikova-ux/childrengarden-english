@@ -16,13 +16,13 @@ Projekt je určen pro děti v předškolním věku (3-6 let)
 
 ## Pravidla projektu:
 - Na mapě levelů se levely vykreslují ve skupinách.
-- Jsou 2 typy skupin: standardní a herní
-- V herní skupině je vždy jen jedna položka
+- Jsou 3 typy skupin: standardní, herní, odemna
+- V herní skupině a odmeně je vždy jen jedna položka
 - V standardní skupině je položek více
 - Na konci každé standardní skupiny je level opakování
 - Po dokončení každé skupiny se odemyká další skupina, do té doby je uzamčená a uživatel do ní nemůže přistoupit
 - Každá skupina může obsahovat maximálně 5 levelů
-- Vždy se střídá skupina standardní a pak skupina herní (STANDARD → GAME → STANDARD → GAME)
+- Vždy se střídá skupina standardní, skupina herní a pak odměna (STANDARD → GAME → AWARD → STANDARD → GAME → AWARD)
 
 ## Pravidla pro obtížnosti:
 - Pro každý level je definována množina možností

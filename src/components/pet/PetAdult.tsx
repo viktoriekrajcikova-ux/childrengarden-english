@@ -1,7 +1,9 @@
+import type { PetMood } from './Pet';
+
 /** Adult hen SVG — full body with neck, head, red comb + wattle, flapping wings, tail feathers, chicken legs */
-export default function PetAdult() {
+export default function PetAdult({ mood = 'neutral' }: { mood?: PetMood }) {
   return (
-    <svg viewBox="0 0 160 170" width="160" height="170" aria-label="Adult hen">
+    <svg viewBox="0 0 160 170" width="190" height="202" aria-label="Adult hen">
       <style>{`
         .wing-left-a { transform-origin: 34px 92px; animation: flapLeftA 0.6s ease-in-out infinite; }
         .wing-right-a { transform-origin: 126px 92px; animation: flapRightA 0.6s ease-in-out infinite; }
@@ -22,6 +24,8 @@ export default function PetAdult() {
           0%,40%,100% { transform: rotate(0deg); }
           20% { transform: rotate(6deg); }
         }
+        .beak-droop-a { transform-origin: 114px 30px; animation: beakDroopA 2s ease-in-out infinite; }
+        @keyframes beakDroopA { 0%,100% { transform: translateY(0); } 50% { transform: translateY(3px); } }
       `}</style>
 
       {/* Tail feathers */}
@@ -70,15 +74,40 @@ export default function PetAdult() {
         strokeWidth="1"
       />
 
-      {/* Eye */}
-      <circle cx="103" cy="22" r="5" fill="#212121" />
-      <circle cx="105" cy="20" r="2" fill="white" />
-      <ellipse className="eyelid-a" cx="103" cy="22" rx="6" ry="5" fill="#FFD54F" />
+      {/* Eye — mood dependent */}
+      {mood === 'happy' ? (
+        <>
+          {/* Happy eye — upward arc */}
+          <path d="M97 24 Q103 17 109 24" stroke="#212121" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+        </>
+      ) : mood === 'sad' ? (
+        <>
+          {/* Sad eye — normal eye + tilted eyebrow */}
+          <circle cx="103" cy="22" r="5" fill="#212121" />
+          <circle cx="105" cy="20" r="2" fill="white" />
+          <line x1="97" y1="13" x2="109" y2="16" stroke="#212121" strokeWidth="2" strokeLinecap="round" />
+        </>
+      ) : (
+        <>
+          {/* Neutral eye — default */}
+          <circle cx="103" cy="22" r="5" fill="#212121" />
+          <circle cx="105" cy="20" r="2" fill="white" />
+          <ellipse className="eyelid-a" cx="103" cy="22" rx="6" ry="5" fill="#FFD54F" />
+        </>
+      )}
 
-      {/* Beak — upper half */}
-      <polygon className="beak-top-a" points="114,26 126,28 114,30" fill="#FF9800" />
-      {/* Beak — lower half */}
-      <polygon className="beak-bot-a" points="114,30 126,32 114,34" fill="#E65100" />
+      {/* Beak — droop animation when sad */}
+      {mood === 'sad' ? (
+        <>
+          <polygon points="114,26 126,28 114,30" fill="#FF9800" />
+          <polygon className="beak-droop-a" points="114,30 126,32 114,33" fill="#E65100" />
+        </>
+      ) : (
+        <>
+          <polygon className="beak-top-a" points="114,26 126,28 114,30" fill="#FF9800" />
+          <polygon className="beak-bot-a" points="114,30 126,32 114,34" fill="#E65100" />
+        </>
+      )}
 
       {/* Wattle */}
       <ellipse cx="110" cy="38" rx="4" ry="6" fill="#F44336" />
