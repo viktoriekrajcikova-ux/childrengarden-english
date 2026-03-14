@@ -27,3 +27,11 @@
   cursor: not-allowed;
   transform: translateX(-50%);
 }
+
+@media (max-width: 768px) {
+  .playButton {
+    padding: 15px 40px;
+    font-size: 1.2em;
+    bottom: 15px;
+  }
+}

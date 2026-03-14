@@ -63,7 +63,14 @@
 }
 
 @media (max-width: 768px) {
-  .grid { gap: 10px; max-width: 100%; }
-  .cardEmoji { font-size: 2.5em; }
-  .cardName { font-size: 0.9em; }
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    max-width: 100%;
+    padding: 10px;
+    margin: 20px auto;
+  }
+  .cardFront { font-size: 2em; }
+  .cardEmoji { font-size: 2em; }
+  .cardName { font-size: 0.8em; }
 }

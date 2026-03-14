@@ -9,7 +9,7 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  background-attachment: fixed;
+  background-attachment: scroll;
   min-height: 100vh;
   position: relative;
   overflow-y: auto;
@@ -153,13 +153,27 @@
 }
 
 @media (max-width: 768px) {
-  .controls { left: 10px; gap: 10px; }
-  .controlButton { width: 50px; height: 50px; font-size: 24px; }
+  .mapScreen { padding: 50px 10px 30px; }
+  .title { font-size: 1.8em; margin-bottom: 15px; }
+  .controls { left: 10px; top: 10px; gap: 8px; }
+  .controlButton { width: 42px; height: 42px; font-size: 20px; }
+  .inventory { padding: 5px; border-radius: 8px; }
+  .inventoryItem { font-size: 16px; }
+  .mapGrid { gap: 10px; padding: 10px; margin-top: 15px; }
   .levelGroup {
     width: auto;
     max-width: 100%;
+    padding: 15px;
+    margin: 5px;
   }
   .levelGroup1, .levelGroup2, .levelGroup3, .levelGroup4, .levelGroup5 {
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   }
+  .completed::before {
+    font-size: 35px;
+    top: -25px;
+    right: -15px;
+  }
+  .groupArrow { margin: 10px 0; }
+  .groupArrowIcon { font-size: 40px; }
 }

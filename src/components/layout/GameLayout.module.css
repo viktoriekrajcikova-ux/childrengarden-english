@@ -7,3 +7,11 @@
   width: 100%;
   position: relative;
 }
+
+@media (max-width: 768px) {
+  .gameContainer {
+    padding: 15px 10px;
+    border-radius: var(--radius-sm);
+    margin: 0 5px;
+  }
+}

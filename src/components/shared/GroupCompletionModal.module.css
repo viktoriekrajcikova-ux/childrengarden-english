@@ -55,3 +55,15 @@
   transform: translateY(-3px);
   box-shadow: 0 12px 30px rgba(0,0,0,0.4);
 }
+
+@media (max-width: 768px) {
+  .content {
+    padding: 30px 20px;
+    margin: 0 15px;
+    border-radius: 20px;
+  }
+  .icon { font-size: 70px; }
+  .title { font-size: 2em; }
+  .message { font-size: 1.2em; margin-bottom: 25px; }
+  .button { padding: 15px 35px; font-size: 1.2em; }
+}

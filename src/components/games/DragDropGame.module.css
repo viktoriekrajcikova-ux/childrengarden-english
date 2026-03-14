@@ -76,3 +76,14 @@
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   animation: dropIn 0.3s ease;
 }
+
+@media (max-width: 768px) {
+  .dropZones { gap: 15px; margin: 20px auto; }
+  .dropZone { width: 100%; min-height: 200px; padding: 15px; }
+  .dropZoneHeader { font-size: 2em; }
+  .dropZoneName { font-size: 1.2em; }
+  .draggableItems { gap: 10px; margin: 20px auto; }
+  .draggableItem { width: 80px; height: 80px; }
+  .draggableEmoji { font-size: 2em; }
+  .draggableName { font-size: 0.75em; }
+}

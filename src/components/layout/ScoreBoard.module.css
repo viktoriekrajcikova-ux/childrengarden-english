@@ -24,3 +24,16 @@
   font-size: 1.5em;
   padding: 15px 35px;
 }
+
+@media (max-width: 768px) {
+  .base { right: 10px; }
+  .scoreBoard {
+    padding: 6px 14px;
+    font-size: 0.9em;
+    top: 50px;
+  }
+  .scoreBoardMap {
+    padding: 8px 18px;
+    font-size: 1.1em;
+  }
+}

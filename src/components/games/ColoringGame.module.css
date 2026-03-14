@@ -63,3 +63,15 @@
   border-right: 100px solid transparent;
   border-bottom: 200px solid #E0E0E0;
 }
+
+@media (max-width: 768px) {
+  .colorOption { width: 45px; height: 45px; }
+  .shapeContainer { gap: 15px; margin: 20px auto; }
+  .shapeSquare { width: 120px; height: 120px; }
+  .shapeCircle { width: 120px; height: 120px; }
+  .shapeTriangle {
+    border-left-width: 60px;
+    border-right-width: 60px;
+    border-bottom-width: 120px;
+  }
+}

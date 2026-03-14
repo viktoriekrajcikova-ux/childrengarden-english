@@ -17,3 +17,9 @@
   color: var(--color-primary);
   margin-bottom: 30px;
 }
+
+@media (max-width: 768px) {
+  .container { padding: 30px 15px; }
+  .title { font-size: 2em; }
+  .text { font-size: 1.2em; }
+}
