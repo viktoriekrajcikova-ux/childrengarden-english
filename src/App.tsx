@@ -7,6 +7,7 @@ const MapPage = lazy(() => import('./pages/MapPage'));
 const LevelPage = lazy(() => import('./pages/LevelPage'));
 const ReviewPage = lazy(() => import('./pages/ReviewPage'));
 const VictoryPage = lazy(() => import('./pages/VictoryPage'));
+const PetCarePage = lazy(() => import('./pages/PetCarePage'));
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
         <Route path="/map" element={<MapPage />} />
         <Route path="/level/:id" element={<LevelPage />} />
         <Route path="/review" element={<ReviewPage />} />
+        <Route path="/pet-care" element={<PetCarePage />} />
         <Route path="/victory" element={<VictoryPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

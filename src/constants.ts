@@ -19,3 +19,10 @@ export const COUNTING_OPTION_RANGE = 3;
 export const SCORE_CORRECT = 10;
 export const SCORE_CORRECT_DOUBLE = 20;
 export const SCORE_PENALTY = 5;
+
+// Pet care
+export const PET_CARE_COST = 5;
+export const PET_GROWTH_MEDIUM = 2;
+export const PET_GROWTH_ADULT = 4;
+export const DELAY_PET_SPEAK = 500;
+export const DELAY_PET_SUCCESS = 1200;

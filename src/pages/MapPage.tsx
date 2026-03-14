@@ -1,21 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAtomValue, useSetAtom } from 'jotai';
-import { completedLevelsAtom, difficultyAtom, resetGameAtom } from '../store/atoms';
+import { completedLevelsAtom, difficultyAtom, resetGameAtom, pendingGroupModalAtom } from '../store/atoms';
 import { useLevelGroups } from '../hooks/useLevelGroups';
-import { useLevelCompletion } from '../hooks/useLevelCompletion';
-import { getLevelIcon } from '../utils/levelGrouping';
+import { getLevelIcon, isGameLevel } from '../utils/levelGrouping';
+import { getPetStage, getPetEmoji } from '../utils/petUtils';
 import { cn } from '../utils/cn';
 import ScoreBoard from '../components/layout/ScoreBoard';
 import GroupCompletionModal from '../components/shared/GroupCompletionModal';
 import MapTile from '../components/shared/MapTile';
 import styles from './MapPage.module.css';
-
-const difficultyIcons: Record<string, string> = {
-  easy: '🐣',
-  medium: '🦊',
-  hard: '🦁',
-};
 
 export default function MapPage() {
   const completedLevels = useAtomValue(completedLevelsAtom);
@@ -24,7 +18,8 @@ export default function MapPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { groups, completedGroupIndices } = useLevelGroups();
-  const { getPendingModal } = useLevelCompletion();
+  const pendingModal = useAtomValue(pendingGroupModalAtom);
+  const clearPendingModal = useSetAtom(pendingGroupModalAtom);
   const [modalGroup, setModalGroup] = useState<number | null>(null);
 
   useEffect(() => {
@@ -32,11 +27,11 @@ export default function MapPage() {
       navigate('/');
       return;
     }
-    const pending = getPendingModal();
-    if (pending) {
-      setModalGroup(pending.groupIndex);
+    if (pendingModal) {
+      setModalGroup(pendingModal.groupIndex);
+      clearPendingModal(null);
     }
-  }, [difficulty, navigate, getPendingModal]);
+  }, [difficulty, navigate, pendingModal, clearPendingModal]);
 
   // Scroll to the level specified in query param
   useEffect(() => {
@@ -85,13 +80,10 @@ export default function MapPage() {
     <div className={styles.mapScreen}>
       <div className={styles.controls}>
         <div className={cn(styles.inventory, completedGroupIndices.length === 0 && styles.inventoryEmpty)}>
-          <div className={styles.inventoryItems}>
-            {completedGroupIndices.map((gi) => (
-              <span key={gi} className={styles.inventoryItem}>
-                {gi < 5 ? '👑' : '💎'}
-              </span>
-            ))}
-          </div>
+          <span className={styles.inventoryCount}>{completedGroupIndices.filter((gi) => gi < 5).length}x</span>
+          <span className={styles.inventoryItem}>👑</span>
+          <span className={styles.inventoryCount}>{completedGroupIndices.filter((gi) => gi >= 5).length}x</span>
+          <span className={styles.inventoryItem}>💎</span>
         </div>
         <button className={cn(styles.controlButton, styles.resetButton)} onClick={handleReset} title="Reset hry">
           🔄
@@ -102,44 +94,67 @@ export default function MapPage() {
           </button>
         )}
         <button className={cn(styles.controlButton, styles.difficultyButton)} onClick={() => navigate('/')} title="Změnit obtížnost">
-          <span>{difficultyIcons[difficulty || 'easy']}</span>
+          <span>{getPetEmoji(getPetStage(completedGroupIndices.length))}</span>
         </button>
       </div>
 
       <h1 className={styles.title}>🗺️ Mapa levelů</h1>
 
       <div className={styles.mapGrid}>
-        {groups.map((group, gIdx) => (
-          <div key={gIdx}>
-            {gIdx > 0 && (
-              <div className={styles.groupArrow}>
-                <div className={styles.groupArrowIcon}>⬇</div>
-              </div>
-            )}
-            <div
-              className={cn(
-                styles.levelGroup,
-                getLevelGroupClass(group.levels.length),
-                group.isLocked && styles.locked,
-                group.isCompleted && styles.completed,
-                group.isCompleted && group.groupNumber <= 5 && styles.crown,
+        {groups.map((group, gIdx) => {
+          const isGame = isGameLevel(group.levels[0].level);
+          const nextGroupFirstLevel = gIdx + 1 < groups.length
+            ? groups[gIdx + 1].levels[0].index
+            : group.levels[group.levels.length - 1].index;
+
+          return (
+            <div key={gIdx}>
+              {gIdx > 0 && (
+                <div className={styles.groupArrow}>
+                  <div className={styles.groupArrowIcon}>⬇</div>
+                </div>
               )}
-            >
-              {group.levels.map(({ level, index }) => (
-                <MapTile
-                  key={index}
-                  id={`level-tile-${index}`}
-                  icon={getLevelIcon(level, group.isLocked)}
-                  number={index + 1}
-                  name={level.name}
-                  isCompleted={completedLevels.includes(index)}
-                  isLocked={group.isLocked}
-                  onClick={() => handleLevelClick(index, group.isLocked)}
-                />
-              ))}
+              <div
+                className={cn(
+                  styles.levelGroup,
+                  getLevelGroupClass(group.levels.length),
+                  group.isLocked && styles.locked,
+                  group.isCompleted && styles.completed,
+                  group.isCompleted && group.groupNumber <= 5 && styles.crown,
+                )}
+              >
+                {group.levels.map(({ level, index }) => (
+                  <MapTile
+                    key={index}
+                    id={`level-tile-${index}`}
+                    icon={getLevelIcon(level, group.isLocked)}
+                    number={index + 1}
+                    name={level.name}
+                    isCompleted={completedLevels.includes(index)}
+                    isLocked={group.isLocked}
+                    onClick={() => handleLevelClick(index, group.isLocked)}
+                  />
+                ))}
+              </div>
+              {isGame && (
+                <>
+                  <div className={styles.groupArrow}>
+                    <div className={styles.groupArrowIcon}>⬇</div>
+                  </div>
+                  <div
+                    className={styles.rewardTile}
+                    onClick={() => navigate(`/pet-care?nextLevel=${nextGroupFirstLevel}`)}
+                  >
+                    <span className={styles.rewardTileIcon}>
+                      {getPetEmoji(getPetStage(completedGroupIndices.length))}
+                    </span>
+                    <span className={styles.rewardTileName}>Odměna</span>
+                  </div>
+                </>
+              )}
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {modalGroup !== null && (

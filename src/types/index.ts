@@ -118,3 +118,5 @@ export interface LevelGroup {
   isCompleted: boolean;
 }
 
+export type PetStage = 'small' | 'medium' | 'adult';
+

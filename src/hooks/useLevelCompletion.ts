@@ -1,7 +1,7 @@
-import { useCallback, useRef } from 'react';
+import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAtomValue, useSetAtom } from 'jotai';
-import { completedLevelsAtom, completeLevelAtom } from '../store/atoms';
+import { completedLevelsAtom, completeLevelAtom, pendingGroupModalAtom } from '../store/atoms';
 import { useAudio } from './useAudio';
 import { useTimers } from './useTimers';
 import { levels } from '../data/levels';
@@ -11,10 +11,10 @@ import { DELAY_TRANSITION } from '../constants';
 export function useLevelCompletion() {
   const completedLevels = useAtomValue(completedLevelsAtom);
   const dispatchCompleteLevel = useSetAtom(completeLevelAtom);
+  const setPendingModal = useSetAtom(pendingGroupModalAtom);
   const { playFanfare, playVictoryFanfare } = useAudio();
   const setTimer = useTimers();
   const navigate = useNavigate();
-  const pendingModalRef = useRef<{ groupIndex: number } | null>(null);
 
   const completeLevel = useCallback(
     (levelIndex: number) => {
@@ -29,7 +29,7 @@ export function useLevelCompletion() {
       const newGroups = currentGroups.filter((g) => !previousGroups.includes(g));
 
       if (newGroups.length > 0) {
-        pendingModalRef.current = { groupIndex: newGroups[0] };
+        setPendingModal({ groupIndex: newGroups[0] });
         playVictoryFanfare();
       } else {
         playFanfare();
@@ -42,14 +42,8 @@ export function useLevelCompletion() {
         setTimer(() => navigate(`/map?scrollTo=${nextLevel}`), DELAY_TRANSITION);
       }
     },
-    [completedLevels, dispatchCompleteLevel, navigate, playFanfare, playVictoryFanfare, setTimer]
+    [completedLevels, dispatchCompleteLevel, setPendingModal, navigate, playFanfare, playVictoryFanfare, setTimer]
   );
 
-  const getPendingModal = useCallback(() => {
-    const modal = pendingModalRef.current;
-    pendingModalRef.current = null;
-    return modal;
-  }, []);
-
-  return { completeLevel, getPendingModal };
+  return { completeLevel };
 }

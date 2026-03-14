@@ -33,8 +33,11 @@ export const completeLevelAtom = atom(null, (get, set, levelIndex: number) => {
   }
 });
 
+export const pendingGroupModalAtom = atom<{ groupIndex: number } | null>(null);
+
 export const resetGameAtom = atom(null, (_get, set) => {
   set(scoreAtom, 0);
   set(completedLevelsAtom, []);
   set(difficultyAtom, null);
+  set(pendingGroupModalAtom, null);
 });
