@@ -1,32 +1,23 @@
-import type { PetMood } from './Pet';
+import type { PetMood } from '../Pet';
+import { generatePetCSS } from '../petAnimations';
+
+const CSS = generatePetCSS({
+  suffix: 's',
+  blinkDuration: 4,
+  flapDuration: 0.8,
+  flapAngle: 20,
+  beakDuration: 1.5,
+  beakAngle: 8,
+  wingOrigins: { left: '34px 62px', right: '86px 62px' },
+  beakOrigin: '60px 68px',
+  bodyFill: '#FFD54F',
+});
 
 /** Baby chick SVG — yellow ball with big eyes, beak, tiny wings, legs, eggshell fragment */
-export default function PetSmall({ mood = 'neutral' }: { mood?: PetMood }) {
+export default function ChickSmall({ mood = 'neutral' }: { mood?: PetMood }) {
   return (
     <svg viewBox="0 0 120 130" width="100" height="108" aria-label="Baby chick">
-      <style>{`
-        .wing-left-s { transform-origin: 34px 62px; animation: flapLeftS 0.8s ease-in-out infinite; }
-        .wing-right-s { transform-origin: 86px 62px; animation: flapRightS 0.8s ease-in-out infinite; }
-        @keyframes flapLeftS { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(-20deg); } }
-        @keyframes flapRightS { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(20deg); } }
-        .eyelid-s { animation: blinkS 4s ease-in-out infinite; }
-        @keyframes blinkS {
-          0%,90%,100% { transform: scaleY(0); }
-          95% { transform: scaleY(1); }
-        }
-        .beak-top-s { transform-origin: 60px 68px; animation: beakTopS 1.5s ease-in-out infinite; }
-        .beak-bot-s { transform-origin: 60px 68px; animation: beakBotS 1.5s ease-in-out infinite; }
-        @keyframes beakTopS {
-          0%,40%,100% { transform: rotate(0deg); }
-          20% { transform: rotate(-8deg); }
-        }
-        @keyframes beakBotS {
-          0%,40%,100% { transform: rotate(0deg); }
-          20% { transform: rotate(8deg); }
-        }
-        .beak-droop-s { transform-origin: 60px 68px; animation: beakDroopS 2s ease-in-out infinite; }
-        @keyframes beakDroopS { 0%,100% { transform: translateY(0); } 50% { transform: translateY(3px); } }
-      `}</style>
+      <style>{CSS}</style>
 
       {/* Eggshell fragment */}
       <path

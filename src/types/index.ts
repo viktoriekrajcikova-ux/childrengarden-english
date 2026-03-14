@@ -120,3 +120,5 @@ export interface LevelGroup {
 
 export type PetStage = 'small' | 'medium' | 'adult';
 
+export type AnimalType = 'chick' | 'fox' | 'lion';
+

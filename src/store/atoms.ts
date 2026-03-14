@@ -1,6 +1,6 @@
 import { atom } from 'jotai';
 import { atomWithStorage, createJSONStorage } from 'jotai/utils';
-import type { Difficulty } from '../types';
+import type { Difficulty, AnimalType } from '../types';
 
 // Custom storage for difficulty — old code stored plain string, not JSON
 const difficultyStorage = createJSONStorage<Difficulty | null>(() => localStorage);
@@ -43,6 +43,17 @@ export const completeLevelAtom = atom(null, (get, set, levelIndex: number) => {
 });
 
 export const pendingGroupModalAtom = atom<{ groupIndex: number } | null>(null);
+
+const DIFFICULTY_TO_ANIMAL: Record<Difficulty, AnimalType> = {
+  easy: 'chick',
+  medium: 'fox',
+  hard: 'lion',
+};
+
+export const animalTypeAtom = atom<AnimalType>((get) => {
+  const difficulty = get(difficultyAtom);
+  return difficulty ? DIFFICULTY_TO_ANIMAL[difficulty] : 'chick';
+});
 
 export const resetGameAtom = atom(null, (_get, set) => {
   set(scoreAtom, 0);

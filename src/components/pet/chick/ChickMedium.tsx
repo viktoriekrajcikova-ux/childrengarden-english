@@ -1,32 +1,23 @@
-import type { PetMood } from './Pet';
+import type { PetMood } from '../Pet';
+import { generatePetCSS } from '../petAnimations';
+
+const CSS = generatePetCSS({
+  suffix: 'm',
+  blinkDuration: 3.5,
+  flapDuration: 0.7,
+  flapAngle: 30,
+  beakDuration: 1.8,
+  beakAngle: 8,
+  wingOrigins: { left: '32px 72px', right: '108px 72px' },
+  beakOrigin: '70px 73px',
+  bodyFill: '#FFD54F',
+});
 
 /** Young chick SVG — bigger ellipse, smaller eyes (proportionally), bigger beak, flapping wings, tail hint */
-export default function PetMedium({ mood = 'neutral' }: { mood?: PetMood }) {
+export default function ChickMedium({ mood = 'neutral' }: { mood?: PetMood }) {
   return (
     <svg viewBox="0 0 140 150" width="140" height="150" aria-label="Young chick">
-      <style>{`
-        .wing-left-m { transform-origin: 32px 72px; animation: flapLeftM 0.7s ease-in-out infinite; }
-        .wing-right-m { transform-origin: 108px 72px; animation: flapRightM 0.7s ease-in-out infinite; }
-        @keyframes flapLeftM { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(-30deg); } }
-        @keyframes flapRightM { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(30deg); } }
-        .eyelid-m { animation: blinkM 3.5s ease-in-out infinite; }
-        @keyframes blinkM {
-          0%,90%,100% { transform: scaleY(0); }
-          95% { transform: scaleY(1); }
-        }
-        .beak-top-m { transform-origin: 70px 73px; animation: beakTopM 1.8s ease-in-out infinite; }
-        .beak-bot-m { transform-origin: 70px 73px; animation: beakBotM 1.8s ease-in-out infinite; }
-        @keyframes beakTopM {
-          0%,40%,100% { transform: rotate(0deg); }
-          20% { transform: rotate(-8deg); }
-        }
-        @keyframes beakBotM {
-          0%,40%,100% { transform: rotate(0deg); }
-          20% { transform: rotate(8deg); }
-        }
-        .beak-droop-m { transform-origin: 70px 73px; animation: beakDroopM 2s ease-in-out infinite; }
-        @keyframes beakDroopM { 0%,100% { transform: translateY(0); } 50% { transform: translateY(3px); } }
-      `}</style>
+      <style>{CSS}</style>
 
       {/* Body — bigger ellipse */}
       <ellipse cx="70" cy="72" rx="40" ry="36" fill="#FFD54F" />

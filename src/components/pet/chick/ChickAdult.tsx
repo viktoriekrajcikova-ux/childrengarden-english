@@ -1,32 +1,23 @@
-import type { PetMood } from './Pet';
+import type { PetMood } from '../Pet';
+import { generatePetCSS } from '../petAnimations';
+
+const CSS = generatePetCSS({
+  suffix: 'a',
+  blinkDuration: 3,
+  flapDuration: 0.6,
+  flapAngle: 35,
+  beakDuration: 2,
+  beakAngle: 6,
+  wingOrigins: { left: '34px 92px', right: '126px 92px' },
+  beakOrigin: '114px 30px',
+  bodyFill: '#FFD54F',
+});
 
 /** Adult hen SVG — full body with neck, head, red comb + wattle, flapping wings, tail feathers, chicken legs */
-export default function PetAdult({ mood = 'neutral' }: { mood?: PetMood }) {
+export default function ChickAdult({ mood = 'neutral' }: { mood?: PetMood }) {
   return (
     <svg viewBox="0 0 160 170" width="190" height="202" aria-label="Adult hen">
-      <style>{`
-        .wing-left-a { transform-origin: 34px 92px; animation: flapLeftA 0.6s ease-in-out infinite; }
-        .wing-right-a { transform-origin: 126px 92px; animation: flapRightA 0.6s ease-in-out infinite; }
-        @keyframes flapLeftA { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(-35deg); } }
-        @keyframes flapRightA { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(35deg); } }
-        .eyelid-a { animation: blinkA 3s ease-in-out infinite; }
-        @keyframes blinkA {
-          0%,90%,100% { transform: scaleY(0); }
-          95% { transform: scaleY(1); }
-        }
-        .beak-top-a { transform-origin: 114px 30px; animation: beakTopA 2s ease-in-out infinite; }
-        .beak-bot-a { transform-origin: 114px 30px; animation: beakBotA 2s ease-in-out infinite; }
-        @keyframes beakTopA {
-          0%,40%,100% { transform: rotate(0deg); }
-          20% { transform: rotate(-6deg); }
-        }
-        @keyframes beakBotA {
-          0%,40%,100% { transform: rotate(0deg); }
-          20% { transform: rotate(6deg); }
-        }
-        .beak-droop-a { transform-origin: 114px 30px; animation: beakDroopA 2s ease-in-out infinite; }
-        @keyframes beakDroopA { 0%,100% { transform: translateY(0); } 50% { transform: translateY(3px); } }
-      `}</style>
+      <style>{CSS}</style>
 
       {/* Tail feathers */}
       <path d="M40 55 Q25 35 30 20" stroke="#F9A825" strokeWidth="3" fill="none" strokeLinecap="round" />

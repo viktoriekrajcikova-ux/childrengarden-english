@@ -1,7 +1,5 @@
-import type { PetStage } from '../../types';
-import PetSmall from './PetSmall';
-import PetMedium from './PetMedium';
-import PetAdult from './PetAdult';
+import type { PetStage, AnimalType } from '../../types';
+import { ANIMAL_REGISTRY } from './animalRegistry';
 import styles from './Pet.module.css';
 
 export type PetAnimation = 'idle' | 'happy' | 'eating' | 'showering' | 'pooping' | 'relieved';
@@ -11,10 +9,11 @@ interface PetProps {
   stage: PetStage;
   animation: PetAnimation;
   mood?: PetMood;
+  animalType?: AnimalType;
 }
 
-export default function Pet({ stage, animation, mood = 'neutral' }: PetProps) {
-  const PetSvg = stage === 'adult' ? PetAdult : stage === 'medium' ? PetMedium : PetSmall;
+export default function Pet({ stage, animation, mood = 'neutral', animalType = 'chick' }: PetProps) {
+  const PetSvg = ANIMAL_REGISTRY[animalType].stages[stage];
 
   return (
     <div className={`${styles.petWrapper} ${styles[animation]}`}>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAtomValue, useSetAtom } from 'jotai';
-import { completedLevelsAtom, difficultyAtom, resetGameAtom, pendingGroupModalAtom } from '../store/atoms';
+import { completedLevelsAtom, difficultyAtom, resetGameAtom, pendingGroupModalAtom, animalTypeAtom } from '../store/atoms';
 import { useLevelGroups } from '../hooks/useLevelGroups';
 import { getLevelIcon, isGameLevel } from '../utils/levelGrouping';
 import { getPetStage, getPetEmoji } from '../utils/petUtils';
@@ -18,6 +18,7 @@ export default function MapPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { groups, completedGroupIndices } = useLevelGroups();
+  const animalType = useAtomValue(animalTypeAtom);
   const pendingModal = useAtomValue(pendingGroupModalAtom);
   const clearPendingModal = useSetAtom(pendingGroupModalAtom);
   const [modalGroup, setModalGroup] = useState<number | null>(null);
@@ -94,7 +95,7 @@ export default function MapPage() {
           </button>
         )}
         <button className={cn(styles.controlButton, styles.difficultyButton)} onClick={() => navigate('/')} title="Změnit obtížnost">
-          <span>{getPetEmoji(getPetStage(completedGroupIndices.length))}</span>
+          <span>{getPetEmoji(getPetStage(completedGroupIndices.length), animalType)}</span>
         </button>
       </div>
 
@@ -146,7 +147,7 @@ export default function MapPage() {
                     onClick={group.isCompleted ? () => navigate(`/pet-care?nextLevel=${nextGroupFirstLevel}`) : undefined}
                   >
                     <span className={styles.rewardTileIcon}>
-                      {group.isCompleted ? getPetEmoji(getPetStage(completedGroupIndices.length)) : '🔒'}
+                      {group.isCompleted ? getPetEmoji(getPetStage(completedGroupIndices.length), animalType) : '🔒'}
                     </span>
                     <span className={styles.rewardTileName}>Odměna</span>
                   </div>

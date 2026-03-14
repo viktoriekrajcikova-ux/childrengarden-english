@@ -4,6 +4,7 @@ import { useSetAtom, useAtomValue, useAtom } from 'jotai';
 import {
   subtractScoreAtom, scoreAtom, addFedFoodAtom,
   mutedAtom, lastSeenPetStageAtom, lastFedTimeAtom,
+  animalTypeAtom,
 } from '../store/atoms';
 import { useSpeech } from '../hooks/useSpeech';
 import { useAudio } from '../hooks/useAudio';
@@ -94,6 +95,7 @@ export default function PetCarePage() {
   const [muted, setMuted] = useAtom(mutedAtom);
   const [lastSeenPetStage, setLastSeenPetStage] = useAtom(lastSeenPetStageAtom);
   const [lastFedTime, setLastFedTime] = useAtom(lastFedTimeAtom);
+  const animalType = useAtomValue(animalTypeAtom);
   const { speak } = useSpeech();
   const {
     playChirpHappy, playMunch, playWaterSplash,
@@ -595,7 +597,7 @@ export default function PetCarePage() {
           onDrop={phase === 'feeding' ? handleDrop : undefined}
           onClick={handlePetTap}
         >
-          <Pet stage={petStage} animation={petAnimation} mood={mood} />
+          <Pet stage={petStage} animation={petAnimation} mood={mood} animalType={animalType} />
           {renderShowerEffects()}
           {renderPoopEffects()}
         </div>

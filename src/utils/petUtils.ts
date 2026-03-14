@@ -1,5 +1,6 @@
-import type { PetStage } from '../types';
+import type { PetStage, AnimalType } from '../types';
 import { PET_GROWTH_MEDIUM, PET_GROWTH_ADULT } from '../constants';
+import { ANIMAL_REGISTRY } from '../components/pet/animalRegistry';
 
 export function getPetStage(completedGroupCount: number): PetStage {
   if (completedGroupCount >= PET_GROWTH_ADULT) return 'adult';
@@ -7,10 +8,6 @@ export function getPetStage(completedGroupCount: number): PetStage {
   return 'small';
 }
 
-export function getPetEmoji(stage: PetStage): string {
-  switch (stage) {
-    case 'small': return '🐣';
-    case 'medium': return '🐥';
-    case 'adult': return '🐔';
-  }
+export function getPetEmoji(stage: PetStage, animalType: AnimalType = 'chick'): string {
+  return ANIMAL_REGISTRY[animalType].emoji[stage];
 }
