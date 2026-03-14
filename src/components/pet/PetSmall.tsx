@@ -7,6 +7,21 @@ export default function PetSmall() {
         .wing-right-s { transform-origin: 86px 62px; animation: flapRightS 0.8s ease-in-out infinite; }
         @keyframes flapLeftS { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(-20deg); } }
         @keyframes flapRightS { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(20deg); } }
+        .eyelid-s { animation: blinkS 4s ease-in-out infinite; }
+        @keyframes blinkS {
+          0%,90%,100% { transform: scaleY(0); }
+          95% { transform: scaleY(1); }
+        }
+        .beak-top-s { transform-origin: 60px 68px; animation: beakTopS 1.5s ease-in-out infinite; }
+        .beak-bot-s { transform-origin: 60px 68px; animation: beakBotS 1.5s ease-in-out infinite; }
+        @keyframes beakTopS {
+          0%,40%,100% { transform: rotate(0deg); }
+          20% { transform: rotate(-8deg); }
+        }
+        @keyframes beakBotS {
+          0%,40%,100% { transform: rotate(0deg); }
+          20% { transform: rotate(8deg); }
+        }
       `}</style>
 
       {/* Eggshell fragment */}
@@ -41,13 +56,17 @@ export default function PetSmall() {
       {/* Left eye */}
       <circle cx="48" cy="55" r="8" fill="#212121" />
       <circle cx="50" cy="52" r="3" fill="white" />
+      <ellipse className="eyelid-s" cx="48" cy="55" rx="9" ry="8" fill="#FFD54F" />
 
       {/* Right eye */}
       <circle cx="72" cy="55" r="8" fill="#212121" />
       <circle cx="74" cy="52" r="3" fill="white" />
+      <ellipse className="eyelid-s" cx="72" cy="55" rx="9" ry="8" fill="#FFD54F" />
 
-      {/* Beak */}
-      <polygon points="56,68 64,68 60,76" fill="#FF9800" />
+      {/* Beak — upper half */}
+      <polygon className="beak-top-s" points="54,68 66,68 60,63" fill="#FF9800" />
+      {/* Beak — lower half */}
+      <polygon className="beak-bot-s" points="54,68 66,68 60,76" fill="#E65100" />
 
       {/* Left leg */}
       <line x1="50" y1="93" x2="45" y2="115" stroke="#FF9800" strokeWidth="3" strokeLinecap="round" />

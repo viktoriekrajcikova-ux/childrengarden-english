@@ -7,6 +7,21 @@ export default function PetAdult() {
         .wing-right-a { transform-origin: 126px 92px; animation: flapRightA 0.6s ease-in-out infinite; }
         @keyframes flapLeftA { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(-35deg); } }
         @keyframes flapRightA { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(35deg); } }
+        .eyelid-a { animation: blinkA 3s ease-in-out infinite; }
+        @keyframes blinkA {
+          0%,90%,100% { transform: scaleY(0); }
+          95% { transform: scaleY(1); }
+        }
+        .beak-top-a { transform-origin: 114px 30px; animation: beakTopA 2s ease-in-out infinite; }
+        .beak-bot-a { transform-origin: 114px 30px; animation: beakBotA 2s ease-in-out infinite; }
+        @keyframes beakTopA {
+          0%,40%,100% { transform: rotate(0deg); }
+          20% { transform: rotate(-6deg); }
+        }
+        @keyframes beakBotA {
+          0%,40%,100% { transform: rotate(0deg); }
+          20% { transform: rotate(6deg); }
+        }
       `}</style>
 
       {/* Tail feathers */}
@@ -58,9 +73,12 @@ export default function PetAdult() {
       {/* Eye */}
       <circle cx="103" cy="22" r="5" fill="#212121" />
       <circle cx="105" cy="20" r="2" fill="white" />
+      <ellipse className="eyelid-a" cx="103" cy="22" rx="6" ry="5" fill="#FFD54F" />
 
-      {/* Beak */}
-      <polygon points="114,26 126,30 114,34" fill="#FF9800" />
+      {/* Beak — upper half */}
+      <polygon className="beak-top-a" points="114,26 126,28 114,30" fill="#FF9800" />
+      {/* Beak — lower half */}
+      <polygon className="beak-bot-a" points="114,30 126,32 114,34" fill="#E65100" />
 
       {/* Wattle */}
       <ellipse cx="110" cy="38" rx="4" ry="6" fill="#F44336" />

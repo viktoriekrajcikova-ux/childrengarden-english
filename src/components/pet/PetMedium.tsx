@@ -7,6 +7,21 @@ export default function PetMedium() {
         .wing-right-m { transform-origin: 108px 72px; animation: flapRightM 0.7s ease-in-out infinite; }
         @keyframes flapLeftM { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(-30deg); } }
         @keyframes flapRightM { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(30deg); } }
+        .eyelid-m { animation: blinkM 3.5s ease-in-out infinite; }
+        @keyframes blinkM {
+          0%,90%,100% { transform: scaleY(0); }
+          95% { transform: scaleY(1); }
+        }
+        .beak-top-m { transform-origin: 70px 73px; animation: beakTopM 1.8s ease-in-out infinite; }
+        .beak-bot-m { transform-origin: 70px 73px; animation: beakBotM 1.8s ease-in-out infinite; }
+        @keyframes beakTopM {
+          0%,40%,100% { transform: rotate(0deg); }
+          20% { transform: rotate(-8deg); }
+        }
+        @keyframes beakBotM {
+          0%,40%,100% { transform: rotate(0deg); }
+          20% { transform: rotate(8deg); }
+        }
       `}</style>
 
       {/* Body — bigger ellipse */}
@@ -33,13 +48,17 @@ export default function PetMedium() {
       {/* Left eye */}
       <circle cx="56" cy="62" r="7" fill="#212121" />
       <circle cx="58" cy="59" r="2.5" fill="white" />
+      <ellipse className="eyelid-m" cx="56" cy="62" rx="8" ry="7" fill="#FFD54F" />
 
       {/* Right eye */}
       <circle cx="84" cy="62" r="7" fill="#212121" />
       <circle cx="86" cy="59" r="2.5" fill="white" />
+      <ellipse className="eyelid-m" cx="84" cy="62" rx="8" ry="7" fill="#FFD54F" />
 
-      {/* Beak */}
-      <polygon points="64,73 76,73 70,83" fill="#FF9800" />
+      {/* Beak — upper half */}
+      <polygon className="beak-top-m" points="63,73 77,73 70,66" fill="#FF9800" />
+      {/* Beak — lower half */}
+      <polygon className="beak-bot-m" points="63,73 77,73 70,83" fill="#E65100" />
 
       {/* Tail hint */}
       <path
