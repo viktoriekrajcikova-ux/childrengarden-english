@@ -61,5 +61,67 @@ export function useAudio() {
     playMelody([392.0, 523.25, 659.25, 783.99], 0.15, 'triangle', 0.4);
   }, []);
 
-  return { playFanfare, playErrorSound, playVictoryFanfare, playGameStartSound };
+  const playChirpHappy = useCallback(() => {
+    playMelody([880, 1100, 1320], 0.08, 'sine', 0.25);
+  }, []);
+
+  const playChirpSad = useCallback(() => {
+    playMelody([600, 440], 0.15, 'sine', 0.2);
+  }, []);
+
+  const playMunch = useCallback(() => {
+    playMelody([200, 250, 200], 0.1, 'square', 0.15);
+  }, []);
+
+  const playWaterSplash = useCallback(() => {
+    const ctx = getAudioContext();
+    const bufferSize = ctx.sampleRate * 0.5;
+    const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = Math.random() * 2 - 1;
+    }
+    const source = ctx.createBufferSource();
+    source.buffer = buffer;
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'highpass';
+    filter.frequency.value = 2000;
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.2, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+    source.connect(filter);
+    filter.connect(gain);
+    gain.connect(ctx.destination);
+    source.start();
+    source.stop(ctx.currentTime + 0.5);
+  }, []);
+
+  const playPoopSound = useCallback(() => {
+    const ctx = getAudioContext();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(300, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + 0.3);
+    gain.gain.setValueAtTime(0.25, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.3);
+  }, []);
+
+  const playBulldozer = useCallback(() => {
+    playMelody([80, 90, 80, 90, 80], 0.15, 'sawtooth', 0.1);
+  }, []);
+
+  const playCashRegister = useCallback(() => {
+    playMelody([1200, 1600], 0.1, 'triangle', 0.25);
+  }, []);
+
+  return {
+    playFanfare, playErrorSound, playVictoryFanfare, playGameStartSound,
+    playChirpHappy, playChirpSad, playMunch, playWaterSplash,
+    playPoopSound, playBulldozer, playCashRegister,
+  };
 }

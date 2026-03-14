@@ -26,3 +26,14 @@ export const PET_GROWTH_MEDIUM = 2;
 export const PET_GROWTH_ADULT = 4;
 export const DELAY_PET_SPEAK = 500;
 export const DELAY_PET_SUCCESS = 1200;
+
+// Pet shop prices
+export const SHOP_GRAIN_PRICE = 0;
+export const SHOP_APPLE_PRICE = 10;
+export const SHOP_CAKE_PRICE = 20;
+
+// Pet action timing (ms)
+export const DELAY_PET_ACTION = 1500;
+export const DELAY_BULLDOZER = 2000;
+export const DELAY_SHOWER = 2500;
+export const DELAY_PET_REACTION = 1000;

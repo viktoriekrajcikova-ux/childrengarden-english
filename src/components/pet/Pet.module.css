@@ -1,0 +1,68 @@
+/* Pet animation wrapper */
+.petWrapper {
+  display: inline-block;
+  transform-origin: center bottom;
+}
+
+/* Idle bounce */
+.idle {
+  animation: petBounce 2s ease-in-out infinite;
+}
+
+/* Happy pulse */
+.happy {
+  animation: petHappy 0.5s ease-in-out 3;
+}
+
+/* Eating / pecking */
+.eating {
+  animation: petEat 0.6s ease-in-out 3;
+}
+
+/* Shower shake */
+.showering {
+  animation: petShake 0.4s ease-in-out 4;
+}
+
+/* Poop squat */
+.pooping {
+  animation: petSquat 1.5s ease-in-out;
+}
+
+/* Relieved jump */
+.relieved {
+  animation: petJump 0.5s ease-out;
+}
+
+@keyframes petBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes petHappy {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  25% { transform: scale(1.15) rotate(-3deg); }
+  75% { transform: scale(1.15) rotate(3deg); }
+}
+
+@keyframes petEat {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(15deg) translateY(5px); }
+}
+
+@keyframes petShake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+
+@keyframes petSquat {
+  0%, 100% { transform: scaleY(1); }
+  30%, 70% { transform: scaleY(0.85) translateY(8px); }
+}
+
+@keyframes petJump {
+  0% { transform: translateY(0); }
+  40% { transform: translateY(-25px); }
+  100% { transform: translateY(0); }
+}
