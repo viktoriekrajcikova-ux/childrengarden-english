@@ -219,3 +219,68 @@
   .rewardTileIcon { font-size: 36px; }
   .rewardTileName { font-size: 0.95em; }
 }
+
+/* Achievements modal */
+.achievementOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+.achievementModal {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 30px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+.achievementTitle {
+  text-align: center;
+  color: var(--color-primary);
+  margin-bottom: 20px;
+}
+.achievementList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.achievementItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: var(--radius-md);
+  background: #f8f9fa;
+}
+.achievementLocked {
+  opacity: 0.5;
+}
+.achievementEmoji {
+  font-size: 2em;
+}
+.achievementName {
+  font-weight: bold;
+  color: var(--color-text);
+}
+.achievementDesc {
+  font-size: 0.85em;
+  color: var(--color-text-light);
+}
+.achievementCloseBtn {
+  display: block;
+  margin: 20px auto 0;
+  background: var(--gradient-primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-full);
+  padding: 10px 30px;
+  font-size: 1em;
+  font-weight: bold;
+  cursor: pointer;
+}

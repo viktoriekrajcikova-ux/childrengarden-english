@@ -159,6 +159,8 @@
   transition: all 0.3s ease;
   box-shadow: var(--shadow-sm);
   border: 3px solid transparent;
+  min-width: 64px;
+  min-height: 64px;
 }
 .itemCard:hover {
   transform: translateY(-5px);

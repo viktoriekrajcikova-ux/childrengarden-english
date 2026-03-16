@@ -6,8 +6,16 @@ import type { StandardLevel, LevelItem } from '../../types';
 import PlayButton from '../layout/PlayButton';
 import MessageDisplay from '../shared/MessageDisplay';
 import ItemCard from '../shared/ItemCard';
-import { SCORE_CORRECT, SCORE_PENALTY, DELAY_FEEDBACK, DELAY_WRONG } from '../../constants';
+import HintButton from '../shared/HintButton';
+import { useStreak } from '../../hooks/useStreak';
+import { useAdaptiveDifficulty } from '../../hooks/useAdaptiveDifficulty';
+import { useIdleNudge } from '../../hooks/useIdleNudge';
+import { useAchievements } from '../../hooks/useAchievements';
+import { useAudio } from '../../hooks/useAudio';
+import { SCORE_CORRECT, SCORE_PENALTY, SCORE_HINT_COST, HINT_WRONG_THRESHOLD, STREAK_BONUS_3, STREAK_BONUS_5, DELAY_FEEDBACK, DELAY_WRONG } from '../../constants';
 import styles from '../../styles/grid.module.css';
+
+type CardState = 'idle' | 'clickable' | 'correct' | 'wrong' | 'hidden' | 'hint' | 'correctReveal';
 
 interface Props {
   level: StandardLevel;
@@ -16,19 +24,27 @@ interface Props {
 
 export default function StandardGame({ level, levelIndex }: Props) {
   const { difficulty, addScore, subtractScore, playFanfare, playErrorSound, speak, completeLevel } = useGameSetup();
+  const { playComboSound } = useAudio();
   const setTimer = useTimers();
+  const { streak, incrementStreak, resetStreak } = useStreak();
+  const { adjustedMax, recordCorrect: adaptiveCorrect, recordWrong: adaptiveWrong } = useAdaptiveDifficulty(level.maxDisplay);
+  const { checkAndUnlock } = useAchievements();
 
   const [items, setItems] = useState<LevelItem[]>([]);
   const [remaining, setRemaining] = useState<LevelItem[]>([]);
   const [currentTarget, setCurrentTarget] = useState<LevelItem | null>(null);
   const [canClick, setCanClick] = useState(false);
-  const [cardStates, setCardStates] = useState<Record<string, 'idle' | 'clickable' | 'correct' | 'wrong' | 'hidden'>>({});
+  const [cardStates, setCardStates] = useState<Record<string, CardState>>({});
   const [message, setMessage] = useState('');
   const [playDisabled, setPlayDisabled] = useState(false);
+  const [wrongCount, setWrongCount] = useState(0);
+  const [hintUsed, setHintUsed] = useState(false);
+
+  const { resetIdle } = useIdleNudge(speak, canClick);
 
   useEffect(() => {
     if (!difficulty) return;
-    const selected = getItemsForLevel(level.items, level.maxDisplay, difficulty);
+    const selected = getItemsForLevel(level.items, adjustedMax, difficulty);
     setItems(selected);
     setRemaining([...selected]);
     setCurrentTarget(null);
@@ -36,14 +52,16 @@ export default function StandardGame({ level, levelIndex }: Props) {
     setMessage('');
     setPlayDisabled(false);
     setCardStates({});
-  }, [level, difficulty]);
+    setWrongCount(0);
+    setHintUsed(false);
+  }, [level, difficulty, adjustedMax]);
 
   const handlePlay = useCallback(() => {
     if (remaining.length === 0) return;
 
     // Reset card states
     setCardStates((prev) => {
-      const next: typeof prev = {};
+      const next: Record<string, CardState> = {};
       items.forEach((item) => {
         next[item.name] = prev[item.name] === 'hidden' ? 'hidden' : 'clickable';
       });
@@ -54,15 +72,27 @@ export default function StandardGame({ level, levelIndex }: Props) {
     const target = remaining[randomIndex];
     setCurrentTarget(target);
     setCanClick(true);
+    setWrongCount(0);
+    setHintUsed(false);
     speak(target.name);
     setMessage('Klikni na správnou položku!');
     setPlayDisabled(true);
   }, [remaining, items, speak]);
 
+  const handleHint = useCallback(() => {
+    if (!currentTarget) return;
+    subtractScore(SCORE_HINT_COST);
+    setHintUsed(true);
+    setCardStates((prev) => ({ ...prev, [currentTarget.name]: 'hint' }));
+    speak(currentTarget.name);
+    setMessage('Tady je nápověda! Klikni na zvýrazněnou kartu.');
+  }, [currentTarget, subtractScore, speak]);
+
   const handleItemClick = useCallback(
     (itemName: string) => {
       if (!canClick || !currentTarget || cardStates[itemName] === 'hidden') return;
       setCanClick(false);
+      resetIdle();
 
       // Remove clickable from all
       setCardStates((prev) => {
@@ -75,8 +105,20 @@ export default function StandardGame({ level, levelIndex }: Props) {
 
       if (itemName === currentTarget.name) {
         setCardStates((prev) => ({ ...prev, [itemName]: 'correct' }));
-        addScore(SCORE_CORRECT);
-        setMessage('🎉 Správně! +10 bodů');
+        incrementStreak();
+        adaptiveCorrect();
+        // streak is not yet updated in this render, so use streak+1 for bonus
+        const nextStreak = streak + 1;
+        const bonus = nextStreak >= 5 ? STREAK_BONUS_5 : nextStreak >= 3 ? STREAK_BONUS_3 : 0;
+        addScore(SCORE_CORRECT + bonus);
+        checkAndUnlock('streak_3', nextStreak >= 3);
+        checkAndUnlock('streak_5', nextStreak >= 5);
+        if (bonus > 0) {
+          playComboSound();
+          setMessage(`🎉 Správně! +${SCORE_CORRECT + bonus} bodů (combo bonus!)`);
+        } else {
+          setMessage('🎉 Správně! +10 bodů');
+        }
         playFanfare();
 
         const newRemaining = remaining.filter((item) => item.name !== itemName);
@@ -97,17 +139,33 @@ export default function StandardGame({ level, levelIndex }: Props) {
       } else {
         setCardStates((prev) => ({ ...prev, [itemName]: 'wrong' }));
         subtractScore(SCORE_PENALTY);
-        setMessage('❌ Špatně! -5 bodů. Zkus to znovu.');
         playErrorSound();
+        resetStreak();
+        adaptiveWrong();
+        setWrongCount((c) => c + 1);
+
+        // Show correct answer after wrong
+        setCardStates((prev) => ({ ...prev, [itemName]: 'wrong', [currentTarget.name]: 'correctReveal' }));
+        speak(currentTarget.name);
+
+        const encouragements = ['Nevadí, zkus to znovu!', 'Skoro! Příště to bude!', 'Dobrý pokus!'];
+        setMessage(`❌ ${encouragements[Math.floor(Math.random() * encouragements.length)]} -5 bodů`);
 
         setTimer(() => {
-          setCardStates((prev) => ({ ...prev, [itemName]: 'idle' }));
+          setCardStates((prev) => {
+            const next = { ...prev };
+            if (next[itemName] === 'wrong') next[itemName] = 'idle';
+            if (next[currentTarget.name] === 'correctReveal') next[currentTarget.name] = 'clickable';
+            return next;
+          });
           setPlayDisabled(false);
         }, DELAY_WRONG);
       }
     },
     [canClick, currentTarget, remaining, cardStates, addScore, subtractScore, playFanfare, playErrorSound, completeLevel, levelIndex, setTimer]
   );
+
+  const showHintBtn = wrongCount >= HINT_WRONG_THRESHOLD && !hintUsed && currentTarget && canClick;
 
   return (
     <>
@@ -123,6 +181,7 @@ export default function StandardGame({ level, levelIndex }: Props) {
         ))}
       </div>
       <MessageDisplay text={message} />
+      {showHintBtn && <HintButton onClick={handleHint} />}
       <PlayButton onClick={handlePlay} disabled={playDisabled} />
     </>
   );

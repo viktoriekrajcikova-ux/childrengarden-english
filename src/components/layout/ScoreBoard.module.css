@@ -8,6 +8,9 @@
   color: var(--color-primary);
   font-weight: bold;
   z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .scoreBoard {

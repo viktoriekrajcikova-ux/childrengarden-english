@@ -116,6 +116,14 @@
   margin: 10px 0;
 }
 
+.petName {
+  font-size: 1.3em;
+  font-weight: bold;
+  color: var(--color-primary);
+  margin-bottom: 4px;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
 .petContainer {
   position: relative;
   display: flex;

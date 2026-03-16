@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAtomValue, useSetAtom } from 'jotai';
-import { completedLevelsAtom, difficultyAtom, resetGameAtom, pendingGroupModalAtom, animalTypeAtom } from '../store/atoms';
+import { completedLevelsAtom, difficultyAtom, resetGameAtom, pendingGroupModalAtom, animalTypeAtom, achievementsAtom } from '../store/atoms';
 import { useLevelGroups } from '../hooks/useLevelGroups';
 import { getLevelIcon, isGameLevel } from '../utils/levelGrouping';
 import { getPetStage, getPetEmoji } from '../utils/petUtils';
+import { ACHIEVEMENTS } from '../data/achievements';
 import { cn } from '../utils/cn';
 import ScoreBoard from '../components/layout/ScoreBoard';
 import GroupCompletionModal from '../components/shared/GroupCompletionModal';
@@ -21,7 +22,9 @@ export default function MapPage() {
   const animalType = useAtomValue(animalTypeAtom);
   const pendingModal = useAtomValue(pendingGroupModalAtom);
   const clearPendingModal = useSetAtom(pendingGroupModalAtom);
+  const unlockedAchievements = useAtomValue(achievementsAtom);
   const [modalGroup, setModalGroup] = useState<number | null>(null);
+  const [showAchievements, setShowAchievements] = useState(false);
 
   useEffect(() => {
     if (!difficulty) {
@@ -97,6 +100,9 @@ export default function MapPage() {
         <button className={cn(styles.controlButton, styles.difficultyButton)} onClick={() => navigate('/')} title="Změnit obtížnost">
           <span>{getPetEmoji(getPetStage(completedGroupIndices.length), animalType)}</span>
         </button>
+        <button className={cn(styles.controlButton, styles.practiceButton)} onClick={() => setShowAchievements(true)} title="Úspěchy">
+          🏆
+        </button>
       </div>
 
       <h1 className={styles.title}>🗺️ Mapa levelů</h1>
@@ -163,6 +169,31 @@ export default function MapPage() {
           groupIndex={modalGroup}
           onClose={() => setModalGroup(null)}
         />
+      )}
+
+      {showAchievements && (
+        <div className={styles.achievementOverlay} onClick={() => setShowAchievements(false)}>
+          <div className={styles.achievementModal} onClick={(e) => e.stopPropagation()}>
+            <h2 className={styles.achievementTitle}>🏆 Úspěchy</h2>
+            <div className={styles.achievementList}>
+              {ACHIEVEMENTS.map((a) => {
+                const unlocked = unlockedAchievements.includes(a.id);
+                return (
+                  <div key={a.id} className={cn(styles.achievementItem, !unlocked && styles.achievementLocked)}>
+                    <span className={styles.achievementEmoji}>{unlocked ? a.emoji : '🔒'}</span>
+                    <div>
+                      <div className={styles.achievementName}>{a.title}</div>
+                      <div className={styles.achievementDesc}>{a.description}</div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <button className={styles.achievementCloseBtn} onClick={() => setShowAchievements(false)}>
+              Zavřít
+            </button>
+          </div>
+        </div>
       )}
     </div>
     </>

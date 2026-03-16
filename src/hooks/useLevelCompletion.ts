@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAtomValue, useSetAtom } from 'jotai';
-import { completedLevelsAtom, completeLevelAtom, pendingGroupModalAtom } from '../store/atoms';
+import { completedLevelsAtom, completeLevelAtom, pendingGroupModalAtom, achievementsAtom } from '../store/atoms';
 import { useAudio } from './useAudio';
 import { useTimers } from './useTimers';
 import { levels } from '../data/levels';
@@ -12,9 +12,19 @@ export function useLevelCompletion() {
   const completedLevels = useAtomValue(completedLevelsAtom);
   const dispatchCompleteLevel = useSetAtom(completeLevelAtom);
   const setPendingModal = useSetAtom(pendingGroupModalAtom);
+  const [achievements, setAchievements] = [useAtomValue(achievementsAtom), useSetAtom(achievementsAtom)];
   const { playFanfare, playVictoryFanfare } = useAudio();
   const setTimer = useTimers();
   const navigate = useNavigate();
+
+  const unlockAchievement = useCallback(
+    (id: string) => {
+      if (!achievements.includes(id)) {
+        setAchievements([...achievements, id]);
+      }
+    },
+    [achievements, setAchievements]
+  );
 
   const completeLevel = useCallback(
     (levelIndex: number) => {
@@ -35,6 +45,14 @@ export function useLevelCompletion() {
         playFanfare();
       }
 
+      // Achievement checks
+      if (newCompleted.length === 1) unlockAchievement('first_level');
+      if (newCompleted.length === levels.length) unlockAchievement('all_levels');
+
+      // Check all standard levels completed
+      const allStandard = levels.every((l, i) => l.type !== 'standard' || newCompleted.includes(i));
+      if (allStandard) unlockAchievement('all_standard');
+
       if (newCompleted.length === levels.length) {
         setTimer(() => navigate('/victory'), DELAY_TRANSITION);
       } else {
@@ -42,7 +60,7 @@ export function useLevelCompletion() {
         setTimer(() => navigate(`/map?scrollTo=${nextLevel}`), DELAY_TRANSITION);
       }
     },
-    [completedLevels, dispatchCompleteLevel, setPendingModal, navigate, playFanfare, playVictoryFanfare, setTimer]
+    [completedLevels, dispatchCompleteLevel, setPendingModal, navigate, playFanfare, playVictoryFanfare, setTimer, unlockAchievement]
   );
 
   return { completeLevel };

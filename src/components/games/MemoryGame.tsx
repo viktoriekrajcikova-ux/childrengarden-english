@@ -52,7 +52,7 @@ export default function MemoryGame({ levelIndex }: Props) {
     setMatched(new Set());
     matchedPairsRef.current = 0;
     canFlipRef.current = true;
-  }, [difficulty]);
+  }, [difficulty, levelIndex]);
 
   const handleCardClick = useCallback(
     (cardId: number, item: LevelItem) => {

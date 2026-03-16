@@ -9,7 +9,7 @@ export function useGameSetup() {
   const addScore = useSetAtom(addScoreAtom);
   const subtractScore = useSetAtom(subtractScoreAtom);
   const { playFanfare, playErrorSound } = useAudio();
-  const { speak } = useSpeech();
+  const { speak } = useSpeech(difficulty);
   const { completeLevel } = useLevelCompletion();
 
   return { difficulty, addScore, subtractScore, playFanfare, playErrorSound, speak, completeLevel };

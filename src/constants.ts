@@ -42,3 +42,15 @@ export const DELAY_PET_REACTION = 1000;
 // Pet limits
 export const PET_MAX_INVENTORY = 6;
 export const PET_HUNGER_THRESHOLD = 24 * 60 * 60 * 1000; // 24 hours in ms
+
+// Hint system
+export const SCORE_HINT_COST = 3;
+export const HINT_WRONG_THRESHOLD = 2;
+
+// Streak / combo
+export const STREAK_BONUS_3 = 2;
+export const STREAK_BONUS_5 = 5;
+
+// Idle nudge
+export const IDLE_NUDGE_MS = 15000;
+export const IDLE_HINT_MS = 30000;

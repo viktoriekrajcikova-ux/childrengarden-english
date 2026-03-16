@@ -1,0 +1,21 @@
+.wrapper {
+  text-align: center;
+  padding: 5px;
+}
+.indicator {
+  display: inline-block;
+  background: linear-gradient(135deg, #ff9800 0%, #f44336 100%);
+  color: white;
+  border-radius: var(--radius-full);
+  padding: 6px 18px;
+  font-weight: bold;
+  font-size: 1em;
+  animation: streakPop 0.4s ease;
+  box-shadow: 0 3px 10px rgba(255, 152, 0, 0.4);
+}
+
+@keyframes streakPop {
+  0% { transform: scale(0.5); opacity: 0; }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); opacity: 1; }
+}

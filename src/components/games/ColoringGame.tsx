@@ -8,7 +8,10 @@ import { cn } from '../../utils/cn';
 import PlayButton from '../layout/PlayButton';
 import GameHeader from '../shared/GameHeader';
 import MessageDisplay from '../shared/MessageDisplay';
-import { SCORE_CORRECT, DELAY_SHORT, DELAY_WRONG } from '../../constants';
+import HintButton from '../shared/HintButton';
+import { useStreak } from '../../hooks/useStreak';
+import { useAudio } from '../../hooks/useAudio';
+import { SCORE_CORRECT, SCORE_HINT_COST, HINT_WRONG_THRESHOLD, STREAK_BONUS_3, STREAK_BONUS_5, DELAY_SHORT, DELAY_WRONG } from '../../constants';
 import styles from './ColoringGame.module.css';
 
 interface Props {
@@ -17,8 +20,10 @@ interface Props {
 }
 
 export default function ColoringGame({ level, levelIndex }: Props) {
-  const { difficulty, addScore, playFanfare, playErrorSound, speak, completeLevel } = useGameSetup();
+  const { difficulty, addScore, subtractScore, playFanfare, playErrorSound, speak, completeLevel } = useGameSetup();
+  const { playComboSound } = useAudio();
   const setTimer = useTimers();
+  const { streak, incrementStreak, resetStreak } = useStreak();
 
   const [targetColor, setTargetColor] = useState<ColorItem | null>(null);
   const [targetShape, setTargetShape] = useState<ShapeItem | null>(null);
@@ -31,6 +36,8 @@ export default function ColoringGame({ level, levelIndex }: Props) {
   const [removedColors, setRemovedColors] = useState<Set<string>>(new Set());
   const [availableColors, setAvailableColors] = useState<ColorItem[]>([]);
   const [transitioning, setTransitioning] = useState(false);
+  const [wrongCount, setWrongCount] = useState(0);
+  const [hintUsed, setHintUsed] = useState(false);
 
   const remainingRef = useRef<ColorItem[]>([]);
   const initializedRef = useRef(false);
@@ -54,6 +61,8 @@ export default function ColoringGame({ level, levelIndex }: Props) {
     setTargetColor(newTargetColor);
     setSelectedColor(null);
     setTransitioning(false);
+    setWrongCount(0);
+    setHintUsed(false);
 
     setMessage('Klikni na PLAY a poslechni si barvu a tvar!');
     setPlayDisabled(false);
@@ -111,6 +120,8 @@ export default function ColoringGame({ level, levelIndex }: Props) {
     if (selectedColor.name !== targetColor.name) {
       setMessage('❌ Špatná barva! Zkus to znovu.');
       playErrorSound();
+      resetStreak();
+      setWrongCount((c) => c + 1);
       setTimer(() => setPlayDisabled(false), DELAY_WRONG);
       return;
     }
@@ -118,6 +129,8 @@ export default function ColoringGame({ level, levelIndex }: Props) {
     if (shape.name !== targetShape.name) {
       setMessage('❌ Špatný tvar! Zkus to znovu.');
       playErrorSound();
+      resetStreak();
+      setWrongCount((c) => c + 1);
       setTimer(() => setPlayDisabled(false), DELAY_WRONG);
       return;
     }
@@ -125,8 +138,16 @@ export default function ColoringGame({ level, levelIndex }: Props) {
     // Correct
     setColoredShapeStyles((prev) => ({ ...prev, [shape.name]: selectedColor.color }));
     setColoredShapeSet((prev) => new Set([...prev, `${shape.name}-${selectedColor.name}`]));
-    addScore(SCORE_CORRECT);
-    setMessage('🎉 Skvěle! +10 bodů');
+    incrementStreak();
+    const nextStreak = streak + 1;
+    const bonus = nextStreak >= 5 ? STREAK_BONUS_5 : nextStreak >= 3 ? STREAK_BONUS_3 : 0;
+    addScore(SCORE_CORRECT + bonus);
+    if (bonus > 0) {
+      playComboSound();
+      setMessage(`🎉 Skvěle! +${SCORE_CORRECT + bonus} bodů (combo!)`);
+    } else {
+      setMessage('🎉 Skvěle! +10 bodů');
+    }
     playFanfare();
 
     const newRemaining = remainingRef.current.filter((c) => c.name !== targetColor.name);
@@ -139,6 +160,17 @@ export default function ColoringGame({ level, levelIndex }: Props) {
       loadNextShape(newRemaining);
     }, DELAY_WRONG);
   };
+
+  const handleHint = () => {
+    if (!targetColor || !targetShape) return;
+    subtractScore(SCORE_HINT_COST);
+    setHintUsed(true);
+    speak(`${targetColor.name} ${targetShape.name}`);
+    setSelectedColor(targetColor);
+    setMessage(`Nápověda: ${targetColor.czech} ${targetShape.czech}!`);
+  };
+
+  const showHintBtn = wrongCount >= HINT_WRONG_THRESHOLD && !hintUsed && !transitioning;
 
   const getShapeClass = (shapeName: string) => {
     switch (shapeName) {
@@ -184,6 +216,7 @@ export default function ColoringGame({ level, levelIndex }: Props) {
           />
         ))}
       </div>
+      {showHintBtn && <HintButton onClick={handleHint} />}
       <MessageDisplay text={message} />
       <PlayButton onClick={handlePlay} disabled={playDisabled} />
     </div>

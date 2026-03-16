@@ -4,7 +4,7 @@ import styles from './ItemCard.module.css';
 interface Props {
   emoji: string;
   czech: string;
-  state?: 'idle' | 'clickable' | 'correct' | 'wrong' | 'hidden';
+  state?: 'idle' | 'clickable' | 'correct' | 'wrong' | 'hidden' | 'hint' | 'correctReveal';
   onClick?: () => void;
 }
 
@@ -17,6 +17,8 @@ export default function ItemCard({ emoji, czech, state = 'idle', onClick }: Prop
         state === 'correct' && styles.correct,
         state === 'wrong' && styles.wrong,
         state === 'hidden' && styles.hidden,
+        state === 'hint' && styles.hint,
+        state === 'correctReveal' && styles.correctReveal,
       )}
       onClick={onClick}
     >

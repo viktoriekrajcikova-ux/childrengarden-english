@@ -6,6 +6,8 @@
   cursor: pointer;
   transition: all 0.3s ease;
   border: 3px solid transparent;
+  min-height: 80px;
+  min-width: 80px;
 }
 .card:hover {
   transform: scale(1.05);
@@ -29,6 +31,25 @@
   transform: scale(0);
   pointer-events: none;
 }
+.hint {
+  border-color: gold;
+  animation: hintPulse 1.2s infinite;
+}
+.correctReveal {
+  border-color: #FFA726;
+  background: #FFF3E0;
+  animation: revealPulse 1s;
+}
+
+@keyframes hintPulse {
+  0%, 100% { box-shadow: 0 0 5px rgba(255, 215, 0, 0.4); }
+  50% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.8); }
+}
+@keyframes revealPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+  100% { transform: scale(1); }
+}
 .emoji {
   font-size: 5em;
   margin-bottom: 10px;
@@ -40,7 +61,7 @@
 }
 
 @media (max-width: 768px) {
-  .card { padding: 12px; }
+  .card { padding: 12px; min-height: 64px; min-width: 64px; }
   .emoji { font-size: 3em; }
   .name { font-size: 1em; }
 }

@@ -13,6 +13,7 @@ difficultyStorage.getItem = (key, initialValue) => {
   return originalGetItem(key, initialValue);
 };
 
+export const volumeAtom = atomWithStorage<number>('englishGameVolume', 0.5);
 export const scoreAtom = atomWithStorage<number>('englishGameScore', 0);
 export const completedLevelsAtom = atomWithStorage<number[]>('englishGameCompletedLevels', []);
 export const difficultyAtom = atomWithStorage<Difficulty | null>('englishGameDifficulty', null, difficultyStorage);
@@ -20,6 +21,10 @@ export const fedFoodAtom = atomWithStorage<Record<string, number>>('englishGameF
 export const mutedAtom = atomWithStorage<boolean>('englishGameMuted', false);
 export const lastSeenPetStageAtom = atomWithStorage<string>('englishGameLastPetStage', 'small');
 export const lastFedTimeAtom = atomWithStorage<number>('englishGameLastFedTime', 0);
+export const seenTutorialsAtom = atomWithStorage<string[]>('englishGameTutorials', []);
+export const petNameAtom = atomWithStorage<string>('englishGamePetName', '');
+export const streakAtom = atom(0);
+export const achievementsAtom = atomWithStorage<string[]>('englishGameAchievements', []);
 
 // Derived write atoms for common actions
 export const addScoreAtom = atom(null, (get, set, amount: number) => {
@@ -61,4 +66,8 @@ export const resetGameAtom = atom(null, (_get, set) => {
   set(difficultyAtom, null);
   set(pendingGroupModalAtom, null);
   set(fedFoodAtom, {});
+  set(petNameAtom, '');
+  set(seenTutorialsAtom, []);
+  set(achievementsAtom, []);
+  set(streakAtom, 0);
 });

@@ -4,6 +4,7 @@ import { useAtomValue } from 'jotai';
 import { difficultyAtom } from '../store/atoms';
 import { levels } from '../data/levels';
 import GameLayout from '../components/layout/GameLayout';
+import GameInstructions from '../components/shared/GameInstructions';
 import PracticeButton from '../components/shared/PracticeButton';
 import styles from './LevelPage.module.css';
 
@@ -68,7 +69,9 @@ export default function LevelPage() {
       className={isRestaurant ? styles.restaurantBg : undefined}
     >
       <Suspense fallback={<div style={{ textAlign: 'center', padding: '40px', fontSize: '2em' }}>Nahrávám...</div>}>
-        {renderGame()}
+        <GameInstructions type={level.type}>
+          {renderGame()}
+        </GameInstructions>
       </Suspense>
       <PracticeButton />
     </GameLayout>
