@@ -37,3 +37,49 @@ export function generatePetCSS(c: PetAnimConfig): string {
     @keyframes beakDroop${S} { 0%,100% { transform: translateY(0); } 50% { transform: translateY(3px); } }
   `;
 }
+
+/* ── Fox animations ── */
+
+export interface FoxAnimConfig {
+  suffix: string;
+  blinkDuration: number;
+  earTwitchDuration: number;
+  earTwitchAngle: number;
+  tailWagDuration: number;
+  tailWagAngle: number;
+  earOrigins: { left: string; right: string };
+  tailOrigin: string;
+}
+
+export function generateFoxCSS(c: FoxAnimConfig): string {
+  const s = c.suffix;
+  const S = s.toUpperCase();
+  return `
+    .ear-left-${s} { transform-origin: ${c.earOrigins.left}; animation: earTwitchL${S} ${c.earTwitchDuration}s ease-in-out infinite; }
+    .ear-right-${s} { transform-origin: ${c.earOrigins.right}; animation: earTwitchR${S} ${c.earTwitchDuration}s ease-in-out infinite; }
+    @keyframes earTwitchL${S} { 0%,80%,100% { transform: rotate(0deg); } 90% { transform: rotate(-${c.earTwitchAngle}deg); } }
+    @keyframes earTwitchR${S} { 0%,80%,100% { transform: rotate(0deg); } 90% { transform: rotate(${c.earTwitchAngle}deg); } }
+    .eyelid-${s} { animation: blink${S} ${c.blinkDuration}s ease-in-out infinite; }
+    @keyframes blink${S} {
+      0%,90%,100% { transform: scaleY(0); }
+      95% { transform: scaleY(1); }
+    }
+    .tail-wag-${s} { transform-origin: ${c.tailOrigin}; animation: tailWag${S} ${c.tailWagDuration}s ease-in-out infinite; }
+    @keyframes tailWag${S} {
+      0%,100% { transform: rotate(0deg); }
+      25% { transform: rotate(-${c.tailWagAngle}deg); }
+      75% { transform: rotate(${c.tailWagAngle}deg); }
+    }
+    .tail-droop-${s} { transform-origin: ${c.tailOrigin}; animation: tailDroop${S} 2s ease-in-out infinite; }
+    @keyframes tailDroop${S} { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(15deg); } }
+    .ear-droop-left-${s} { transform-origin: ${c.earOrigins.left}; animation: earDroopL${S} 2s ease-in-out infinite; }
+    .ear-droop-right-${s} { transform-origin: ${c.earOrigins.right}; animation: earDroopR${S} 2s ease-in-out infinite; }
+    @keyframes earDroopL${S} { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(15deg); } }
+    @keyframes earDroopR${S} { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(-15deg); } }
+  `;
+}
+
+/* ── Lion animations (same ear+tail pattern) ── */
+
+export type LionAnimConfig = FoxAnimConfig;
+export const generateLionCSS = generateFoxCSS;

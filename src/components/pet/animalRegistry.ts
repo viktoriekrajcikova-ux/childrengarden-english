@@ -3,6 +3,12 @@ import type { PetMood } from './Pet';
 import ChickSmall from './chick/ChickSmall';
 import ChickMedium from './chick/ChickMedium';
 import ChickAdult from './chick/ChickAdult';
+import FoxSmall from './fox/FoxSmall';
+import FoxMedium from './fox/FoxMedium';
+import FoxAdult from './fox/FoxAdult';
+import LionSmall from './lion/LionSmall';
+import LionMedium from './lion/LionMedium';
+import LionAdult from './lion/LionAdult';
 
 interface AnimalDef {
   stages: Record<PetStage, React.FC<{ mood: PetMood }>>;
@@ -15,13 +21,11 @@ export const ANIMAL_REGISTRY: Record<AnimalType, AnimalDef> = {
     emoji: { small: '🐣', medium: '🐥', adult: '🐔' },
   },
   fox: {
-    // Placeholder — reuses chick SVGs until fox artwork is added
-    stages: { small: ChickSmall, medium: ChickMedium, adult: ChickAdult },
+    stages: { small: FoxSmall, medium: FoxMedium, adult: FoxAdult },
     emoji: { small: '🦊', medium: '🦊', adult: '🦊' },
   },
   lion: {
-    // Placeholder — reuses chick SVGs until lion artwork is added
-    stages: { small: ChickSmall, medium: ChickMedium, adult: ChickAdult },
+    stages: { small: LionSmall, medium: LionMedium, adult: LionAdult },
     emoji: { small: '🦁', medium: '🦁', adult: '🦁' },
   },
 };
