@@ -25,6 +25,7 @@ export const seenTutorialsAtom = atomWithStorage<string[]>('englishGameTutorials
 export const petNameAtom = atomWithStorage<string>('englishGamePetName', '');
 export const streakAtom = atom(0);
 export const achievementsAtom = atomWithStorage<string[]>('englishGameAchievements', []);
+export const hasHatchedAtom = atomWithStorage<boolean>('englishGameHasHatched', false);
 
 // Derived write atoms for common actions
 export const addScoreAtom = atom(null, (get, set, amount: number) => {
@@ -70,4 +71,5 @@ export const resetGameAtom = atom(null, (_get, set) => {
   set(seenTutorialsAtom, []);
   set(achievementsAtom, []);
   set(streakAtom, 0);
+  set(hasHatchedAtom, false);
 });

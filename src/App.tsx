@@ -9,6 +9,7 @@ const ReviewPage = lazy(() => import('./pages/ReviewPage'));
 const VictoryPage = lazy(() => import('./pages/VictoryPage'));
 const PetCarePage = lazy(() => import('./pages/PetCarePage'));
 const CertificatePage = lazy(() => import('./pages/CertificatePage'));
+const EggHatchPage = lazy(() => import('./pages/EggHatchPage'));
 
 export default function App() {
   return (
@@ -17,6 +18,7 @@ export default function App() {
       <Suspense fallback={<div style={{ textAlign: 'center', paddingTop: '40vh', fontSize: '2em' }}>Nahrávám...</div>}>
       <Routes>
         <Route path="/" element={<DifficultyPage />} />
+        <Route path="/egg-hatch" element={<EggHatchPage />} />
         <Route path="/map" element={<MapPage />} />
         <Route path="/level/:id" element={<LevelPage />} />
         <Route path="/review" element={<ReviewPage />} />

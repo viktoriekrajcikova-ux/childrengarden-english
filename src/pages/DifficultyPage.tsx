@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
-import { useSetAtom } from 'jotai';
-import { difficultyAtom } from '../store/atoms';
+import { useSetAtom, useAtomValue } from 'jotai';
+import { difficultyAtom, hasHatchedAtom } from '../store/atoms';
 import { useAudio } from '../hooks/useAudio';
 import type { Difficulty } from '../types';
 import styles from './DifficultyPage.module.css';
@@ -13,13 +13,14 @@ const difficulties: { key: Difficulty; emoji: string; name: string; description:
 
 export default function DifficultyPage() {
   const setDifficulty = useSetAtom(difficultyAtom);
+  const hasHatched = useAtomValue(hasHatchedAtom);
   const navigate = useNavigate();
   const { playGameStartSound } = useAudio();
 
   const selectDifficulty = (d: Difficulty) => {
     setDifficulty(d);
     playGameStartSound();
-    navigate('/map');
+    navigate(hasHatched ? '/map' : '/egg-hatch');
   };
 
   return (

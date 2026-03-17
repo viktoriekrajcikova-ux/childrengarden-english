@@ -11,14 +11,13 @@ import { useAudio } from '../hooks/useAudio';
 import { useTimers } from '../hooks/useTimers';
 import { useTouchDrag } from '../hooks/useTouchDrag';
 import { useLevelGroups } from '../hooks/useLevelGroups';
-import { getPetStage, getPetEmoji } from '../utils/petUtils';
+import { getPetStage } from '../utils/petUtils';
 import {
   SHOP_GRAIN_PRICE, SHOP_APPLE_PRICE, SHOP_CAKE_PRICE,
   DELAY_PET_ACTION, DELAY_BULLDOZER, DELAY_SHOWER, DELAY_PET_REACTION,
   PET_MIN_FED, PET_MAX_INVENTORY, PET_HUNGER_THRESHOLD,
 } from '../constants';
 import Pet from '../components/pet/Pet';
-import PetNameDialog from '../components/pet/PetNameDialog';
 import type { PetAnimation, PetMood } from '../components/pet/Pet';
 import SpeechBubble from '../components/pet/SpeechBubble';
 import Inventory from '../components/pet/Inventory';
@@ -127,7 +126,6 @@ export default function PetCarePage() {
   const speechTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const speechFadeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
-  const [showNameDialog, setShowNameDialog] = useState(false);
   const initDone = useRef(false);
 
   // --- SPEECH BUBBLE AUTO-HIDE ---
@@ -160,11 +158,6 @@ export default function PetCarePage() {
   useEffect(() => {
     if (initDone.current) return;
     initDone.current = true;
-
-    // Show name dialog if no name set
-    if (!petName) {
-      setShowNameDialog(true);
-    }
 
     // Check for growth celebration first
     if (petStage !== lastSeenPetStage) {
@@ -551,14 +544,6 @@ export default function PetCarePage() {
 
   return (
     <div className={styles.wrapper}>
-      {/* Pet name dialog */}
-      {showNameDialog && (
-        <PetNameDialog
-          petEmoji={getPetEmoji(petStage, animalType)}
-          onDone={() => setShowNameDialog(false)}
-        />
-      )}
-
       {/* Confetti overlay */}
       {renderConfetti()}
 
