@@ -11,7 +11,8 @@ import { useStreak } from '../../hooks/useStreak';
 import { useAdaptiveDifficulty } from '../../hooks/useAdaptiveDifficulty';
 import { useIdleNudge } from '../../hooks/useIdleNudge';
 import { useAudio } from '../../hooks/useAudio';
-import { ROUNDS_REQUIRED, SCORE_CORRECT, SCORE_PENALTY, SCORE_HINT_COST, HINT_WRONG_THRESHOLD, STREAK_BONUS_3, STREAK_BONUS_5, DELAY_SHORT, DELAY_WRONG, DELAY_TRANSITION, DELAY_WRONG_LONG, COUNTING_MAX_TARGET, COUNTING_TOTAL_MIN, COUNTING_TOTAL_EXTRA, COUNTING_OPTION_RANGE } from '../../constants';
+import { ROUNDS_REQUIRED, SCORE_PENALTY, SCORE_HINT_COST, HINT_WRONG_THRESHOLD, DELAY_SHORT, DELAY_WRONG, DELAY_TRANSITION, DELAY_WRONG_LONG, COUNTING_MAX_TARGET, COUNTING_TOTAL_MIN, COUNTING_TOTAL_EXTRA, COUNTING_OPTION_RANGE, ENCOURAGEMENTS } from '../../constants';
+import { pickRandom } from '../../utils/shuffle';
 import styles from './CountingGame.module.css';
 
 interface Props {
@@ -23,7 +24,7 @@ export default function CountingGame({ level, levelIndex }: Props) {
   const { difficulty, addScore, subtractScore, playFanfare, playErrorSound, speak, completeLevel } = useGameSetup();
   const { playComboSound } = useAudio();
   const setTimer = useTimers();
-  const { streak, incrementStreak, resetStreak } = useStreak();
+  const { incrementStreak, resetStreak, getCorrectScore } = useStreak();
   const baseNumOpts = difficulty === 'easy' ? 3 : difficulty === 'medium' ? 4 : 6;
   const { adjustedMax: adjustedNumOpts, recordCorrect: adaptiveCorrect, recordWrong: adaptiveWrong } = useAdaptiveDifficulty(baseNumOpts);
 
@@ -89,11 +90,10 @@ export default function CountingGame({ level, levelIndex }: Props) {
 
     if (selected === correctCount) {
       setButtonStates((prev) => ({ ...prev, [selected]: 'correct' }));
+      const { total, bonus } = getCorrectScore();
       incrementStreak();
       adaptiveCorrect();
-      const nextStreak = streak + 1;
-      const bonus = nextStreak >= 5 ? STREAK_BONUS_5 : nextStreak >= 3 ? STREAK_BONUS_3 : 0;
-      addScore(SCORE_CORRECT + bonus);
+      addScore(total);
       if (bonus > 0) playComboSound();
       playFanfare();
       speak(String(correctCount));
@@ -113,8 +113,7 @@ export default function CountingGame({ level, levelIndex }: Props) {
       setButtonStates((prev) => ({ ...prev, [selected]: 'incorrect', [correctCount]: 'correct' }));
       subtractScore(SCORE_PENALTY);
       speak(String(correctCount));
-      const encouragements = ['Nevadí, zkus to znovu!', 'Skoro! Příště to bude!', 'Dobrý pokus!'];
-      setMessage(`❌ ${encouragements[Math.floor(Math.random() * encouragements.length)]} Správně: ${correctCount}. -5 bodů`);
+      setMessage(`❌ ${pickRandom(ENCOURAGEMENTS)} Správně: ${correctCount}. -5 bodů`);
       playErrorSound();
       resetStreak();
       adaptiveWrong();

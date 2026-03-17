@@ -11,7 +11,7 @@ import MessageDisplay from '../shared/MessageDisplay';
 import HintButton from '../shared/HintButton';
 import { useStreak } from '../../hooks/useStreak';
 import { useAudio } from '../../hooks/useAudio';
-import { SCORE_CORRECT, SCORE_HINT_COST, HINT_WRONG_THRESHOLD, STREAK_BONUS_3, STREAK_BONUS_5, DELAY_SHORT, DELAY_WRONG } from '../../constants';
+import { SCORE_HINT_COST, HINT_WRONG_THRESHOLD, DELAY_SHORT, DELAY_WRONG } from '../../constants';
 import styles from './ColoringGame.module.css';
 
 interface Props {
@@ -23,7 +23,7 @@ export default function ColoringGame({ level, levelIndex }: Props) {
   const { difficulty, addScore, subtractScore, playFanfare, playErrorSound, speak, completeLevel } = useGameSetup();
   const { playComboSound } = useAudio();
   const setTimer = useTimers();
-  const { streak, incrementStreak, resetStreak } = useStreak();
+  const { incrementStreak, resetStreak, getCorrectScore } = useStreak();
 
   const [targetColor, setTargetColor] = useState<ColorItem | null>(null);
   const [targetShape, setTargetShape] = useState<ShapeItem | null>(null);
@@ -138,13 +138,12 @@ export default function ColoringGame({ level, levelIndex }: Props) {
     // Correct
     setColoredShapeStyles((prev) => ({ ...prev, [shape.name]: selectedColor.color }));
     setColoredShapeSet((prev) => new Set([...prev, `${shape.name}-${selectedColor.name}`]));
+    const { total, bonus } = getCorrectScore();
     incrementStreak();
-    const nextStreak = streak + 1;
-    const bonus = nextStreak >= 5 ? STREAK_BONUS_5 : nextStreak >= 3 ? STREAK_BONUS_3 : 0;
-    addScore(SCORE_CORRECT + bonus);
+    addScore(total);
     if (bonus > 0) {
       playComboSound();
-      setMessage(`🎉 Skvěle! +${SCORE_CORRECT + bonus} bodů (combo!)`);
+      setMessage(`🎉 Skvěle! +${total} bodů (combo!)`);
     } else {
       setMessage('🎉 Skvěle! +10 bodů');
     }

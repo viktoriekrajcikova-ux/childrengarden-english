@@ -10,7 +10,7 @@ import GameHeader from '../shared/GameHeader';
 import MessageDisplay from '../shared/MessageDisplay';
 import { useStreak } from '../../hooks/useStreak';
 import { useAudio } from '../../hooks/useAudio';
-import { SCORE_CORRECT, SCORE_PENALTY, STREAK_BONUS_3, STREAK_BONUS_5, DELAY_SHORT, DELAY_WRONG, DELAY_TRANSITION } from '../../constants';
+import { SCORE_PENALTY, DELAY_SHORT, DELAY_WRONG, DELAY_TRANSITION } from '../../constants';
 import styles from './RestaurantGame.module.css';
 
 interface Props {
@@ -22,7 +22,7 @@ export default function RestaurantGame({ level, levelIndex }: Props) {
   const { difficulty, addScore, subtractScore, playFanfare, playErrorSound, speak, completeLevel } = useGameSetup();
   const { playComboSound } = useAudio();
   const setTimer = useTimers();
-  const { streak, incrementStreak, resetStreak } = useStreak();
+  const { incrementStreak, resetStreak, getCorrectScore } = useStreak();
 
   const [served, setServed] = useState(0);
   const [currentDrink, setCurrentDrink] = useState<DrinkItem | null>(null);
@@ -56,13 +56,12 @@ export default function RestaurantGame({ level, levelIndex }: Props) {
     if (!currentDrink) return;
 
     if (drink.name === currentDrink.name) {
+      const { total, bonus } = getCorrectScore();
       incrementStreak();
-      const nextStreak = streak + 1;
-      const bonus = nextStreak >= 5 ? STREAK_BONUS_5 : nextStreak >= 3 ? STREAK_BONUS_3 : 0;
-      addScore(SCORE_CORRECT + bonus);
+      addScore(total);
       if (bonus > 0) {
         playComboSound();
-        setMessage(`🎉 Správně! +${SCORE_CORRECT + bonus} bodů (combo!)`);
+        setMessage(`🎉 Správně! +${total} bodů (combo!)`);
       } else {
         setMessage('🎉 Správně! +10 bodů');
       }

@@ -7,6 +7,7 @@ import { useLevelGroups } from '../hooks/useLevelGroups';
 import { getLevelIcon, isGameLevel } from '../utils/levelGrouping';
 import { getPetStage, getPetEmoji } from '../utils/petUtils';
 import { ACHIEVEMENTS } from '../data/achievements';
+import { DAILY_REWARD_BASE, DAILY_REWARD_PER_STREAK, DAILY_REWARD_MAX } from '../constants';
 import { cn } from '../utils/cn';
 import ScoreBoard from '../components/layout/ScoreBoard';
 import GroupCompletionModal from '../components/shared/GroupCompletionModal';
@@ -53,7 +54,7 @@ export default function MapPage() {
   }, [difficulty, playedToday]);
 
   const claimDailyReward = () => {
-    const bonus = Math.min(5 + currentStreak * 2, 25); // 5-25 points based on streak
+    const bonus = Math.min(DAILY_REWARD_BASE + currentStreak * DAILY_REWARD_PER_STREAK, DAILY_REWARD_MAX);
     addScore(bonus);
     recordToday();
     setShowDailyReward(false);

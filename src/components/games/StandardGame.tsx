@@ -12,7 +12,8 @@ import { useAdaptiveDifficulty } from '../../hooks/useAdaptiveDifficulty';
 import { useIdleNudge } from '../../hooks/useIdleNudge';
 import { useAchievements } from '../../hooks/useAchievements';
 import { useAudio } from '../../hooks/useAudio';
-import { SCORE_CORRECT, SCORE_PENALTY, SCORE_HINT_COST, HINT_WRONG_THRESHOLD, STREAK_BONUS_3, STREAK_BONUS_5, DELAY_FEEDBACK, DELAY_WRONG } from '../../constants';
+import { SCORE_PENALTY, SCORE_HINT_COST, HINT_WRONG_THRESHOLD, DELAY_FEEDBACK, DELAY_WRONG, ENCOURAGEMENTS } from '../../constants';
+import { pickRandom } from '../../utils/shuffle';
 import styles from '../../styles/grid.module.css';
 
 type CardState = 'idle' | 'clickable' | 'correct' | 'wrong' | 'hidden' | 'hint' | 'correctReveal';
@@ -26,7 +27,7 @@ export default function StandardGame({ level, levelIndex }: Props) {
   const { difficulty, addScore, subtractScore, playFanfare, playErrorSound, speak, completeLevel } = useGameSetup();
   const { playComboSound } = useAudio();
   const setTimer = useTimers();
-  const { streak, incrementStreak, resetStreak } = useStreak();
+  const { incrementStreak, resetStreak, getCorrectScore } = useStreak();
   const { adjustedMax, recordCorrect: adaptiveCorrect, recordWrong: adaptiveWrong } = useAdaptiveDifficulty(level.maxDisplay);
   const { checkAndUnlock } = useAchievements();
 
@@ -105,17 +106,15 @@ export default function StandardGame({ level, levelIndex }: Props) {
 
       if (itemName === currentTarget.name) {
         setCardStates((prev) => ({ ...prev, [itemName]: 'correct' }));
+        const { total, bonus } = getCorrectScore();
         incrementStreak();
         adaptiveCorrect();
-        // streak is not yet updated in this render, so use streak+1 for bonus
-        const nextStreak = streak + 1;
-        const bonus = nextStreak >= 5 ? STREAK_BONUS_5 : nextStreak >= 3 ? STREAK_BONUS_3 : 0;
-        addScore(SCORE_CORRECT + bonus);
-        checkAndUnlock('streak_3', nextStreak >= 3);
-        checkAndUnlock('streak_5', nextStreak >= 5);
+        addScore(total);
+        checkAndUnlock('streak_3', bonus > 0);
+        checkAndUnlock('streak_5', bonus >= 5);
         if (bonus > 0) {
           playComboSound();
-          setMessage(`🎉 Správně! +${SCORE_CORRECT + bonus} bodů (combo bonus!)`);
+          setMessage(`🎉 Správně! +${total} bodů (combo bonus!)`);
         } else {
           setMessage('🎉 Správně! +10 bodů');
         }
@@ -148,8 +147,7 @@ export default function StandardGame({ level, levelIndex }: Props) {
         setCardStates((prev) => ({ ...prev, [itemName]: 'wrong', [currentTarget.name]: 'correctReveal' }));
         speak(currentTarget.name);
 
-        const encouragements = ['Nevadí, zkus to znovu!', 'Skoro! Příště to bude!', 'Dobrý pokus!'];
-        setMessage(`❌ ${encouragements[Math.floor(Math.random() * encouragements.length)]} -5 bodů`);
+        setMessage(`❌ ${pickRandom(ENCOURAGEMENTS)} -5 bodů`);
 
         setTimer(() => {
           setCardStates((prev) => {
@@ -162,7 +160,7 @@ export default function StandardGame({ level, levelIndex }: Props) {
         }, DELAY_WRONG);
       }
     },
-    [canClick, currentTarget, remaining, cardStates, addScore, subtractScore, playFanfare, playErrorSound, completeLevel, levelIndex, setTimer]
+    [canClick, currentTarget, remaining, cardStates, addScore, subtractScore, playFanfare, playErrorSound, completeLevel, levelIndex, setTimer, getCorrectScore, incrementStreak, resetStreak, adaptiveCorrect, adaptiveWrong, playComboSound, checkAndUnlock, resetIdle]
   );
 
   const showHintBtn = wrongCount >= HINT_WRONG_THRESHOLD && !hintUsed && currentTarget && canClick;

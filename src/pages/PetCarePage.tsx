@@ -22,6 +22,7 @@ import type { PetAnimation, PetMood } from '../components/pet/Pet';
 import SpeechBubble from '../components/pet/SpeechBubble';
 import Inventory from '../components/pet/Inventory';
 import type { FoodItem } from '../components/pet/Inventory';
+import { pickRandom } from '../utils/shuffle';
 import { cn } from '../utils/cn';
 import styles from './PetCarePage.module.css';
 
@@ -58,17 +59,9 @@ const TAP_PHRASES = [
 
 const CONFETTI_EMOJIS = ['🎉', '⭐', '✨', '🌟'];
 
-function randomPhrase() {
-  return IDLE_PHRASES[Math.floor(Math.random() * IDLE_PHRASES.length)];
-}
-
-function randomSadPhrase() {
-  return SAD_PHRASES[Math.floor(Math.random() * SAD_PHRASES.length)];
-}
-
-function randomTapPhrase() {
-  return TAP_PHRASES[Math.floor(Math.random() * TAP_PHRASES.length)];
-}
+const randomPhrase = () => pickRandom(IDLE_PHRASES);
+const randomSadPhrase = () => pickRandom(SAD_PHRASES);
+const randomTapPhrase = () => pickRandom(TAP_PHRASES);
 
 interface ShopItem {
   emoji: string;

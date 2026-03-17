@@ -54,3 +54,11 @@ export const STREAK_BONUS_5 = 5;
 // Idle nudge
 export const IDLE_NUDGE_MS = 15000;
 export const IDLE_HINT_MS = 30000;
+
+// Daily reward
+export const DAILY_REWARD_BASE = 5;
+export const DAILY_REWARD_PER_STREAK = 2;
+export const DAILY_REWARD_MAX = 25;
+
+// Encouragement messages (shared across games)
+export const ENCOURAGEMENTS = ['Nevadí, zkus to znovu!', 'Skoro! Příště to bude!', 'Dobrý pokus!'];

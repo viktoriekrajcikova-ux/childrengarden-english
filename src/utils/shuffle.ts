@@ -1,3 +1,7 @@
+export function pickRandom<T>(array: T[]): T {
+  return array[Math.floor(Math.random() * array.length)];
+}
+
 export function shuffleArray<T>(array: T[]): T[] {
   const shuffled = [...array];
   for (let i = shuffled.length - 1; i > 0; i--) {
