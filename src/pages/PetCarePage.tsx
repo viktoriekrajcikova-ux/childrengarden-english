@@ -25,7 +25,7 @@ import type { FoodItem } from '../components/pet/Inventory';
 import { cn } from '../utils/cn';
 import styles from './PetCarePage.module.css';
 
-type ActionPhase = 'idle' | 'shopping' | 'feeding' | 'shower' | 'poop';
+type ActionPhase = 'idle' | 'shopping' | 'feeding' | 'shower' | 'poop' | 'sleeping';
 
 const IDLE_PHRASES = [
   'Hi! What shall we do?',
@@ -106,6 +106,7 @@ export default function PetCarePage() {
   const { completedGroupIndices } = useLevelGroups();
 
   const petStage = getPetStage(completedGroupIndices.length);
+  const habitatIndex = Math.min(completedGroupIndices.length, 4);
 
   const [phase, setPhase] = useState<ActionPhase>('idle');
   const [inventory, setInventory] = useState<FoodItem[]>([]);
@@ -126,6 +127,7 @@ export default function PetCarePage() {
   const speechTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const speechFadeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [showZzz, setShowZzz] = useState(false);
   const initDone = useRef(false);
 
   // --- SPEECH BUBBLE AUTO-HIDE ---
@@ -382,6 +384,24 @@ export default function PetCarePage() {
     }, DELAY_PET_ACTION + 500 + DELAY_BULLDOZER + DELAY_PET_REACTION);
   }, [say, playPoopSound, playBulldozer, playChirpHappy, setTimer, goIdle]);
 
+  // --- SLEEP & LEAVE ---
+  const handleLeave = useCallback(() => {
+    setPhase('sleeping');
+    setBusy(true);
+    say('*yaaawn* I am sleepy...');
+    setPetAnimation('sleeping');
+    setMood('neutral');
+    setShowZzz(true);
+
+    setTimer(() => {
+      say('Good night! See you tomorrow!');
+    }, 2000);
+
+    setTimer(() => {
+      navigate(`/map?scrollTo=${nextLevel}`);
+    }, 4000);
+  }, [say, setTimer, navigate, nextLevel]);
+
   // --- RENDER HELPERS ---
   const renderShowerEffects = () => {
     if (!showerActive && !bubblesActive) return null;
@@ -512,6 +532,7 @@ export default function PetCarePage() {
 
       case 'shower':
       case 'poop':
+      case 'sleeping':
         return null;
 
       default:
@@ -543,7 +564,7 @@ export default function PetCarePage() {
   };
 
   return (
-    <div className={styles.wrapper}>
+    <div className={cn(styles.wrapper, styles[`habitat${habitatIndex}`])}>
       {/* Confetti overlay */}
       {renderConfetti()}
 
@@ -552,8 +573,8 @@ export default function PetCarePage() {
         <div>
           <button
             className={styles.backButton}
-            onClick={() => navigate(`/map?scrollTo=${nextLevel}`)}
-            disabled={fedCount < PET_MIN_FED}
+            onClick={handleLeave}
+            disabled={fedCount < PET_MIN_FED || phase === 'sleeping'}
           >
             ← Back
           </button>
@@ -602,6 +623,13 @@ export default function PetCarePage() {
           <Pet stage={petStage} animation={petAnimation} mood={mood} animalType={animalType} />
           {renderShowerEffects()}
           {renderPoopEffects()}
+          {showZzz && (
+            <div className={styles.zzzContainer}>
+              {['💤', '💤', '💤'].map((z, i) => (
+                <span key={i} className={styles.zzz} style={{ animationDelay: `${i * 0.8}s` }}>{z}</span>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 

@@ -2,7 +2,7 @@ import type { PetStage, AnimalType } from '../../types';
 import { ANIMAL_REGISTRY } from './animalRegistry';
 import styles from './Pet.module.css';
 
-export type PetAnimation = 'idle' | 'happy' | 'eating' | 'showering' | 'pooping' | 'relieved';
+export type PetAnimation = 'idle' | 'happy' | 'eating' | 'showering' | 'pooping' | 'relieved' | 'sleeping';
 export type PetMood = 'happy' | 'sad' | 'neutral';
 
 interface PetProps {

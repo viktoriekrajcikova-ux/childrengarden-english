@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAtomValue, useSetAtom } from 'jotai';
-import { completedLevelsAtom, difficultyAtom, resetGameAtom, pendingGroupModalAtom, animalTypeAtom, achievementsAtom } from '../store/atoms';
+import { completedLevelsAtom, difficultyAtom, resetGameAtom, pendingGroupModalAtom, animalTypeAtom, achievementsAtom, addScoreAtom } from '../store/atoms';
+import { useDailyStreak } from '../hooks/useDailyStreak';
 import { useLevelGroups } from '../hooks/useLevelGroups';
 import { getLevelIcon, isGameLevel } from '../utils/levelGrouping';
 import { getPetStage, getPetEmoji } from '../utils/petUtils';
@@ -9,6 +10,7 @@ import { ACHIEVEMENTS } from '../data/achievements';
 import { cn } from '../utils/cn';
 import ScoreBoard from '../components/layout/ScoreBoard';
 import GroupCompletionModal from '../components/shared/GroupCompletionModal';
+import DailyStreakBanner from '../components/shared/DailyStreakBanner';
 import MapTile from '../components/shared/MapTile';
 import styles from './MapPage.module.css';
 
@@ -23,8 +25,12 @@ export default function MapPage() {
   const pendingModal = useAtomValue(pendingGroupModalAtom);
   const clearPendingModal = useSetAtom(pendingGroupModalAtom);
   const unlockedAchievements = useAtomValue(achievementsAtom);
+  const addScore = useSetAtom(addScoreAtom);
+  const { playedToday, currentStreak, recordToday } = useDailyStreak();
   const [modalGroup, setModalGroup] = useState<number | null>(null);
   const [showAchievements, setShowAchievements] = useState(false);
+  const [showDailyReward, setShowDailyReward] = useState(false);
+  const dailyRewardChecked = useRef(false);
 
   useEffect(() => {
     if (!difficulty) {
@@ -36,6 +42,22 @@ export default function MapPage() {
       clearPendingModal(null);
     }
   }, [difficulty, navigate, pendingModal, clearPendingModal]);
+
+  // Daily reward check
+  useEffect(() => {
+    if (dailyRewardChecked.current || !difficulty) return;
+    dailyRewardChecked.current = true;
+    if (!playedToday) {
+      setShowDailyReward(true);
+    }
+  }, [difficulty, playedToday]);
+
+  const claimDailyReward = () => {
+    const bonus = Math.min(5 + currentStreak * 2, 25); // 5-25 points based on streak
+    addScore(bonus);
+    recordToday();
+    setShowDailyReward(false);
+  };
 
   // Scroll to the level specified in query param
   useEffect(() => {
@@ -103,6 +125,7 @@ export default function MapPage() {
         <button className={cn(styles.controlButton, styles.practiceButton)} onClick={() => setShowAchievements(true)} title="Úspěchy">
           🏆
         </button>
+        <DailyStreakBanner />
       </div>
 
       <h1 className={styles.title}>🗺️ Mapa levelů</h1>
@@ -191,6 +214,22 @@ export default function MapPage() {
             </div>
             <button className={styles.achievementCloseBtn} onClick={() => setShowAchievements(false)}>
               Zavřít
+            </button>
+          </div>
+        </div>
+      )}
+      {showDailyReward && (
+        <div className={styles.achievementOverlay} onClick={claimDailyReward}>
+          <div className={styles.dailyRewardModal} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.dailyRewardEmoji}>🎁</div>
+            <h2 className={styles.dailyRewardTitle}>Denní odměna!</h2>
+            <p className={styles.dailyRewardText}>
+              {currentStreak > 0
+                ? `Série ${currentStreak + 1} dní! Bonus: +${Math.min(5 + currentStreak * 2, 25)} bodů`
+                : 'Vítej zpět! +5 bodů'}
+            </p>
+            <button className={styles.dailyRewardBtn} onClick={claimDailyReward}>
+              Vyzvednout!
             </button>
           </div>
         </div>

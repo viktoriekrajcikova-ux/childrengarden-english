@@ -4,6 +4,7 @@ import { useAtomValue, useSetAtom } from 'jotai';
 import { completedLevelsAtom, completeLevelAtom, pendingGroupModalAtom, achievementsAtom } from '../store/atoms';
 import { useAudio } from './useAudio';
 import { useTimers } from './useTimers';
+import { useDailyStreak } from './useDailyStreak';
 import { levels } from '../data/levels';
 import { getCompletedGroupIndices } from '../utils/levelGrouping';
 import { DELAY_TRANSITION } from '../constants';
@@ -16,6 +17,7 @@ export function useLevelCompletion() {
   const { playFanfare, playVictoryFanfare } = useAudio();
   const setTimer = useTimers();
   const navigate = useNavigate();
+  const { recordToday } = useDailyStreak();
 
   const unlockAchievement = useCallback(
     (id: string) => {
@@ -30,6 +32,7 @@ export function useLevelCompletion() {
     (levelIndex: number) => {
       const previousGroups = getCompletedGroupIndices(levels, completedLevels);
       dispatchCompleteLevel(levelIndex);
+      recordToday();
 
       const newCompleted = completedLevels.includes(levelIndex)
         ? completedLevels
@@ -60,7 +63,7 @@ export function useLevelCompletion() {
         setTimer(() => navigate(`/map?scrollTo=${nextLevel}`), DELAY_TRANSITION);
       }
     },
-    [completedLevels, dispatchCompleteLevel, setPendingModal, navigate, playFanfare, playVictoryFanfare, setTimer, unlockAchievement]
+    [completedLevels, dispatchCompleteLevel, setPendingModal, navigate, playFanfare, playVictoryFanfare, setTimer, unlockAchievement, recordToday]
   );
 
   return { completeLevel };
