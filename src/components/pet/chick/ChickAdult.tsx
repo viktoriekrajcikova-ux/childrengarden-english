@@ -1,31 +1,18 @@
 import type { PetSvgProps } from '../animalRegistry';
 import { generatePetCSS } from '../petAnimations';
-import { derivePalette } from '../../../utils/colorUtils';
-
-const DEFAULT_BODY = '#FFD54F';
-const DEFAULT_ACCENT = '#FFC107';
-const DEFAULT_OUTLINE = '#F9A825';
+import { resolveColors } from '../animalDefaults';
 
 function makeCSS(bodyFill: string) {
   return generatePetCSS({
-    suffix: 'a',
-    blinkDuration: 3,
-    flapDuration: 0.6,
-    flapAngle: 35,
-    beakDuration: 2,
-    beakAngle: 6,
+    suffix: 'a', blinkDuration: 3, flapDuration: 0.6, flapAngle: 35,
+    beakDuration: 2, beakAngle: 6,
     wingOrigins: { left: '34px 92px', right: '126px 92px' },
-    beakOrigin: '114px 30px',
-    bodyFill,
+    beakOrigin: '114px 30px', bodyFill,
   });
 }
 
-/** Adult hen SVG — Sparkly-style */
 export default function ChickAdult({ mood = 'neutral', bodyColor }: PetSvgProps) {
-  const palette = bodyColor ? derivePalette(bodyColor) : null;
-  const body = palette?.body ?? DEFAULT_BODY;
-  const accent = palette?.accent ?? DEFAULT_ACCENT;
-  const outline = palette?.outline ?? DEFAULT_OUTLINE;
+  const { body, accent, outline } = resolveColors('chick', bodyColor);
   const CSS = makeCSS(body);
 
   return (

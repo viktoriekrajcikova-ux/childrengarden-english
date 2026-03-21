@@ -7,7 +7,7 @@ import PlayButton from '../layout/PlayButton';
 import MessageDisplay from '../shared/MessageDisplay';
 import ItemCard from '../shared/ItemCard';
 import HintButton from '../shared/HintButton';
-import { useStreak } from '../../hooks/useStreak';
+import { useComboStreak } from '../../hooks/useStreak';
 import { useAdaptiveDifficulty } from '../../hooks/useAdaptiveDifficulty';
 import { useIdleNudge } from '../../hooks/useIdleNudge';
 import { useAchievements } from '../../hooks/useAchievements';
@@ -27,7 +27,7 @@ export default function StandardGame({ level, levelIndex }: Props) {
   const { difficulty, addScore, subtractScore, playFanfare, playErrorSound, speak, completeLevel } = useGameSetup();
   const { playComboSound } = useAudio();
   const setTimer = useTimers();
-  const { incrementStreak, resetStreak, getCorrectScore } = useStreak();
+  const { incrementStreak, resetStreak, getCorrectScore } = useComboStreak();
   const { adjustedMax, recordCorrect: adaptiveCorrect, recordWrong: adaptiveWrong } = useAdaptiveDifficulty(level.maxDisplay);
   const { checkAndUnlock } = useAchievements();
 

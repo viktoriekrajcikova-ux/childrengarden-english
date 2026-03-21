@@ -3,7 +3,8 @@ import { useAtom } from 'jotai';
 import { streakAtom } from '../store/atoms';
 import { STREAK_BONUS_3, STREAK_BONUS_5, SCORE_CORRECT } from '../constants';
 
-export function useStreak() {
+/** In-game combo streak (consecutive correct answers). */
+export function useComboStreak() {
   const [streak, setStreak] = useAtom(streakAtom);
 
   const incrementStreak = useCallback(() => setStreak((s) => s + 1), [setStreak]);

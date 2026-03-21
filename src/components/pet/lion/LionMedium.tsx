@@ -1,10 +1,6 @@
 import type { PetSvgProps } from '../animalRegistry';
 import { generateLionCSS } from '../petAnimations';
-import { derivePalette } from '../../../utils/colorUtils';
-
-const DEFAULT_BODY = '#D4A017';
-const DEFAULT_ACCENT = '#C69214';
-const DEFAULT_MANE = '#B8860B';
+import { resolveColors } from '../animalDefaults';
 
 const CSS = generateLionCSS({
   suffix: 'lm',
@@ -19,10 +15,7 @@ const CSS = generateLionCSS({
 
 /** Young lion SVG — Sparkly-style */
 export default function LionMedium({ mood = 'neutral', bodyColor }: PetSvgProps) {
-  const palette = bodyColor ? derivePalette(bodyColor) : null;
-  const body = palette?.body ?? DEFAULT_BODY;
-  const accent = palette?.accent ?? DEFAULT_ACCENT;
-  const mane = palette ? palette.outline : DEFAULT_MANE;
+  const { body, accent, mane } = resolveColors('lion', bodyColor);
 
   return (
     <svg viewBox="0 0 140 150" width="180" height="193" aria-label="Young lion">

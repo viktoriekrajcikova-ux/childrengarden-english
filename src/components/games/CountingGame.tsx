@@ -7,7 +7,7 @@ import { cn } from '../../utils/cn';
 import GameHeader from '../shared/GameHeader';
 import MessageDisplay from '../shared/MessageDisplay';
 import HintButton from '../shared/HintButton';
-import { useStreak } from '../../hooks/useStreak';
+import { useComboStreak } from '../../hooks/useStreak';
 import { useAdaptiveDifficulty } from '../../hooks/useAdaptiveDifficulty';
 import { useIdleNudge } from '../../hooks/useIdleNudge';
 import { useAudio } from '../../hooks/useAudio';
@@ -24,7 +24,7 @@ export default function CountingGame({ level, levelIndex }: Props) {
   const { difficulty, addScore, subtractScore, playFanfare, playErrorSound, speak, completeLevel } = useGameSetup();
   const { playComboSound } = useAudio();
   const setTimer = useTimers();
-  const { incrementStreak, resetStreak, getCorrectScore } = useStreak();
+  const { incrementStreak, resetStreak, getCorrectScore } = useComboStreak();
   const baseNumOpts = difficulty === 'easy' ? 3 : difficulty === 'medium' ? 4 : 6;
   const { adjustedMax: adjustedNumOpts, recordCorrect: adaptiveCorrect, recordWrong: adaptiveWrong } = useAdaptiveDifficulty(baseNumOpts);
 

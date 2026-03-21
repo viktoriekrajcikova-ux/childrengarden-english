@@ -1,9 +1,6 @@
 import type { PetSvgProps } from '../animalRegistry';
 import { generateFoxCSS } from '../petAnimations';
-import { derivePalette } from '../../../utils/colorUtils';
-
-const DEFAULT_BODY = '#E67E22';
-const DEFAULT_ACCENT = '#FFCC80';
+import { resolveColors } from '../animalDefaults';
 
 const CSS = generateFoxCSS({
   suffix: 'fm',
@@ -18,9 +15,7 @@ const CSS = generateFoxCSS({
 
 /** Young fox SVG — Sparkly-style */
 export default function FoxMedium({ mood = 'neutral', bodyColor }: PetSvgProps) {
-  const palette = bodyColor ? derivePalette(bodyColor) : null;
-  const body = palette?.body ?? DEFAULT_BODY;
-  const accent = palette?.accent ?? DEFAULT_ACCENT;
+  const { body, accent } = resolveColors('fox', bodyColor);
 
   return (
     <svg viewBox="0 0 140 150" width="180" height="193" aria-label="Young fox">

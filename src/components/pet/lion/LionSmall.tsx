@@ -1,9 +1,6 @@
 import type { PetSvgProps } from '../animalRegistry';
 import { generateLionCSS } from '../petAnimations';
-import { derivePalette } from '../../../utils/colorUtils';
-
-const DEFAULT_BODY = '#D4A017';
-const DEFAULT_ACCENT = '#C69214';
+import { resolveColors } from '../animalDefaults';
 
 const CSS = generateLionCSS({
   suffix: 'ls',
@@ -18,9 +15,7 @@ const CSS = generateLionCSS({
 
 /** Baby lion cub SVG — Sparkly-style: big shiny eyes, round, cute */
 export default function LionSmall({ mood = 'neutral', bodyColor }: PetSvgProps) {
-  const palette = bodyColor ? derivePalette(bodyColor) : null;
-  const body = palette?.body ?? DEFAULT_BODY;
-  const accent = palette?.accent ?? DEFAULT_ACCENT;
+  const { body, accent } = resolveColors('lion', bodyColor);
 
   return (
     <svg viewBox="0 0 120 130" width="140" height="151" aria-label="Baby lion cub">

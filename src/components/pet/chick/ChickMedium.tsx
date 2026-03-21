@@ -1,31 +1,18 @@
 import type { PetSvgProps } from '../animalRegistry';
 import { generatePetCSS } from '../petAnimations';
-import { derivePalette } from '../../../utils/colorUtils';
-
-const DEFAULT_BODY = '#FFD54F';
-const DEFAULT_ACCENT = '#FFC107';
-const DEFAULT_OUTLINE = '#F9A825';
+import { resolveColors } from '../animalDefaults';
 
 function makeCSS(bodyFill: string) {
   return generatePetCSS({
-    suffix: 'm',
-    blinkDuration: 3.5,
-    flapDuration: 0.7,
-    flapAngle: 30,
-    beakDuration: 1.8,
-    beakAngle: 8,
+    suffix: 'm', blinkDuration: 3.5, flapDuration: 0.7, flapAngle: 30,
+    beakDuration: 1.8, beakAngle: 8,
     wingOrigins: { left: '32px 72px', right: '108px 72px' },
-    beakOrigin: '70px 73px',
-    bodyFill,
+    beakOrigin: '70px 73px', bodyFill,
   });
 }
 
-/** Young chick SVG — Sparkly-style */
 export default function ChickMedium({ mood = 'neutral', bodyColor }: PetSvgProps) {
-  const palette = bodyColor ? derivePalette(bodyColor) : null;
-  const body = palette?.body ?? DEFAULT_BODY;
-  const accent = palette?.accent ?? DEFAULT_ACCENT;
-  const outline = palette?.outline ?? DEFAULT_OUTLINE;
+  const { body, accent, outline } = resolveColors('chick', bodyColor);
   const CSS = makeCSS(body);
 
   return (

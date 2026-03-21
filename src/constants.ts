@@ -1,77 +1,65 @@
-// Game round counts
+// ── Game mechanics ──
 export const ROUNDS_REQUIRED = 3;
 export const REVIEW_ROUNDS = 5;
+export const SCORE_CORRECT = 10;
+export const SCORE_CORRECT_DOUBLE = 20;
+export const SCORE_PENALTY = 5;
+export const SCORE_HINT_COST = 3;
+export const HINT_WRONG_THRESHOLD = 2;
+export const STREAK_BONUS_3 = 2;
+export const STREAK_BONUS_5 = 5;
 
-// Timing delays (ms)
+// ── Counting game ──
+export const COUNTING_MAX_TARGET = 10;
+export const COUNTING_TOTAL_MIN = 15;
+export const COUNTING_TOTAL_EXTRA = 6;
+export const COUNTING_OPTION_RANGE = 3;
+
+// ── Timing delays (ms) ──
 export const DELAY_SHORT = 500;
 export const DELAY_FEEDBACK = 1000;
 export const DELAY_WRONG = 1500;
 export const DELAY_TRANSITION = 2000;
 export const DELAY_WRONG_LONG = 2500;
 
-// Counting game
-export const COUNTING_MAX_TARGET = 10;
-export const COUNTING_TOTAL_MIN = 15;
-export const COUNTING_TOTAL_EXTRA = 6;
-export const COUNTING_OPTION_RANGE = 3;
+// ── Idle & nudge ──
+export const IDLE_NUDGE_MS = 15000;
+export const IDLE_HINT_MS = 30000;
+export const IDLE_ANIM_MIN = 8000;
+export const IDLE_ANIM_MAX = 15000;
 
-// Score values
-export const SCORE_CORRECT = 10;
-export const SCORE_CORRECT_DOUBLE = 20;
-export const SCORE_PENALTY = 5;
-
-// Pet care
+// ── Pet care ──
 export const PET_MIN_FED = 3;
 export const PET_CARE_COST = 5;
 export const PET_GROWTH_MEDIUM = 2;
 export const PET_GROWTH_ADULT = 4;
+export const PET_MAX_INVENTORY = 6;
+export const PET_HUNGER_THRESHOLD = 24 * 60 * 60 * 1000;
+
+// ── Pet timing (ms) ──
 export const DELAY_PET_SPEAK = 500;
 export const DELAY_PET_SUCCESS = 1200;
+export const DELAY_PET_ACTION = 1500;
+export const DELAY_PET_REACTION = 1000;
+export const DELAY_SHOWER = 1800;
+export const DELAY_BULLDOZER = 2000;
 
-// Pet shop prices
+// ── Pet absence thresholds (ms) ──
+export const ABSENCE_MILD = 1 * 60 * 60 * 1000;
+export const ABSENCE_MEDIUM = 6 * 60 * 60 * 1000;
+export const ABSENCE_LONG = 24 * 60 * 60 * 1000;
+
+// ── Shop prices ──
 export const SHOP_GRAIN_PRICE = 0;
 export const SHOP_APPLE_PRICE = 10;
 export const SHOP_CAKE_PRICE = 20;
+export const SHOP_COLOR_PRICE = 30;
+export const SHOP_ACCESSORY_PRICE = 40;
 
-// Pet action timing (ms)
-export const DELAY_PET_ACTION = 1500;
-export const DELAY_BULLDOZER = 2000;
-export const DELAY_SHOWER = 1800;
-export const DELAY_PET_REACTION = 1000;
-
-// Pet limits
-export const PET_MAX_INVENTORY = 6;
-export const PET_HUNGER_THRESHOLD = 24 * 60 * 60 * 1000; // 24 hours in ms
-
-// Hint system
-export const SCORE_HINT_COST = 3;
-export const HINT_WRONG_THRESHOLD = 2;
-
-// Streak / combo
-export const STREAK_BONUS_3 = 2;
-export const STREAK_BONUS_5 = 5;
-
-// Idle nudge
-export const IDLE_NUDGE_MS = 15000;
-export const IDLE_HINT_MS = 30000;
-
-// Daily reward
+// ── Daily reward ──
 export const DAILY_REWARD_BASE = 5;
 export const DAILY_REWARD_PER_STREAK = 2;
 export const DAILY_REWARD_MAX = 25;
 
-// Absence thresholds (ms)
-export const ABSENCE_MILD = 1 * 60 * 60 * 1000;    // 1h
-export const ABSENCE_MEDIUM = 6 * 60 * 60 * 1000;   // 6h
-export const ABSENCE_LONG = 24 * 60 * 60 * 1000;     // 24h
-
-// Idle pet animation timing (ms)
-export const IDLE_ANIM_MIN = 8000;
-export const IDLE_ANIM_MAX = 15000;
-
-// Shop prices — colors & accessories
-export const SHOP_COLOR_PRICE = 30;
-export const SHOP_ACCESSORY_PRICE = 40;
-
-// Encouragement messages (shared across games)
+// ── Shared messages ──
 export const ENCOURAGEMENTS = ['Nevadí, zkus to znovu!', 'Skoro! Příště to bude!', 'Dobrý pokus!'];

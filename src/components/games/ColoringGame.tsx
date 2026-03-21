@@ -9,7 +9,7 @@ import PlayButton from '../layout/PlayButton';
 import GameHeader from '../shared/GameHeader';
 import MessageDisplay from '../shared/MessageDisplay';
 import HintButton from '../shared/HintButton';
-import { useStreak } from '../../hooks/useStreak';
+import { useComboStreak } from '../../hooks/useStreak';
 import { useAudio } from '../../hooks/useAudio';
 import { SCORE_HINT_COST, HINT_WRONG_THRESHOLD, DELAY_SHORT, DELAY_WRONG } from '../../constants';
 import styles from './ColoringGame.module.css';
@@ -23,7 +23,7 @@ export default function ColoringGame({ level, levelIndex }: Props) {
   const { difficulty, addScore, subtractScore, playFanfare, playErrorSound, speak, completeLevel } = useGameSetup();
   const { playComboSound } = useAudio();
   const setTimer = useTimers();
-  const { incrementStreak, resetStreak, getCorrectScore } = useStreak();
+  const { incrementStreak, resetStreak, getCorrectScore } = useComboStreak();
 
   const [targetColor, setTargetColor] = useState<ColorItem | null>(null);
   const [targetShape, setTargetShape] = useState<ShapeItem | null>(null);
