@@ -18,7 +18,7 @@ export function generatePetCSS(c: PetAnimConfig): string {
     .wing-right-${s} { transform-origin: ${c.wingOrigins.right}; animation: flapRight${S} ${c.flapDuration}s ease-in-out infinite; }
     @keyframes flapLeft${S} { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(-${c.flapAngle}deg); } }
     @keyframes flapRight${S} { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(${c.flapAngle}deg); } }
-    .eyelid-${s} { animation: blink${S} ${c.blinkDuration}s ease-in-out infinite; }
+    .eyelid-${s} { transform-box: fill-box; transform-origin: center top; animation: blink${S} ${c.blinkDuration}s ease-in-out infinite; }
     @keyframes blink${S} {
       0%,90%,100% { transform: scaleY(0); }
       95% { transform: scaleY(1); }
@@ -59,7 +59,7 @@ export function generateFoxCSS(c: FoxAnimConfig): string {
     .ear-right-${s} { transform-origin: ${c.earOrigins.right}; animation: earTwitchR${S} ${c.earTwitchDuration}s ease-in-out infinite; }
     @keyframes earTwitchL${S} { 0%,80%,100% { transform: rotate(0deg); } 90% { transform: rotate(-${c.earTwitchAngle}deg); } }
     @keyframes earTwitchR${S} { 0%,80%,100% { transform: rotate(0deg); } 90% { transform: rotate(${c.earTwitchAngle}deg); } }
-    .eyelid-${s} { animation: blink${S} ${c.blinkDuration}s ease-in-out infinite; }
+    .eyelid-${s} { transform-box: fill-box; transform-origin: center top; animation: blink${S} ${c.blinkDuration}s ease-in-out infinite; }
     @keyframes blink${S} {
       0%,90%,100% { transform: scaleY(0); }
       95% { transform: scaleY(1); }

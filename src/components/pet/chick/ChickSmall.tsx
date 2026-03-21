@@ -1,22 +1,35 @@
-import type { PetMood } from '../Pet';
+import type { PetSvgProps } from '../animalRegistry';
 import { generatePetCSS } from '../petAnimations';
+import { derivePalette } from '../../../utils/colorUtils';
 
-const CSS = generatePetCSS({
-  suffix: 's',
-  blinkDuration: 4,
-  flapDuration: 0.8,
-  flapAngle: 20,
-  beakDuration: 1.5,
-  beakAngle: 8,
-  wingOrigins: { left: '34px 62px', right: '86px 62px' },
-  beakOrigin: '60px 68px',
-  bodyFill: '#FFD54F',
-});
+const DEFAULT_BODY = '#FFD54F';
+const DEFAULT_ACCENT = '#FFC107';
+const DEFAULT_OUTLINE = '#F9A825';
 
-/** Baby chick SVG — yellow ball with big eyes, beak, tiny wings, legs, eggshell fragment */
-export default function ChickSmall({ mood = 'neutral' }: { mood?: PetMood }) {
+function makeCSS(bodyFill: string) {
+  return generatePetCSS({
+    suffix: 's',
+    blinkDuration: 4,
+    flapDuration: 0.8,
+    flapAngle: 20,
+    beakDuration: 1.5,
+    beakAngle: 8,
+    wingOrigins: { left: '34px 62px', right: '86px 62px' },
+    beakOrigin: '60px 68px',
+    bodyFill,
+  });
+}
+
+/** Baby chick SVG — Sparkly-style: big shiny eyes, round, cute */
+export default function ChickSmall({ mood = 'neutral', bodyColor }: PetSvgProps) {
+  const palette = bodyColor ? derivePalette(bodyColor) : null;
+  const body = palette?.body ?? DEFAULT_BODY;
+  const accent = palette?.accent ?? DEFAULT_ACCENT;
+  const outline = palette?.outline ?? DEFAULT_OUTLINE;
+  const CSS = makeCSS(body);
+
   return (
-    <svg viewBox="0 0 120 130" width="100" height="108" aria-label="Baby chick">
+    <svg viewBox="0 0 120 130" width="140" height="151" aria-label="Baby chick">
       <style>{CSS}</style>
 
       {/* Eggshell fragment */}
@@ -28,14 +41,16 @@ export default function ChickSmall({ mood = 'neutral' }: { mood?: PetMood }) {
       />
 
       {/* Body — yellow circle */}
-      <circle cx="60" cy="62" r="32" fill="#FFD54F" />
+      <circle cx="60" cy="62" r="32" fill={body} />
+      {/* Glossy body highlight */}
+      <ellipse cx="52" cy="52" rx="16" ry="12" fill="white" opacity="0.18" transform="rotate(-15 52 52)" />
 
       {/* Left tiny wing */}
       <path
         className="wing-left-s"
         d="M30 58 Q24 64 28 72 Q32 67 34 60"
-        fill="#FFC107"
-        stroke="#F9A825"
+        fill={accent}
+        stroke={outline}
         strokeWidth="1"
       />
 
@@ -43,42 +58,51 @@ export default function ChickSmall({ mood = 'neutral' }: { mood?: PetMood }) {
       <path
         className="wing-right-s"
         d="M90 58 Q96 64 92 72 Q88 67 86 60"
-        fill="#FFC107"
-        stroke="#F9A825"
+        fill={accent}
+        stroke={outline}
         strokeWidth="1"
       />
 
       {/* Eyes — mood dependent */}
       {mood === 'happy' ? (
         <>
-          {/* Happy eyes — upward arcs (˘ shape) */}
-          <path d="M40 57 Q48 48 56 57" stroke="#212121" strokeWidth="3" fill="none" strokeLinecap="round" />
-          <path d="M64 57 Q72 48 80 57" stroke="#212121" strokeWidth="3" fill="none" strokeLinecap="round" />
+          {/* Happy eyes — thick upward arcs */}
+          <path d="M38 57 Q48 45 58 57" stroke="#212121" strokeWidth="3.5" fill="none" strokeLinecap="round" />
+          <path d="M62 57 Q72 45 82 57" stroke="#212121" strokeWidth="3.5" fill="none" strokeLinecap="round" />
+          {/* Tiny sparkles */}
+          <circle cx="40" cy="50" r="1.5" fill="#FFF" opacity="0.8" />
+          <circle cx="80" cy="50" r="1.5" fill="#FFF" opacity="0.8" />
         </>
       ) : mood === 'sad' ? (
         <>
-          {/* Sad eyes — normal eyes + tilted eyebrows */}
-          <circle cx="48" cy="55" r="8" fill="#212121" />
-          <circle cx="50" cy="52" r="3" fill="white" />
-          <circle cx="72" cy="55" r="8" fill="#212121" />
-          <circle cx="74" cy="52" r="3" fill="white" />
-          {/* Sad eyebrows — angled inward-down */}
-          <line x1="39" y1="43" x2="53" y2="46" stroke="#212121" strokeWidth="2.5" strokeLinecap="round" />
-          <line x1="81" y1="43" x2="67" y2="46" stroke="#212121" strokeWidth="2.5" strokeLinecap="round" />
+          {/* Sad — big sparkly eyes + eyebrows */}
+          <circle cx="48" cy="55" r="10" fill="#212121" />
+          <circle cx="51" cy="51" r="4" fill="white" />
+          <circle cx="45" cy="58" r="2" fill="white" opacity="0.6" />
+          <circle cx="72" cy="55" r="10" fill="#212121" />
+          <circle cx="75" cy="51" r="4" fill="white" />
+          <circle cx="69" cy="58" r="2" fill="white" opacity="0.6" />
+          {/* Sad eyebrows */}
+          <line x1="37" y1="42" x2="53" y2="45" stroke="#212121" strokeWidth="2.5" strokeLinecap="round" />
+          <line x1="83" y1="42" x2="67" y2="45" stroke="#212121" strokeWidth="2.5" strokeLinecap="round" />
         </>
       ) : (
         <>
-          {/* Neutral eyes — default */}
-          <circle cx="48" cy="55" r="8" fill="#212121" />
-          <circle cx="50" cy="52" r="3" fill="white" />
-          <ellipse className="eyelid-s" cx="48" cy="55" rx="9" ry="8" fill="#FFD54F" />
-          <circle cx="72" cy="55" r="8" fill="#212121" />
-          <circle cx="74" cy="52" r="3" fill="white" />
-          <ellipse className="eyelid-s" cx="72" cy="55" rx="9" ry="8" fill="#FFD54F" />
+          {/* Neutral — big sparkly eyes with multiple highlights */}
+          <circle cx="48" cy="55" r="10" fill="#212121" />
+          <circle cx="51" cy="51" r="4" fill="white" />
+          <circle cx="45" cy="58" r="2" fill="white" opacity="0.6" />
+          <circle cx="52" cy="49" r="1" fill="white" opacity="0.9" />
+          <ellipse className="eyelid-s" cx="48" cy="55" rx="11" ry="10" fill={body} />
+          <circle cx="72" cy="55" r="10" fill="#212121" />
+          <circle cx="75" cy="51" r="4" fill="white" />
+          <circle cx="69" cy="58" r="2" fill="white" opacity="0.6" />
+          <circle cx="76" cy="49" r="1" fill="white" opacity="0.9" />
+          <ellipse className="eyelid-s" cx="72" cy="55" rx="11" ry="10" fill={body} />
         </>
       )}
 
-      {/* Beak — droop animation when sad */}
+      {/* Beak */}
       {mood === 'sad' ? (
         <>
           <polygon points="54,68 66,68 60,63" fill="#FF9800" />
@@ -91,19 +115,21 @@ export default function ChickSmall({ mood = 'neutral' }: { mood?: PetMood }) {
         </>
       )}
 
-      {/* Left leg */}
-      <line x1="50" y1="93" x2="45" y2="115" stroke="#FF9800" strokeWidth="3" strokeLinecap="round" />
-      <line x1="45" y1="115" x2="38" y2="118" stroke="#FF9800" strokeWidth="2.5" strokeLinecap="round" />
-      <line x1="45" y1="115" x2="48" y2="120" stroke="#FF9800" strokeWidth="2.5" strokeLinecap="round" />
+      {/* Left paw */}
+      <ellipse cx="48" cy="96" rx="11" ry="6" fill="#FF9800" />
+      <circle cx="41" cy="94" r="3.5" fill="#E65100" opacity="0.35" />
+      <circle cx="48" cy="92" r="3.5" fill="#E65100" opacity="0.35" />
+      <circle cx="55" cy="94" r="3.5" fill="#E65100" opacity="0.35" />
 
-      {/* Right leg */}
-      <line x1="70" y1="93" x2="75" y2="115" stroke="#FF9800" strokeWidth="3" strokeLinecap="round" />
-      <line x1="75" y1="115" x2="68" y2="118" stroke="#FF9800" strokeWidth="2.5" strokeLinecap="round" />
-      <line x1="75" y1="115" x2="78" y2="120" stroke="#FF9800" strokeWidth="2.5" strokeLinecap="round" />
+      {/* Right paw */}
+      <ellipse cx="72" cy="96" rx="11" ry="6" fill="#FF9800" />
+      <circle cx="65" cy="94" r="3.5" fill="#E65100" opacity="0.35" />
+      <circle cx="72" cy="92" r="3.5" fill="#E65100" opacity="0.35" />
+      <circle cx="79" cy="94" r="3.5" fill="#E65100" opacity="0.35" />
 
-      {/* Blush cheeks */}
-      <circle cx="38" cy="65" r="5" fill="#FFAB91" opacity="0.5" />
-      <circle cx="82" cy="65" r="5" fill="#FFAB91" opacity="0.5" />
+      {/* Blush cheeks — bigger, more prominent */}
+      <circle cx="36" cy="65" r="7" fill="#FFAB91" opacity="0.45" />
+      <circle cx="84" cy="65" r="7" fill="#FFAB91" opacity="0.45" />
     </svg>
   );
 }

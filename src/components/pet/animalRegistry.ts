@@ -10,8 +10,13 @@ import LionSmall from './lion/LionSmall';
 import LionMedium from './lion/LionMedium';
 import LionAdult from './lion/LionAdult';
 
+export interface PetSvgProps {
+  mood: PetMood;
+  bodyColor?: string;
+}
+
 interface AnimalDef {
-  stages: Record<PetStage, React.FC<{ mood: PetMood }>>;
+  stages: Record<PetStage, React.FC<PetSvgProps>>;
   emoji: Record<PetStage, string>;
 }
 

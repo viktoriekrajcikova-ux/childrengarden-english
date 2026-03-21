@@ -60,5 +60,18 @@ export const DAILY_REWARD_BASE = 5;
 export const DAILY_REWARD_PER_STREAK = 2;
 export const DAILY_REWARD_MAX = 25;
 
+// Absence thresholds (ms)
+export const ABSENCE_MILD = 1 * 60 * 60 * 1000;    // 1h
+export const ABSENCE_MEDIUM = 6 * 60 * 60 * 1000;   // 6h
+export const ABSENCE_LONG = 24 * 60 * 60 * 1000;     // 24h
+
+// Idle pet animation timing (ms)
+export const IDLE_ANIM_MIN = 8000;
+export const IDLE_ANIM_MAX = 15000;
+
+// Shop prices — colors & accessories
+export const SHOP_COLOR_PRICE = 30;
+export const SHOP_ACCESSORY_PRICE = 40;
+
 // Encouragement messages (shared across games)
 export const ENCOURAGEMENTS = ['Nevadí, zkus to znovu!', 'Skoro! Příště to bude!', 'Dobrý pokus!'];
