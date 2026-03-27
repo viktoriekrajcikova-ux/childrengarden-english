@@ -6,7 +6,6 @@ import { filterByDifficulty } from '../../utils/difficultyFilter';
 import { shuffleArray } from '../../utils/shuffle';
 import type { LevelItem } from '../../types';
 import { cn } from '../../utils/cn';
-import GameHeader from '../shared/GameHeader';
 import MessageDisplay from '../shared/MessageDisplay';
 import { SCORE_CORRECT_DOUBLE, DELAY_SHORT, DELAY_FEEDBACK, DELAY_WRONG } from '../../constants';
 import styles from './MemoryGame.module.css';
@@ -104,7 +103,6 @@ export default function MemoryGame({ levelIndex }: Props) {
 
   return (
     <div className={styles.wrapper}>
-      <GameHeader emoji="🎮" title="Pexeso" />
       <div className={styles.grid}>
         {cards.map((card) => {
           const isFlipped = flipped.includes(card.id);

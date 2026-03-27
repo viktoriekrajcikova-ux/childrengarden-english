@@ -37,3 +37,21 @@ Projekt je určen pro děti v předškolním věku (3-6 let)
 ### Lev
 - V každém levelu zobrazuje maximálně 6 možností
 
+
+## UI/UX požadavky a responzivita
+
+### Prioritní rozlišení
+
+- Každý level by se měl vejít na jednu obrazovku bez nutnosti scrollování
+- Níže je seznam zařízení na kterých aplikaci používám nejčastěji
+
+#### Mobil (portrait)
+- **350x720 px** - primární cílové rozlišení pro mobil
+- Všechny interaktivní prvky musí být dostatečně velké pro dotykové ovládání
+
+#### Tablet (landscape)
+- **1024x600 px** - cílové rozlišení pro tablet (například Blackview Tab 6)
+- Layout se má přizpůsobit širšímu formátu (možnosti vedle sebe místo pod sebou)
+- Všechny interaktivní prvky musí být dostatečně velké pro dotykové ovládání
+- Využít šířku obrazovky pro lepší rozmístění elementů
+

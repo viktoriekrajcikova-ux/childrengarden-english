@@ -6,10 +6,8 @@ import { filterByDifficulty } from '../../utils/difficultyFilter';
 import { shuffleArray } from '../../utils/shuffle';
 import type { RestaurantLevel, DrinkItem } from '../../types';
 import { cn } from '../../utils/cn';
-import GameHeader from '../shared/GameHeader';
 import MessageDisplay from '../shared/MessageDisplay';
 import { useComboStreak } from '../../hooks/useStreak';
-import { useAudio } from '../../hooks/useAudio';
 import { SCORE_PENALTY, DELAY_SHORT, DELAY_WRONG, DELAY_TRANSITION } from '../../constants';
 import styles from './RestaurantGame.module.css';
 
@@ -19,8 +17,7 @@ interface Props {
 }
 
 export default function RestaurantGame({ level, levelIndex }: Props) {
-  const { difficulty, addScore, subtractScore, playFanfare, playErrorSound, speak, completeLevel } = useGameSetup();
-  const { playComboSound } = useAudio();
+  const { difficulty, addScore, subtractScore, playFanfare, playErrorSound, playComboSound, speak, completeLevel } = useGameSetup();
   const setTimer = useTimers();
   const { incrementStreak, resetStreak, getCorrectScore } = useComboStreak();
 
@@ -116,7 +113,6 @@ export default function RestaurantGame({ level, levelIndex }: Props) {
 
   return (
     <div className={styles.wrapper}>
-      <GameHeader emoji="🍽️" title="Restaurace" />
       <div className={styles.progress}>
         Zákazník {served + 1} / {level.customersToServe}
       </div>

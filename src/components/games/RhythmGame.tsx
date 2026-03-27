@@ -6,7 +6,6 @@ import { filterByDifficulty } from '../../utils/difficultyFilter';
 import { shuffleArray } from '../../utils/shuffle';
 import type { LevelItem } from '../../types';
 import { cn } from '../../utils/cn';
-import GameHeader from '../shared/GameHeader';
 import MessageDisplay from '../shared/MessageDisplay';
 import { ROUNDS_REQUIRED, SCORE_CORRECT_DOUBLE, SCORE_PENALTY, DELAY_SHORT, DELAY_FEEDBACK, DELAY_WRONG, DELAY_TRANSITION } from '../../constants';
 import styles from './RhythmGame.module.css';
@@ -162,7 +161,6 @@ export default function RhythmGame({ levelIndex }: Props) {
 
   return (
     <div className={styles.wrapper}>
-      <GameHeader emoji="🎵" title="Rytmická hra" />
       <div className={styles.progress}>
         Kolo {roundsCompleted + 1} / {ROUNDS_REQUIRED}
       </div>

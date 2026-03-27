@@ -1,16 +1,17 @@
 import { useEffect, useState, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAtomValue, useSetAtom } from 'jotai';
-import { completedLevelsAtom, difficultyAtom, resetGameAtom, pendingGroupModalAtom, animalTypeAtom, achievementsAtom, addScoreAtom } from '../store/atoms';
+import { completedLevelsAtom, difficultyAtom, resetGameAtom, pendingGroupModalAtom, animalTypeAtom, addScoreAtom } from '../store/atoms';
 import { useDailyStreak } from '../hooks/useDailyStreak';
 import { useLevelGroups } from '../hooks/useLevelGroups';
 import { getLevelIcon, isGameLevel } from '../utils/levelGrouping';
 import { getPetStage, getPetEmoji } from '../utils/petUtils';
-import { ACHIEVEMENTS } from '../data/achievements';
 import { DAILY_REWARD_BASE, DAILY_REWARD_PER_STREAK, DAILY_REWARD_MAX } from '../constants';
 import { cn } from '../utils/cn';
 import ScoreBoard from '../components/layout/ScoreBoard';
 import GroupCompletionModal from '../components/shared/GroupCompletionModal';
+import AchievementsModal from '../components/shared/AchievementsModal';
+import DailyRewardModal from '../components/shared/DailyRewardModal';
 import DailyStreakBanner from '../components/shared/DailyStreakBanner';
 import MapTile from '../components/shared/MapTile';
 import styles from './MapPage.module.css';
@@ -25,7 +26,6 @@ export default function MapPage() {
   const animalType = useAtomValue(animalTypeAtom);
   const pendingModal = useAtomValue(pendingGroupModalAtom);
   const clearPendingModal = useSetAtom(pendingGroupModalAtom);
-  const unlockedAchievements = useAtomValue(achievementsAtom);
   const addScore = useSetAtom(addScoreAtom);
   const { playedToday, currentStreak, recordToday } = useDailyStreak();
   const [modalGroup, setModalGroup] = useState<number | null>(null);
@@ -196,44 +196,14 @@ export default function MapPage() {
       )}
 
       {showAchievements && (
-        <div className={styles.achievementOverlay} onClick={() => setShowAchievements(false)}>
-          <div className={styles.achievementModal} onClick={(e) => e.stopPropagation()}>
-            <h2 className={styles.achievementTitle}>🏆 Úspěchy</h2>
-            <div className={styles.achievementList}>
-              {ACHIEVEMENTS.map((a) => {
-                const unlocked = unlockedAchievements.includes(a.id);
-                return (
-                  <div key={a.id} className={cn(styles.achievementItem, !unlocked && styles.achievementLocked)}>
-                    <span className={styles.achievementEmoji}>{unlocked ? a.emoji : '🔒'}</span>
-                    <div>
-                      <div className={styles.achievementName}>{a.title}</div>
-                      <div className={styles.achievementDesc}>{a.description}</div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-            <button className={styles.achievementCloseBtn} onClick={() => setShowAchievements(false)}>
-              Zavřít
-            </button>
-          </div>
-        </div>
+        <AchievementsModal onClose={() => setShowAchievements(false)} />
       )}
       {showDailyReward && (
-        <div className={styles.achievementOverlay} onClick={claimDailyReward}>
-          <div className={styles.dailyRewardModal} onClick={(e) => e.stopPropagation()}>
-            <div className={styles.dailyRewardEmoji}>🎁</div>
-            <h2 className={styles.dailyRewardTitle}>Denní odměna!</h2>
-            <p className={styles.dailyRewardText}>
-              {currentStreak > 0
-                ? `Série ${currentStreak + 1} dní! Bonus: +${Math.min(5 + currentStreak * 2, 25)} bodů`
-                : 'Vítej zpět! +5 bodů'}
-            </p>
-            <button className={styles.dailyRewardBtn} onClick={claimDailyReward}>
-              Vyzvednout!
-            </button>
-          </div>
-        </div>
+        <DailyRewardModal
+          currentStreak={currentStreak}
+          bonus={Math.min(DAILY_REWARD_BASE + currentStreak * DAILY_REWARD_PER_STREAK, DAILY_REWARD_MAX)}
+          onClaim={claimDailyReward}
+        />
       )}
     </div>
     </>

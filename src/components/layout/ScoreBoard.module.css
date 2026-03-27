@@ -1,42 +1,42 @@
 .base {
-  position: fixed;
-  right: 20px;
-  left: auto;
   width: auto;
   border-radius: var(--radius-full);
   box-shadow: var(--shadow-md);
   color: var(--color-primary);
   font-weight: bold;
-  z-index: 1000;
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
 .scoreBoard {
-  top: 80px;
-  background: white;
-  padding: 10px 25px;
-  font-size: 1.2em;
+  position: fixed;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255,255,255,0.95);
+  padding: 8px 20px;
+  font-size: 1em;
+  z-index: 1000;
 }
 
 .scoreBoardMap {
-  top: 10px;
-  transform: none;
-  background: rgba(255,255,255,0.95);
-  font-size: 1.5em;
-  padding: 15px 35px;
+  position: relative;
+  display: inline-block;
+  background: white;
+  font-size: 1.1em;
+  padding: 10px 25px;
 }
 
 @media (max-width: 768px) {
-  .base { right: 10px; }
   .scoreBoard {
-    padding: 6px 14px;
     font-size: 0.9em;
-    top: 50px;
+    padding: 6px 16px;
+    top: 10px;
   }
+
   .scoreBoardMap {
-    padding: 8px 18px;
-    font-size: 1.1em;
+    font-size: 1em;
+    padding: 8px 20px;
   }
 }

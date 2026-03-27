@@ -4,13 +4,11 @@ import { useTimers } from '../../hooks/useTimers';
 import { shuffleArray } from '../../utils/shuffle';
 import type { CountingLevel, CountingObject } from '../../types';
 import { cn } from '../../utils/cn';
-import GameHeader from '../shared/GameHeader';
 import MessageDisplay from '../shared/MessageDisplay';
 import HintButton from '../shared/HintButton';
 import { useComboStreak } from '../../hooks/useStreak';
 import { useAdaptiveDifficulty } from '../../hooks/useAdaptiveDifficulty';
 import { useIdleNudge } from '../../hooks/useIdleNudge';
-import { useAudio } from '../../hooks/useAudio';
 import { ROUNDS_REQUIRED, SCORE_PENALTY, SCORE_HINT_COST, HINT_WRONG_THRESHOLD, DELAY_SHORT, DELAY_WRONG, DELAY_TRANSITION, DELAY_WRONG_LONG, COUNTING_MAX_TARGET, COUNTING_TOTAL_MIN, COUNTING_TOTAL_EXTRA, COUNTING_OPTION_RANGE, ENCOURAGEMENTS } from '../../constants';
 import { pickRandom } from '../../utils/shuffle';
 import styles from './CountingGame.module.css';
@@ -21,8 +19,7 @@ interface Props {
 }
 
 export default function CountingGame({ level, levelIndex }: Props) {
-  const { difficulty, addScore, subtractScore, playFanfare, playErrorSound, speak, completeLevel } = useGameSetup();
-  const { playComboSound } = useAudio();
+  const { difficulty, addScore, subtractScore, playFanfare, playErrorSound, playComboSound, speak, completeLevel } = useGameSetup();
   const setTimer = useTimers();
   const { incrementStreak, resetStreak, getCorrectScore } = useComboStreak();
   const baseNumOpts = difficulty === 'easy' ? 3 : difficulty === 'medium' ? 4 : 6;
@@ -137,7 +134,6 @@ export default function CountingGame({ level, levelIndex }: Props) {
 
   return (
     <div className={styles.wrapper}>
-      <GameHeader emoji="🔢" title="Kolik jich vidíš?" />
       <div className={styles.question}>{questionText}</div>
       <div className={styles.objectsArea}>
         {displayObjects.map((obj) => (

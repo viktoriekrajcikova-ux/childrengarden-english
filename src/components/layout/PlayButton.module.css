@@ -1,10 +1,10 @@
 .playButton {
   position: fixed;
-  bottom: 30px;
+  bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  padding: 20px 60px;
-  font-size: 1.5em;
+  padding: 16px 50px;
+  font-size: 1.3em;
   background: var(--color-success);
   color: white;
   border: none;
@@ -13,6 +13,7 @@
   transition: all 0.3s ease;
   box-shadow: 0 5px 15px rgba(76,175,80,0.3);
   z-index: 1000;
+  max-width: 90%;
 }
 .playButton:hover {
   background: var(--color-success-dark);
@@ -30,8 +31,16 @@
 
 @media (max-width: 768px) {
   .playButton {
-    padding: 15px 40px;
-    font-size: 1.2em;
     bottom: 15px;
+    padding: 12px 40px;
+    font-size: 1.1em;
+  }
+}
+
+@media (max-height: 700px) {
+  .playButton {
+    bottom: 10px;
+    padding: 10px 35px;
+    font-size: 1em;
   }
 }

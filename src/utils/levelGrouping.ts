@@ -66,9 +66,13 @@ export function calculateGroups(
     if (isComplete) completedGroupsCount++;
   });
 
-  // Group is locked if groupNumber > completedGroupsCount + 1
+  // Admin mode — defaultne zapnuto, vypnout lze pres localStorage.setItem('role', 'user')
+  const role = localStorage.getItem('role');
+  const isAdmin = role === null || role === 'admin';
+
+  // Group is locked if groupNumber > completedGroupsCount + 1 (unless admin)
   groups.forEach((group) => {
-    group.isLocked = group.groupNumber > completedGroupsCount + 1;
+    group.isLocked = isAdmin ? false : group.groupNumber > completedGroupsCount + 1;
   });
 
   return groups;

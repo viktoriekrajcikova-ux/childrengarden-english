@@ -1,3 +1,115 @@
+.gameLayout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+  background: var(--gradient-primary);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Horni lista */
+.navbar {
+  position: relative;
+  z-index: 100;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.95) 0%, rgba(118, 75, 162, 0.95) 100%);
+  backdrop-filter: blur(10px);
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.navbarLeft,
+.navbarCenter,
+.navbarRight {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.navbarLeft {
+  justify-content: flex-start;
+}
+
+.navbarCenter {
+  justify-content: center;
+}
+
+.navbarRight {
+  justify-content: flex-end;
+}
+
+.backButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.25);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
+  font-weight: bold;
+  font-size: 1em;
+}
+
+.backButton:hover {
+  background: rgba(255, 255, 255, 0.35);
+  transform: translateX(-2px);
+}
+
+.backIcon {
+  font-size: 1.3em;
+}
+
+.backText {
+  font-size: 1em;
+}
+
+.levelTitle {
+  color: white;
+  font-weight: bold;
+  font-size: 1.2em;
+  text-align: center;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.scoreDisplay {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 8px 16px;
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.scoreIcon {
+  font-size: 1.3em;
+  animation: scoreGlow 2s ease-in-out infinite;
+}
+
+.scoreValue {
+  color: var(--color-primary);
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+/* Obsah */
+.gameContent {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .gameContainer {
   background: white;
   border-radius: var(--radius-lg);
@@ -8,10 +120,108 @@
   position: relative;
 }
 
-@media (max-width: 768px) {
+/* Animace */
+@keyframes scoreGlow {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 5px rgba(255, 215, 0, 0.5));
+  }
+  50% {
+    filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.8));
+  }
+}
+
+/* Tablet landscape (napr. 1024x600) */
+@media (min-width: 768px) and (max-height: 700px) and (orientation: landscape) {
+  .gameContent {
+    padding: 8px 15px;
+  }
+
   .gameContainer {
-    padding: 15px 10px;
-    border-radius: var(--radius-sm);
-    margin: 0 5px;
+    padding: 15px 25px;
+    border-radius: var(--radius-md);
+  }
+
+  .navbar {
+    padding: 8px 20px;
+  }
+}
+
+/* Responzivni design */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 10px 15px;
+  }
+
+  .backButton {
+    padding: 6px 12px;
+    font-size: 0.9em;
+  }
+
+  .backText {
+    display: none;
+  }
+
+  .backIcon {
+    font-size: 1.5em;
+  }
+
+  .levelTitle {
+    font-size: 1em;
+  }
+
+  .scoreDisplay {
+    padding: 6px 12px;
+  }
+
+  .scoreIcon {
+    font-size: 1.1em;
+  }
+
+  .scoreValue {
+    font-size: 1em;
+  }
+
+  .gameContent {
+    padding: 15px;
+  }
+
+  .gameContainer {
+    padding: 30px 20px;
+    border-radius: var(--radius-md);
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    padding: 8px 10px;
+  }
+
+  .backButton {
+    padding: 6px 10px;
+  }
+
+  .levelTitle {
+    font-size: 0.9em;
+  }
+
+  .scoreDisplay {
+    padding: 5px 10px;
+  }
+
+  .scoreIcon {
+    font-size: 1em;
+  }
+
+  .scoreValue {
+    font-size: 0.9em;
+  }
+
+  .gameContent {
+    padding: 10px;
+  }
+
+  .gameContainer {
+    padding: 25px 15px;
   }
 }

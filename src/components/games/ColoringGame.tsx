@@ -6,11 +6,9 @@ import { shuffleArray } from '../../utils/shuffle';
 import type { ColoringLevel, ColorItem, ShapeItem } from '../../types';
 import { cn } from '../../utils/cn';
 import PlayButton from '../layout/PlayButton';
-import GameHeader from '../shared/GameHeader';
 import MessageDisplay from '../shared/MessageDisplay';
 import HintButton from '../shared/HintButton';
 import { useComboStreak } from '../../hooks/useStreak';
-import { useAudio } from '../../hooks/useAudio';
 import { SCORE_HINT_COST, HINT_WRONG_THRESHOLD, DELAY_SHORT, DELAY_WRONG } from '../../constants';
 import styles from './ColoringGame.module.css';
 
@@ -20,8 +18,7 @@ interface Props {
 }
 
 export default function ColoringGame({ level, levelIndex }: Props) {
-  const { difficulty, addScore, subtractScore, playFanfare, playErrorSound, speak, completeLevel } = useGameSetup();
-  const { playComboSound } = useAudio();
+  const { difficulty, addScore, subtractScore, playFanfare, playErrorSound, playComboSound, speak, completeLevel } = useGameSetup();
   const setTimer = useTimers();
   const { incrementStreak, resetStreak, getCorrectScore } = useComboStreak();
 
@@ -191,7 +188,6 @@ export default function ColoringGame({ level, levelIndex }: Props) {
 
   return (
     <div className={styles.wrapper}>
-      <GameHeader emoji="🎨" title="Omalovánka" />
       <div className={styles.palette}>
         {availableColors
           .filter((c) => !removedColors.has(c.name))

@@ -6,7 +6,6 @@ import { filterByDifficulty } from '../../utils/difficultyFilter';
 import { shuffleArray } from '../../utils/shuffle';
 import type { DragDropLevel, DragDropItem } from '../../types';
 import { cn } from '../../utils/cn';
-import GameHeader from '../shared/GameHeader';
 import MessageDisplay from '../shared/MessageDisplay';
 import { SCORE_CORRECT, SCORE_PENALTY, DELAY_SHORT, DELAY_FEEDBACK } from '../../constants';
 import styles from './DragDropGame.module.css';
@@ -118,7 +117,6 @@ export default function DragDropGame({ level, levelIndex }: Props) {
 
   return (
     <div className={styles.wrapper}>
-      <GameHeader emoji="🎯" title="Kam to patří?" />
       <div className={styles.dropZones}>
         {level.destinations.map((dest) => (
           <div

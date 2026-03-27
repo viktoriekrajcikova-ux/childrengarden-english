@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import ErrorBoundary from './components/shared/ErrorBoundary';
+import InitialRoute from './components/shared/InitialRoute';
 
 const DifficultyPage = lazy(() => import('./pages/DifficultyPage'));
 const MapPage = lazy(() => import('./pages/MapPage'));
@@ -17,7 +18,8 @@ export default function App() {
     <BrowserRouter>
       <Suspense fallback={<div style={{ textAlign: 'center', paddingTop: '40vh', fontSize: '2em' }}>Nahrávám...</div>}>
       <Routes>
-        <Route path="/" element={<DifficultyPage />} />
+        <Route path="/" element={<InitialRoute />} />
+        <Route path="/difficulty" element={<DifficultyPage />} />
         <Route path="/egg-hatch" element={<EggHatchPage />} />
         <Route path="/map" element={<MapPage />} />
         <Route path="/level/:id" element={<LevelPage />} />

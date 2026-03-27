@@ -11,7 +11,6 @@ import { useComboStreak } from '../../hooks/useStreak';
 import { useAdaptiveDifficulty } from '../../hooks/useAdaptiveDifficulty';
 import { useIdleNudge } from '../../hooks/useIdleNudge';
 import { useAchievements } from '../../hooks/useAchievements';
-import { useAudio } from '../../hooks/useAudio';
 import { SCORE_PENALTY, SCORE_HINT_COST, HINT_WRONG_THRESHOLD, DELAY_FEEDBACK, DELAY_WRONG, ENCOURAGEMENTS } from '../../constants';
 import { pickRandom } from '../../utils/shuffle';
 import styles from '../../styles/grid.module.css';
@@ -24,8 +23,7 @@ interface Props {
 }
 
 export default function StandardGame({ level, levelIndex }: Props) {
-  const { difficulty, addScore, subtractScore, playFanfare, playErrorSound, speak, completeLevel } = useGameSetup();
-  const { playComboSound } = useAudio();
+  const { difficulty, addScore, subtractScore, playFanfare, playErrorSound, playComboSound, speak, completeLevel } = useGameSetup();
   const setTimer = useTimers();
   const { incrementStreak, resetStreak, getCorrectScore } = useComboStreak();
   const { adjustedMax, recordCorrect: adaptiveCorrect, recordWrong: adaptiveWrong } = useAdaptiveDifficulty(level.maxDisplay);
