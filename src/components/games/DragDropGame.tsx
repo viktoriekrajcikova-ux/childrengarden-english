@@ -132,7 +132,8 @@ export default function DragDropGame({ level, levelIndex }: Props) {
             onDrop={(e) => handleDrop(e, dest.name)}
           >
             <div className={styles.dropZoneHeader}>{dest.emoji}</div>
-            <div className={styles.dropZoneName}>{dest.czech}</div>
+            <div className={styles.dropZoneName}><strong>{dest.name.toUpperCase()}</strong></div>
+            <div className={styles.dropZoneNameCz}>{dest.czech}</div>
             <div className={styles.dropZoneItems}>
               {(droppedItems[dest.name] || []).map((emoji, i) => (
                 <div key={i} className={styles.droppedItem}>{emoji}</div>
@@ -152,7 +153,8 @@ export default function DragDropGame({ level, levelIndex }: Props) {
             {...getTouchHandlers(item)}
           >
             <div className={styles.draggableEmoji}>{item.emoji}</div>
-            <div className={styles.draggableName}>{item.czech}</div>
+            <div className={styles.draggableName}>{item.name}</div>
+            <div className={styles.draggableNameCz}>{item.czech}</div>
           </div>
         ))}
       </div>

@@ -1,6 +1,7 @@
 /* Pet animation wrapper */
 .petWrapper {
   display: inline-block;
+  position: relative;
   transform-origin: center bottom;
   filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.18));
 }
@@ -142,9 +143,16 @@
   75% { transform: rotate(10deg); }
 }
 
-/* Accessory overlay */
-.accessoryOverlay {
+/* Accessory - draggable emoji */
+.accessory {
   position: absolute;
-  pointer-events: none;
-  z-index: 2;
+  top: 0;
+  left: 50%;
+  font-size: 2.2em;
+  z-index: 10;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.3));
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  line-height: 1;
 }

@@ -125,7 +125,8 @@
 }
 .drinkDragging { opacity: 0.5; }
 .drinkEmoji { font-size: 3em; margin-bottom: 10px; }
-.drinkName { font-size: 1.1em; font-weight: bold; color: var(--color-text); }
+.drinkName { font-size: 1em; font-weight: 800; color: var(--color-primary); text-transform: uppercase; }
+.drinkNameCz { font-size: 0.8em; color: var(--color-text-light); }
 .servedEmoji { font-size: 3em; animation: drinkServed 1s ease; }
 
 @media (max-width: 768px) {

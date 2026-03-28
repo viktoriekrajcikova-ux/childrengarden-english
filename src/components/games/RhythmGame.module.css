@@ -61,7 +61,8 @@
   box-shadow: 0 0 20px rgba(255,215,0,0.8);
 }
 .sequenceEmoji { font-size: 3rem; }
-.sequenceName { font-size: 0.9rem; color: var(--color-text-light); font-weight: 600; }
+.sequenceEnglish { font-size: 0.95rem; color: var(--color-primary); font-weight: 800; text-transform: uppercase; }
+.sequenceName { font-size: 0.75rem; color: var(--color-text-light); font-weight: 600; }
 .controls {
   display: flex;
   gap: 15px;
@@ -169,7 +170,8 @@
 }
 .itemCardUsed { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
 .itemEmoji { font-size: 3rem; }
-.itemName { font-size: 1rem; color: #495057; font-weight: 600; }
+.itemEnglish { font-size: 0.95rem; color: var(--color-primary); font-weight: 800; text-transform: uppercase; }
+.itemName { font-size: 0.8rem; color: #495057; font-weight: 600; }
 
 @media (max-width: 768px) {
   .title { font-size: 2rem; }

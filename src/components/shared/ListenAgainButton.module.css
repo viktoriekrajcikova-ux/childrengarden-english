@@ -1,0 +1,46 @@
+.button {
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: none;
+  background: var(--gradient-primary);
+  color: white;
+  font-size: 1.6em;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+  z-index: 900;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.5);
+}
+.button:active {
+  transform: scale(0.95);
+}
+
+@media (max-width: 768px) {
+  .button {
+    width: 48px;
+    height: 48px;
+    font-size: 1.3em;
+    bottom: 80px;
+    right: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .button {
+    width: 42px;
+    height: 42px;
+    font-size: 1.1em;
+    bottom: 70px;
+    right: 8px;
+  }
+}

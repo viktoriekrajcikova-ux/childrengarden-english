@@ -58,10 +58,16 @@
   font-size: 4em;
   margin-bottom: 10px;
 }
+.cardEnglish {
+  font-size: 1.1em;
+  font-weight: 800;
+  color: var(--color-primary);
+  text-transform: uppercase;
+}
 .cardName {
-  font-size: 1.2em;
-  font-weight: bold;
-  color: var(--color-text);
+  font-size: 0.85em;
+  font-weight: 600;
+  color: var(--color-text-light);
 }
 
 @media (max-width: 768px) {

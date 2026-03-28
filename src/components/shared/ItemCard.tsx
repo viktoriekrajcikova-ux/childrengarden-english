@@ -3,12 +3,13 @@ import styles from './ItemCard.module.css';
 
 interface Props {
   emoji: string;
+  english?: string;
   czech: string;
   state?: 'idle' | 'clickable' | 'correct' | 'wrong' | 'hidden' | 'hint' | 'correctReveal';
   onClick?: () => void;
 }
 
-export default function ItemCard({ emoji, czech, state = 'idle', onClick }: Props) {
+export default function ItemCard({ emoji, english, czech, state = 'idle', onClick }: Props) {
   return (
     <div
       className={cn(
@@ -23,6 +24,7 @@ export default function ItemCard({ emoji, czech, state = 'idle', onClick }: Prop
       onClick={onClick}
     >
       <div className={styles.emoji}>{emoji}</div>
+      {english && <div className={styles.english}>{english}</div>}
       <div className={styles.name}>{czech}</div>
     </div>
   );

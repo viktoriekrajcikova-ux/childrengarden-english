@@ -14,6 +14,7 @@ import GameLayout from '../components/layout/GameLayout';
 import PlayButton from '../components/layout/PlayButton';
 import MessageDisplay from '../components/shared/MessageDisplay';
 import ItemCard from '../components/shared/ItemCard';
+import ListenAgainButton from '../components/shared/ListenAgainButton';
 import Button from '../components/shared/Button';
 import { REVIEW_ROUNDS, SCORE_CORRECT, SCORE_PENALTY, DELAY_FEEDBACK, DELAY_WRONG, DELAY_TRANSITION } from '../constants';
 import reviewStyles from './ReviewPage.module.css';
@@ -106,6 +107,7 @@ export default function ReviewPage() {
     setCanClick(true);
     setPlayDisabled(true);
     speak(currentTarget.name);
+    setTimer(() => speak(currentTarget.name), 1200);
     setMessage('Klikni na správnou položku!');
     const newStates: Record<string, 'idle' | 'clickable' | 'correct' | 'wrong' | 'hidden'> = {};
     currentItems.forEach((item) => { newStates[item.name] = 'clickable'; });
@@ -178,6 +180,7 @@ export default function ReviewPage() {
           <ItemCard
             key={item.name}
             emoji={item.emoji}
+            english={item.name}
             czech={item.czech}
             state={cardStates[item.name] || 'idle'}
             onClick={() => handleItemClick(item.name)}
@@ -185,6 +188,7 @@ export default function ReviewPage() {
         ))}
       </div>
       <MessageDisplay text={message} />
+      {currentTarget && <ListenAgainButton onClick={() => speak(currentTarget.name)} />}
       {!finished && <PlayButton onClick={handlePlay} disabled={playDisabled} />}
       <Button variant="secondary" onClick={() => navigate('/map')}>
         ← Zpět na levely

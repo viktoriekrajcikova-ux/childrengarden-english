@@ -173,6 +173,7 @@ export default function RhythmGame({ levelIndex }: Props) {
             className={cn(styles.sequenceItem, playingIndex === idx && styles.playing)}
           >
             <div className={styles.sequenceEmoji}>{item.emoji}</div>
+            <div className={styles.sequenceEnglish}>{item.name}</div>
             <div className={styles.sequenceName}>{item.czech}</div>
           </div>
         ))}
@@ -196,7 +197,8 @@ export default function RhythmGame({ levelIndex }: Props) {
           playerSequence.map((item, idx) => (
             <div key={idx} className={styles.playerItem}>
               <div className={styles.itemEmoji}>{item.emoji}</div>
-              <div className={styles.itemName}>{item.czech}</div>
+              <div className={styles.itemEnglish}>{item.name}</div>
+            <div className={styles.itemName}>{item.czech}</div>
               <button className={styles.removeBtn} onClick={() => handleRemoveItem(idx)}>
                 ×
               </button>
@@ -213,6 +215,7 @@ export default function RhythmGame({ levelIndex }: Props) {
             onClick={() => handleItemClick(item)}
           >
             <div className={styles.itemEmoji}>{item.emoji}</div>
+            <div className={styles.itemEnglish}>{item.name}</div>
             <div className={styles.itemName}>{item.czech}</div>
           </div>
         ))}

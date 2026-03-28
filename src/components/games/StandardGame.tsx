@@ -7,11 +7,12 @@ import PlayButton from '../layout/PlayButton';
 import MessageDisplay from '../shared/MessageDisplay';
 import ItemCard from '../shared/ItemCard';
 import HintButton from '../shared/HintButton';
+import ListenAgainButton from '../shared/ListenAgainButton';
 import { useComboStreak } from '../../hooks/useStreak';
 import { useAdaptiveDifficulty } from '../../hooks/useAdaptiveDifficulty';
 import { useIdleNudge } from '../../hooks/useIdleNudge';
 import { useAchievements } from '../../hooks/useAchievements';
-import { SCORE_PENALTY, SCORE_HINT_COST, HINT_WRONG_THRESHOLD, DELAY_FEEDBACK, DELAY_WRONG, ENCOURAGEMENTS } from '../../constants';
+import { SCORE_PENALTY, SCORE_HINT_COST, HINT_WRONG_THRESHOLD, DELAY_FEEDBACK, DELAY_WRONG, ENCOURAGEMENTS, ENGLISH_PRAISE, ENGLISH_TRY_AGAIN } from '../../constants';
 import { pickRandom } from '../../utils/shuffle';
 import styles from '../../styles/grid.module.css';
 
@@ -74,9 +75,10 @@ export default function StandardGame({ level, levelIndex }: Props) {
     setWrongCount(0);
     setHintUsed(false);
     speak(target.name);
+    setTimer(() => speak(target.name), 1200);
     setMessage('Klikni na správnou položku!');
     setPlayDisabled(true);
-  }, [remaining, items, speak]);
+  }, [remaining, items, speak, setTimer]);
 
   const handleHint = useCallback(() => {
     if (!currentTarget) return;
@@ -117,6 +119,7 @@ export default function StandardGame({ level, levelIndex }: Props) {
           setMessage('🎉 Správně! +10 bodů');
         }
         playFanfare();
+        setTimer(() => speak(pickRandom(ENGLISH_PRAISE)), 600);
 
         const newRemaining = remaining.filter((item) => item.name !== itemName);
         setRemaining(newRemaining);
@@ -146,6 +149,7 @@ export default function StandardGame({ level, levelIndex }: Props) {
         speak(currentTarget.name);
 
         setMessage(`❌ ${pickRandom(ENCOURAGEMENTS)} -5 bodů`);
+        setTimer(() => speak(pickRandom(ENGLISH_TRY_AGAIN)), 600);
 
         setTimer(() => {
           setCardStates((prev) => {
@@ -170,6 +174,7 @@ export default function StandardGame({ level, levelIndex }: Props) {
           <ItemCard
             key={item.name}
             emoji={item.emoji}
+            english={item.name}
             czech={item.czech}
             state={cardStates[item.name] || 'idle'}
             onClick={() => handleItemClick(item.name)}
@@ -177,6 +182,7 @@ export default function StandardGame({ level, levelIndex }: Props) {
         ))}
       </div>
       <MessageDisplay text={message} />
+      {currentTarget && <ListenAgainButton onClick={() => speak(currentTarget.name)} />}
       {showHintBtn && <HintButton onClick={handleHint} />}
       <PlayButton onClick={handlePlay} disabled={playDisabled} />
     </>

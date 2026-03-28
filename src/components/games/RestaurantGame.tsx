@@ -151,7 +151,8 @@ export default function RestaurantGame({ level, levelIndex }: Props) {
                 {...getTouchHandlers(drink)}
               >
                 <div className={styles.drinkEmoji}>{drink.emoji}</div>
-                <div className={styles.drinkName}>{drink.czech}</div>
+                <div className={styles.drinkName}>{drink.name}</div>
+                <div className={styles.drinkNameCz}>{drink.czech}</div>
               </div>
             ))}
           </div>

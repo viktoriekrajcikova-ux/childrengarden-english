@@ -54,10 +54,17 @@
   font-size: 5em;
   margin-bottom: 10px;
 }
+.english {
+  font-size: 1.3em;
+  color: var(--color-primary);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
 .name {
-  font-size: 1.2em;
-  color: var(--color-text);
-  font-weight: bold;
+  font-size: 0.9em;
+  color: var(--color-text-light);
+  font-weight: 600;
 }
 
 @media (max-width: 768px) {

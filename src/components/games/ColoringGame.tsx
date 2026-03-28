@@ -8,6 +8,7 @@ import { cn } from '../../utils/cn';
 import PlayButton from '../layout/PlayButton';
 import MessageDisplay from '../shared/MessageDisplay';
 import HintButton from '../shared/HintButton';
+import ListenAgainButton from '../shared/ListenAgainButton';
 import { useComboStreak } from '../../hooks/useStreak';
 import { SCORE_HINT_COST, HINT_WRONG_THRESHOLD, DELAY_SHORT, DELAY_WRONG } from '../../constants';
 import styles from './ColoringGame.module.css';
@@ -94,6 +95,7 @@ export default function ColoringGame({ level, levelIndex }: Props) {
   const handlePlay = () => {
     if (!targetColor || !targetShape || transitioning) return;
     speak(`${targetColor.name} ${targetShape.name}`);
+    setTimer(() => speak(`${targetColor.name} ${targetShape.name}`), 1200);
     setMessage(selectedColor ? 'Vyber správný tvar a obarvi ho!' : 'Vyber správnou barvu a pak správný tvar!');
     setPlayDisabled(true);
   };
@@ -211,6 +213,9 @@ export default function ColoringGame({ level, levelIndex }: Props) {
           />
         ))}
       </div>
+      {targetColor && targetShape && (
+        <ListenAgainButton onClick={() => speak(`${targetColor.name} ${targetShape.name}`)} />
+      )}
       {showHintBtn && <HintButton onClick={handleHint} />}
       <MessageDisplay text={message} />
       <PlayButton onClick={handlePlay} disabled={playDisabled} />

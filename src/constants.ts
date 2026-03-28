@@ -1,6 +1,6 @@
 // ── Game mechanics ──
 export const ROUNDS_REQUIRED = 3;
-export const REVIEW_ROUNDS = 5;
+export const REVIEW_ROUNDS = 8;
 export const SCORE_CORRECT = 10;
 export const SCORE_CORRECT_DOUBLE = 20;
 export const SCORE_PENALTY = 5;
@@ -63,3 +63,5 @@ export const DAILY_REWARD_MAX = 25;
 
 // ── Shared messages ──
 export const ENCOURAGEMENTS = ['Nevadí, zkus to znovu!', 'Skoro! Příště to bude!', 'Dobrý pokus!'];
+export const ENGLISH_PRAISE = ['Good job!', 'Well done!', 'Great!', 'Awesome!', 'Perfect!'];
+export const ENGLISH_TRY_AGAIN = ['Try again!', 'Almost!', 'Not quite!'];

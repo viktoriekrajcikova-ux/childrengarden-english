@@ -35,6 +35,8 @@ import Inventory from '../components/pet/Inventory';
 import type { FoodItem } from '../components/pet/Inventory';
 import { pickRandom } from '../utils/shuffle';
 import { cn } from '../utils/cn';
+import { getUnlockedIds } from '../data/rewards';
+import { claimedRewardsAtom } from '../store/atoms';
 import styles from './PetCarePage.module.css';
 
 type ActionPhase = 'idle' | 'shopping' | 'feeding' | 'shower' | 'poop' | 'sleeping';
@@ -42,7 +44,7 @@ type ShopTab = 'food' | 'colors' | 'accessories';
 
 interface ShopItem { emoji: string; name: string; price: number }
 
-const SHOP_ITEMS: ShopItem[] = [
+const ALL_FOOD: ShopItem[] = [
   { emoji: '🌾', name: 'Grain', price: SHOP_GRAIN_PRICE },
   { emoji: '🍎', name: 'Apple', price: SHOP_APPLE_PRICE },
   { emoji: '🎂', name: 'Cake', price: SHOP_CAKE_PRICE },
@@ -78,6 +80,8 @@ export default function PetCarePage() {
   } = useAudio();
   const setTimer = useTimers();
   const { completedGroupIndices } = useLevelGroups();
+  const claimedRewards = useAtomValue(claimedRewardsAtom);
+  const unlocked = getUnlockedIds(claimedRewards);
 
   const petStage = getPetStage(completedGroupIndices.length);
   const habitatIndex = Math.min(completedGroupIndices.length, 4);
@@ -298,13 +302,20 @@ export default function PetCarePage() {
   }, [say, playPoopSound, playBulldozer, playChirpHappy, setTimer, goIdle]);
 
   // --- Leave ---
-  const handleLeave = useCallback(() => {
+  const doLeave = useCallback(() => {
     setPhase('sleeping'); setBusy(true);
     say('*yaaawn* I am sleepy...'); setPetAnimation('sleeping'); setMood('neutral'); setShowZzz(true);
     setLastVisitTime(Date.now());
     setTimer(() => say('Good night! See you tomorrow!'), 2000);
     setTimer(() => navigate(`/map?scrollTo=${nextLevel}`), 4000);
   }, [say, setTimer, navigate, nextLevel, setLastVisitTime]);
+
+  const handleLeave = useCallback(() => {
+    if (fedCount < PET_MIN_FED) {
+      if (!confirm('Zvířátko ještě nemá dost jídla! Opravdu chceš odejít?')) return;
+    }
+    doLeave();
+  }, [fedCount, doLeave]);
 
   // --- Render helpers ---
   const inventoryFull = inventory.length >= PET_MAX_INVENTORY;
@@ -326,10 +337,10 @@ export default function PetCarePage() {
       <div className={styles.header}>
         <div>
           <button className={styles.backButton} onClick={handleLeave}
-            disabled={fedCount < PET_MIN_FED || phase === 'sleeping'}>← Back</button>
+            disabled={phase === 'sleeping'}>← Back</button>
           {fedCount < PET_MIN_FED && (
             <div className={styles.backHint}>
-              Feed me {PET_MIN_FED - fedCount} more time{PET_MIN_FED - fedCount !== 1 ? 's' : ''}!
+              {PET_MIN_FED - fedCount}x 🤍
             </div>
           )}
         </div>
@@ -428,7 +439,7 @@ export default function PetCarePage() {
           {shopTab === 'food' ? (
             <>
               <div className={styles.shopCards}>
-                {SHOP_ITEMS.map(item => {
+                {ALL_FOOD.filter(item => unlocked.foods.has(item.emoji)).map(item => {
                   const disabled = item.price > score || inventoryFull;
                   return (
                     <button key={item.emoji} className={cn(styles.shopCard, disabled && styles.shopCardDisabled)}
@@ -451,7 +462,7 @@ export default function PetCarePage() {
                 <span className={styles.shopCardName}>Default</span>
                 <span className={styles.shopCardFree}>Free</span>
               </button>
-              {COLOR_OPTIONS.map(c => {
+              {COLOR_OPTIONS.filter(c => unlocked.colors.has(c.id)).map(c => {
                 const owned = ownedColors.includes(c.id);
                 const active = petColor === c.hex;
                 const disabled = !owned && SHOP_COLOR_PRICE > score;
@@ -465,6 +476,7 @@ export default function PetCarePage() {
                   </button>
                 );
               })}
+              {unlocked.colors.size === 0 && <div className={styles.backHint}>Hraj a odemkni barvy!</div>}
             </div>
           ) : (
             <div className={styles.shopCards}>
@@ -475,7 +487,7 @@ export default function PetCarePage() {
                 <span className={styles.shopCardName}>None</span>
                 <span className={styles.shopCardFree}>Free</span>
               </button>
-              {ACCESSORY_LIST.map(acc => {
+              {ACCESSORY_LIST.filter(acc => unlocked.accessories.has(acc.id)).map(acc => {
                 const owned = ownedAccessories.includes(acc.id);
                 const equipped = equippedAccessory === acc.id;
                 const disabled = !owned && SHOP_ACCESSORY_PRICE > score;
@@ -489,6 +501,7 @@ export default function PetCarePage() {
                   </button>
                 );
               })}
+              {unlocked.accessories.size === 0 && <div className={styles.backHint}>Hraj a odemkni doplňky!</div>}
             </div>
           )}
           <button className={styles.backActionBtn} onClick={() => goIdle()}>Back</button>

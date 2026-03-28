@@ -6,6 +6,7 @@ import type { CountingLevel, CountingObject } from '../../types';
 import { cn } from '../../utils/cn';
 import MessageDisplay from '../shared/MessageDisplay';
 import HintButton from '../shared/HintButton';
+import ListenAgainButton from '../shared/ListenAgainButton';
 import { useComboStreak } from '../../hooks/useStreak';
 import { useAdaptiveDifficulty } from '../../hooks/useAdaptiveDifficulty';
 import { useIdleNudge } from '../../hooks/useIdleNudge';
@@ -128,13 +129,16 @@ export default function CountingGame({ level, levelIndex }: Props) {
 
   const showHintBtn = wrongCount >= HINT_WRONG_THRESHOLD && !hintUsed && !disabled;
 
-  const questionText = target
-    ? `How many ${correctCount === 1 ? target.nameSingular : target.name} can you see?`
+  const questionEmoji = target?.emoji ?? '';
+  const questionWord = target
+    ? (correctCount === 1 ? target.nameSingular : target.name).toUpperCase()
     : '';
 
   return (
     <div className={styles.wrapper}>
-      <div className={styles.question}>{questionText}</div>
+      <div className={styles.question}>
+        HOW MANY {questionEmoji} <strong>{questionWord}</strong> ?
+      </div>
       <div className={styles.objectsArea}>
         {displayObjects.map((obj) => (
           <div key={obj.key} className={styles.countingObject} style={{ animationDelay: `${obj.key * 0.05}s` }}>
@@ -158,6 +162,7 @@ export default function CountingGame({ level, levelIndex }: Props) {
           </button>
         ))}
       </div>
+      {target && <ListenAgainButton onClick={() => speak(`How many ${correctCount === 1 ? target.nameSingular : target.name} can you see?`, 0.9)} />}
       {showHintBtn && <HintButton onClick={handleHint} />}
       <MessageDisplay text={message} />
     </div>

@@ -27,11 +27,13 @@ export const streakAtom = atom(0);
 export const achievementsAtom = atomWithStorage<string[]>('englishGameAchievements', []);
 export const hasHatchedAtom = atomWithStorage<boolean>('englishGameHasHatched', false);
 export const playDatesAtom = atomWithStorage<string[]>('englishGamePlayDates', []);
+export const claimedRewardsAtom = atomWithStorage<number[]>('englishGameClaimedRewards', []);
 export const lastVisitTimeAtom = atomWithStorage<number>('englishGameLastVisitTime', 0);
 export const petColorsAtom = atomWithStorage<Record<string, string | null>>('englishGamePetColors', {});
 export const ownedColorsAtom = atomWithStorage<Record<string, string[]>>('englishGameOwnedColors2', {});
 export const ownedAccessoriesAtom = atomWithStorage<Record<string, string[]>>('englishGameOwnedAccessories2', {});
 export const equippedAccessoriesAtom = atomWithStorage<Record<string, string | null>>('englishGameEquippedAccessories', {});
+export const accessoryPositionsAtom = atomWithStorage<Record<string, { x: number; y: number }>>('englishGameAccessoryPositions', {});
 
 // Derived write atoms for common actions
 export const addScoreAtom = atom(null, (get, set, amount: number) => {
@@ -84,4 +86,6 @@ export const resetGameAtom = atom(null, (_get, set) => {
   set(ownedColorsAtom, {});
   set(ownedAccessoriesAtom, {});
   set(equippedAccessoriesAtom, {});
+  set(accessoryPositionsAtom, {});
+  set(claimedRewardsAtom, []);
 });

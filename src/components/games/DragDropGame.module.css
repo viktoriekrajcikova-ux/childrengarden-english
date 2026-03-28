@@ -22,7 +22,8 @@
   align-items: center;
 }
 .dropZoneHeader { font-size: 3em; margin-bottom: 10px; }
-.dropZoneName { font-size: 1.5em; font-weight: bold; color: var(--color-text); margin-bottom: 20px; }
+.dropZoneName { font-size: 1.5em; font-weight: 800; color: var(--color-primary); margin-bottom: 4px; }
+.dropZoneNameCz { font-size: 1em; color: var(--color-text-light); margin-bottom: 16px; }
 .dropZoneItems { display: flex; flex-wrap: wrap; gap: 10px; width: 100%; justify-content: center; }
 .sky {
   background: linear-gradient(180deg, #87CEEB 0%, #E0F6FF 100%);
@@ -66,7 +67,8 @@
 .draggableItem:hover { transform: scale(1.1); box-shadow: 0 6px 12px rgba(0,0,0,0.3); }
 .dragging { opacity: 0.5; transform: rotate(5deg); }
 .draggableEmoji { font-size: 3em; }
-.draggableName { font-size: 0.9em; color: var(--color-text); font-weight: bold; margin-top: 5px; }
+.draggableName { font-size: 0.85em; color: var(--color-primary); font-weight: 800; text-transform: uppercase; margin-top: 3px; }
+.draggableNameCz { font-size: 0.7em; color: var(--color-text-light); }
 .droppedItem {
   background: white;
   padding: 10px;

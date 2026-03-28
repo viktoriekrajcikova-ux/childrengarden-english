@@ -122,6 +122,7 @@ export default function MemoryGame({ levelIndex }: Props) {
                 <div className={styles.cardFront}>?</div>
                 <div className={styles.cardBack}>
                   <div className={styles.cardEmoji}>{card.item.emoji}</div>
+                  <div className={styles.cardEnglish}>{card.item.name}</div>
                   <div className={styles.cardName}>{card.item.czech}</div>
                 </div>
               </div>
