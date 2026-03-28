@@ -36,14 +36,19 @@
   color: white;
   border: none;
   border-radius: var(--radius-full);
-  padding: 14px 40px;
-  font-size: 1.2em;
+  padding: 16px 50px;
+  font-size: 1.3em;
   font-weight: bold;
   cursor: pointer;
   transition: transform 0.2s;
+  min-height: 48px;
+  touch-action: manipulation;
 }
 .button:hover {
   transform: scale(1.05);
+}
+.button:active {
+  transform: scale(0.97);
 }
 
 @keyframes popIn {

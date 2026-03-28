@@ -276,19 +276,24 @@
   transition: transform 0.2s, box-shadow 0.2s;
   width: fit-content;
   margin: 0 auto;
+  font-family: inherit;
 }
 .rewardTile:hover {
   transform: scale(1.05);
   box-shadow: 0 8px 25px rgba(255, 165, 0, 0.5);
 }
-.rewardTileLocked {
+.rewardTile:disabled {
   opacity: 0.5;
   filter: grayscale(1);
   cursor: not-allowed;
 }
-.rewardTileLocked:hover {
+.rewardTile:disabled:hover {
   transform: none;
   box-shadow: 0 6px 20px rgba(255, 165, 0, 0.3);
+}
+.rewardTileLocked {
+  opacity: 0.5;
+  filter: grayscale(1);
 }
 .rewardTileClaimed {
   background: linear-gradient(135deg, #e8f5e9 0%, #a5d6a7 50%, #66bb6a 100%);

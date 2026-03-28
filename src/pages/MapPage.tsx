@@ -61,10 +61,12 @@ export default function MapPage() {
   const handleClaimReward = () => {
     if (!pendingReward) return;
     const { reward, gameGroupIndex } = pendingReward;
-    if (reward.type === 'bonus' && reward.points) {
-      addScore(reward.points);
+    if (gameGroupIndex >= 0) {
+      if (reward.type === 'bonus' && reward.points) {
+        addScore(reward.points);
+      }
+      setClaimedRewards([...claimedRewards, gameGroupIndex]);
     }
-    setClaimedRewards([...claimedRewards, gameGroupIndex]);
     setPendingReward(null);
   };
 
@@ -224,13 +226,17 @@ export default function MapPage() {
                     <div className={styles.groupArrow}>
                       <div className={styles.groupArrowIcon}>⬇</div>
                     </div>
-                    <div
+                    <button
                       className={cn(
                         styles.rewardTile,
                         !group.isCompleted && styles.rewardTileLocked,
                         isClaimed && styles.rewardTileClaimed,
                       )}
-                      onClick={group.isCompleted && !isClaimed ? () => handleRewardTileClick(currentGameGroupIndex) : undefined}
+                      disabled={!group.isCompleted}
+                      onClick={() => isClaimed
+                        ? setPendingReward({ reward, gameGroupIndex: -1 })
+                        : handleRewardTileClick(currentGameGroupIndex)
+                      }
                     >
                       <span className={styles.rewardTileIcon}>
                         {!group.isCompleted ? '🔒' : isClaimed ? '✅' : reward.emoji}
@@ -238,7 +244,7 @@ export default function MapPage() {
                       <span className={styles.rewardTileName}>
                         {isClaimed ? 'Vyzvednuto' : 'Odměna'}
                       </span>
-                    </div>
+                    </button>
                   </>
                 )}
               </div>
@@ -247,35 +253,36 @@ export default function MapPage() {
         })()}
       </div>
 
-      {modalGroup !== null && (
-        <GroupCompletionModal
-          groupIndex={modalGroup}
-          onClose={() => setModalGroup(null)}
-        />
-      )}
-
-      {pendingReward && (
-        <PopupModal
-          emoji={pendingReward.reward.emoji}
-          title={pendingReward.reward.title}
-          text={pendingReward.reward.description}
-          onAction={handleClaimReward}
-        />
-      )}
-      {showAchievements && (
-        <AchievementsModal onClose={() => setShowAchievements(false)} />
-      )}
-      {showDailyReward && (
-        <PopupModal
-          emoji="🎁"
-          title="Denní odměna!"
-          text={currentStreak > 0
-            ? `Série ${currentStreak + 1} dní! Bonus: +${Math.min(DAILY_REWARD_BASE + currentStreak * DAILY_REWARD_PER_STREAK, DAILY_REWARD_MAX)} bodů`
-            : 'Vítej zpět! +5 bodů'}
-          onAction={claimDailyReward}
-        />
-      )}
     </div>
+
+    {modalGroup !== null && (
+      <GroupCompletionModal
+        groupIndex={modalGroup}
+        onClose={() => setModalGroup(null)}
+      />
+    )}
+    {pendingReward && (
+      <PopupModal
+        emoji={pendingReward.gameGroupIndex >= 0 ? pendingReward.reward.emoji : '✅'}
+        title={pendingReward.gameGroupIndex >= 0 ? pendingReward.reward.title : 'Již vyzvednuto'}
+        text={pendingReward.gameGroupIndex >= 0 ? pendingReward.reward.description : 'Tuto odměnu už máš!'}
+        buttonText={pendingReward.gameGroupIndex >= 0 ? 'Vyzvednout!' : 'OK'}
+        onAction={handleClaimReward}
+      />
+    )}
+    {showAchievements && (
+      <AchievementsModal onClose={() => setShowAchievements(false)} />
+    )}
+    {showDailyReward && (
+      <PopupModal
+        emoji="🎁"
+        title="Denní odměna!"
+        text={currentStreak > 0
+          ? `Série ${currentStreak + 1} dní! Bonus: +${Math.min(DAILY_REWARD_BASE + currentStreak * DAILY_REWARD_PER_STREAK, DAILY_REWARD_MAX)} bodů`
+          : 'Vítej zpět! +5 bodů'}
+        onAction={claimDailyReward}
+      />
+    )}
     </>
   );
 }
