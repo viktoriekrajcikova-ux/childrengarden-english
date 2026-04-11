@@ -50,15 +50,6 @@ export function useSpeech(difficulty?: Difficulty | null) {
         setTtsReady(false);
         setTtsChecked(true);
         clearInterval(checkInterval);
-
-        if (window.AndroidTTS && window.AndroidTTS.getDiagnostics) {
-          try {
-            const diagnostics = window.AndroidTTS.getDiagnostics();
-            console.error('TTS Diagnostics:', diagnostics);
-          } catch (e) {
-            console.error('Failed to get diagnostics:', e);
-          }
-        }
       }
     }, 500);
 
@@ -69,16 +60,20 @@ export function useSpeech(difficulty?: Difficulty | null) {
     if (muted) return;
     const effectiveRate = rate ?? (difficulty ? DIFFICULTY_RATE[difficulty] : 0.8);
 
+    // Sanitize text: limit length, strip control chars
+    const safeText = text.slice(0, 200).replace(/[\x00-\x1f]/g, '');
+    if (!safeText) return;
+
     try {
       // Try Android TTS first (for Android WebView)
       if (window.AndroidTTS && window.AndroidTTS.isAvailable()) {
-        window.AndroidTTS.speak(text, effectiveRate);
+        window.AndroidTTS.speak(safeText, effectiveRate);
         return;
       }
 
       // Fallback to Web Speech API (for browsers)
       if (window.speechSynthesis) {
-        const utterance = new SpeechSynthesisUtterance(text);
+        const utterance = new SpeechSynthesisUtterance(safeText);
         utterance.lang = 'en-US';
         utterance.rate = effectiveRate;
         utterance.pitch = pitch;
@@ -93,18 +88,7 @@ export function useSpeech(difficulty?: Difficulty | null) {
         return;
       }
 
-      // No TTS available - provide helpful error message
-      console.error('No TTS available');
-
-      if (window.AndroidTTS && window.AndroidTTS.getDiagnostics) {
-        try {
-          const diagnostics = window.AndroidTTS.getDiagnostics();
-          console.error('TTS Diagnostics:', diagnostics);
-        } catch (e) {
-          console.error('Failed to get diagnostics:', e);
-        }
-      }
-
+      // No TTS available
       const errorMsg =
         'Text-to-Speech is not available on this device.\n\n' +
         'Please:\n' +

@@ -12,8 +12,10 @@ export default function PetNameDialog({ petEmoji, onDone }: Props) {
   const setPetName = useSetAtom(petNameAtom);
   const [name, setName] = useState('');
 
+  const sanitize = (val: string) => val.replace(/[^a-zA-ZáčďéěíňóřšťúůýžÁČĎÉĚÍŇÓŘŠŤÚŮÝŽ0-9 ]/g, '');
+
   const handleSubmit = () => {
-    const trimmed = name.trim();
+    const trimmed = sanitize(name).trim();
     if (!trimmed) return;
     setPetName(trimmed);
     onDone();
@@ -30,7 +32,7 @@ export default function PetNameDialog({ petEmoji, onDone }: Props) {
           maxLength={12}
           placeholder="Jméno..."
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e) => setName(sanitize(e.target.value))}
           onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
           autoFocus
         />
