@@ -69,7 +69,7 @@ export default function PetCarePage() {
   const [lastVisitTime, setLastVisitTime] = useAtom(lastVisitTimeAtom);
 
   // --- Custom hooks ---
-  const { say, speechText, showSpeech, speechFading } = usePetSpeech();
+  const { say, stop: stopSpeech, speechText, showSpeech, speechFading } = usePetSpeech();
   const {
     petColor, setPetColor, ownedColors, setOwnedColors,
     ownedAccessories, setOwnedAccessories, equippedAccessory, setEquippedAccessory,
@@ -303,12 +303,13 @@ export default function PetCarePage() {
 
   // --- Leave ---
   const doLeave = useCallback(() => {
+    setTimer.clearAll();
+    stopSpeech();
     setPhase('sleeping'); setBusy(true);
-    say('*yaaawn* I am sleepy...'); setPetAnimation('sleeping'); setMood('neutral'); setShowZzz(true);
+    setPetAnimation('sleeping'); setMood('neutral'); setShowZzz(true);
     setLastVisitTime(Date.now());
-    setTimer(() => say('Good night! See you tomorrow!'), 2000);
-    setTimer(() => navigate(`/map?scrollTo=${nextLevel}`), 4000);
-  }, [say, setTimer, navigate, nextLevel, setLastVisitTime]);
+    navigate(`/map?scrollTo=${nextLevel}`);
+  }, [stopSpeech, setTimer, navigate, nextLevel, setLastVisitTime]);
 
   const handleLeave = useCallback(() => {
     if (fedCount < PET_MIN_FED) {

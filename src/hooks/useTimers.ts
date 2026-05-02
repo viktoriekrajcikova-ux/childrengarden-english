@@ -1,22 +1,36 @@
-import { useRef, useEffect, useCallback } from 'react';
+import { useRef, useEffect } from 'react';
 
-export function useTimers() {
+type SetTimerFn = ((fn: () => void, delay: number) => ReturnType<typeof setTimeout>) & {
+  clearAll: () => void;
+};
+
+export function useTimers(): SetTimerFn {
   const timersRef = useRef<Set<ReturnType<typeof setTimeout>>>(new Set());
+  const apiRef = useRef<SetTimerFn | null>(null);
 
   useEffect(() => {
+    const timers = timersRef.current;
     return () => {
-      timersRef.current.forEach(clearTimeout);
+      timers.forEach(clearTimeout);
+      timers.clear();
     };
   }, []);
 
-  const setTimer = useCallback((fn: () => void, delay: number) => {
-    const id = setTimeout(() => {
-      timersRef.current.delete(id);
-      fn();
-    }, delay);
-    timersRef.current.add(id);
-    return id;
-  }, []);
+  if (!apiRef.current) {
+    const fn = ((cb: () => void, delay: number) => {
+      const id = setTimeout(() => {
+        timersRef.current.delete(id);
+        cb();
+      }, delay);
+      timersRef.current.add(id);
+      return id;
+    }) as SetTimerFn;
+    fn.clearAll = () => {
+      timersRef.current.forEach(clearTimeout);
+      timersRef.current.clear();
+    };
+    apiRef.current = fn;
+  }
 
-  return setTimer;
+  return apiRef.current;
 }

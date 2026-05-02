@@ -8,6 +8,7 @@ declare global {
   interface Window {
     AndroidTTS?: {
       speak: (text: string, rate: number) => void;
+      stop?: () => void;
       isAvailable: () => boolean;
       getDiagnostics: () => string;
       openTTSSettings: () => void;
@@ -109,5 +110,14 @@ export function useSpeech(difficulty?: Difficulty | null) {
     }
   }, [muted, difficulty, volume]);
 
-  return { speak, ttsReady, ttsChecked };
+  const cancel = useCallback(() => {
+    try {
+      if (window.AndroidTTS?.stop) window.AndroidTTS.stop();
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  return { speak, cancel, ttsReady, ttsChecked };
 }
