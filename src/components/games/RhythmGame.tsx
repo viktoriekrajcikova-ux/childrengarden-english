@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useGameSetup } from '../../hooks/useGameSetup';
 import { useTimers } from '../../hooks/useTimers';
 import { levels } from '../../data/levels';
-import { filterByDifficulty } from '../../utils/difficultyFilter';
+import { filterByDifficulty, DIFFICULTY_LIMITS } from '../../utils/difficultyFilter';
 import { shuffleArray } from '../../utils/shuffle';
 import type { LevelItem } from '../../types';
 import { cn } from '../../utils/cn';
@@ -48,9 +48,8 @@ export default function RhythmGame({ levelIndex }: Props) {
     const items = allItemsRef.current;
     if (items.length === 0) return;
 
-    let seqLen = 3;
-    if (difficulty === 'medium') seqLen = 4;
-    else if (difficulty === 'hard') seqLen = 5;
+    const limits = DIFFICULTY_LIMITS[difficulty ?? 'easy'];
+    const seqLen = limits.rhythmSequence;
 
     const shuffled = shuffleArray(items);
     const seq = shuffled.slice(0, seqLen);
@@ -72,7 +71,7 @@ export default function RhythmGame({ levelIndex }: Props) {
       }
     });
 
-    const distractorCount = difficulty === 'easy' ? 2 : difficulty === 'medium' ? 3 : 4;
+    const distractorCount = limits.rhythmDistractors;
     const others = shuffleArray(items.filter((i) => !uniqueNames.has(i.name)));
     for (let i = 0; i < distractorCount && i < others.length; i++) {
       unique.push(others[i]);

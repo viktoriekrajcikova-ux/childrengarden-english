@@ -49,6 +49,20 @@ body {
   outline-offset: 2px;
 }
 
+/* Když má uživatel v systému zapnuto "omezit animace" (Android: Přístupnost →
+   Odebrat animace), zklidníme nekonečné animace a přechody. Šetří GPU na slabých
+   zařízeních (např. Blackview Tab 6) a respektuje volbu uživatele. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 #root {
   width: 100%;
   min-height: 100vh;

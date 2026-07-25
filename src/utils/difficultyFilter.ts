@@ -33,10 +33,24 @@ export function filterByDifficulty<T extends { difficulties?: DifficultyKey[]; n
   return byDifficulty;
 }
 
+// Centrální tabulka limitů podle obtížnosti (dřív byly tyhle "magické" počty
+// rozeseté a duplikované po jednotlivých hrách). Jedno místo pravdy.
+export const DIFFICULTY_LIMITS: Record<
+  Difficulty,
+  {
+    options: number; // počet možností ve standardní / počítací hře
+    colors: number; // velikost palety v omalovánce
+    rhythmSequence: number; // délka posloupnosti v rytmické hře
+    rhythmDistractors: number; // počet matoucích karet navíc v rytmické hře
+  }
+> = {
+  easy: { options: 3, colors: 2, rhythmSequence: 3, rhythmDistractors: 2 },
+  medium: { options: 4, colors: 4, rhythmSequence: 4, rhythmDistractors: 3 },
+  hard: { options: 6, colors: 6, rhythmSequence: 5, rhythmDistractors: 4 },
+};
+
 export function getMaxDisplay(difficulty: Difficulty): number {
-  if (difficulty === 'easy') return 3;
-  if (difficulty === 'medium') return 4;
-  return 6;
+  return DIFFICULTY_LIMITS[difficulty].options;
 }
 
 export function getItemsForLevel(

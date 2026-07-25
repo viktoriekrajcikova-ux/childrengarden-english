@@ -33,8 +33,9 @@
 }
 
 .secondary {
-  padding: 10px 30px;
+  padding: 13px 30px;
   font-size: 1em;
+  min-height: 44px;
   background: var(--color-gray);
   color: white;
   box-shadow: 0 5px 15px rgba(158, 158, 158, 0.3);

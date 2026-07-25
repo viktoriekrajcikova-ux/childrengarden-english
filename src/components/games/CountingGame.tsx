@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useGameSetup } from '../../hooks/useGameSetup';
 import { useTimers } from '../../hooks/useTimers';
 import { shuffleArray } from '../../utils/shuffle';
+import { getMaxDisplay } from '../../utils/difficultyFilter';
 import type { CountingLevel, CountingObject } from '../../types';
 import { cn } from '../../utils/cn';
 import MessageDisplay from '../shared/MessageDisplay';
@@ -23,7 +24,7 @@ export default function CountingGame({ level, levelIndex }: Props) {
   const { difficulty, addScore, subtractScore, playFanfare, playErrorSound, playComboSound, speak, completeLevel } = useGameSetup();
   const setTimer = useTimers();
   const { incrementStreak, resetStreak, getCorrectScore } = useComboStreak();
-  const baseNumOpts = difficulty === 'easy' ? 3 : difficulty === 'medium' ? 4 : 6;
+  const baseNumOpts = difficulty ? getMaxDisplay(difficulty) : 6;
   const { adjustedMax: adjustedNumOpts, recordCorrect: adaptiveCorrect, recordWrong: adaptiveWrong } = useAdaptiveDifficulty(baseNumOpts);
   // Přes ref, aby změna adaptivního počtu možností NErestartovala rozehrané kolo.
   const adjustedNumOptsRef = useRef(adjustedNumOpts);

@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useGameSetup } from '../../hooks/useGameSetup';
 import { useTimers } from '../../hooks/useTimers';
-import { filterByDifficulty } from '../../utils/difficultyFilter';
+import { filterByDifficulty, DIFFICULTY_LIMITS } from '../../utils/difficultyFilter';
 import { shuffleArray } from '../../utils/shuffle';
 import type { ColoringLevel, ColorItem, ShapeItem } from '../../types';
 import { cn } from '../../utils/cn';
@@ -41,6 +41,7 @@ export default function ColoringGame({ level, levelIndex }: Props) {
   const initializedRef = useRef(false);
 
   const loadNextShape = useCallback((colors: ColorItem[]) => {
+    if (!difficulty) return;
     if (colors.length === 0) {
       setMessage('🎨 Skvělá práce! Level dokončen!');
       playFanfare();
@@ -48,7 +49,7 @@ export default function ColoringGame({ level, levelIndex }: Props) {
       return;
     }
 
-    const shapes = filterByDifficulty(level.shapes, difficulty!);
+    const shapes = filterByDifficulty(level.shapes, difficulty);
     const newTargetShape = shapes[Math.floor(Math.random() * shapes.length)];
     setTargetShape(newTargetShape);
 
@@ -70,7 +71,7 @@ export default function ColoringGame({ level, levelIndex }: Props) {
   useEffect(() => {
     if (!difficulty) return;
     const filtered = filterByDifficulty(level.colors, difficulty);
-    const limit = difficulty === 'easy' ? 2 : difficulty === 'medium' ? 4 : 6;
+    const limit = DIFFICULTY_LIMITS[difficulty].colors;
     const available = filtered.slice(0, limit);
     setAvailableColors(available);
     remainingRef.current = [...available];
