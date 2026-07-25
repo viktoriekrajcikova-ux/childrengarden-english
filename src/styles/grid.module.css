@@ -12,3 +12,13 @@
     margin-top: 10px;
   }
 }
+
+/* Tablet landscape (napr. 1024x600) - mensi karty, aby se i 6 moznosti
+   veslo do jedne rady a level se vesel na vysku bez scrollovani. */
+@media (min-width: 768px) and (max-height: 700px) and (orientation: landscape) {
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+    margin-top: 8px;
+  }
+}

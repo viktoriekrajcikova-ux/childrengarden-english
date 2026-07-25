@@ -16,8 +16,13 @@ interface Props {
 
 interface MemoryCard {
   item: LevelItem;
-  id: number;
+  id: number;      // unikátní pro každou kartu
+  pairId: number;  // shodné pro obě karty jednoho páru
 }
+
+// Maximální počet párů (karet je 2×). Míň párů může vzniknout, když
+// po filtrování obtížnosti zbyde méně unikátních slov – to je v pořádku.
+const MAX_PAIRS = 8;
 
 export default function MemoryGame({ levelIndex }: Props) {
   const { difficulty, addScore, playFanfare, playErrorSound, speak, completeLevel } = useGameSetup();
@@ -25,10 +30,11 @@ export default function MemoryGame({ levelIndex }: Props) {
 
   const [cards, setCards] = useState<MemoryCard[]>([]);
   const [flipped, setFlipped] = useState<number[]>([]);
-  const [matched, setMatched] = useState<Set<string>>(new Set());
+  const [matched, setMatched] = useState<Set<number>>(new Set());
   const [message, setMessage] = useState('Klikni na karty a najdi stejné dvojice!');
   const canFlipRef = useRef(true);
   const matchedPairsRef = useRef(0);
+  const totalPairsRef = useRef(0);
 
   useEffect(() => {
     if (!difficulty) return;
@@ -41,43 +47,62 @@ export default function MemoryGame({ levelIndex }: Props) {
       }
     }
 
-    const selected = shuffleArray(allItems).slice(0, 8);
-    const pairs: MemoryCard[] = [...selected, ...selected].map((item, idx) => ({
-      item,
-      id: idx,
-    }));
+    // Deduplikace podle jména – stejné slovo se napříč levely opakuje
+    // (např. "orange" v Jídle i Barvách) a bez toho by vznikly 4 stejné karty.
+    const seen = new Set<string>();
+    const unique = allItems.filter((it) => {
+      if (seen.has(it.name)) return false;
+      seen.add(it.name);
+      return true;
+    });
+
+    const selected = shuffleArray(unique).slice(0, MAX_PAIRS);
+    // Každé slovo = jeden pár (pairId), dvě karty s unikátním id.
+    const pairs: MemoryCard[] = selected.flatMap((item, p) => [
+      { item, id: p * 2, pairId: p },
+      { item, id: p * 2 + 1, pairId: p },
+    ]);
+
     setCards(shuffleArray(pairs));
     setFlipped([]);
     setMatched(new Set());
     matchedPairsRef.current = 0;
+    totalPairsRef.current = selected.length;
     canFlipRef.current = true;
   }, [difficulty, levelIndex]);
 
   const handleCardClick = useCallback(
-    (cardId: number, item: LevelItem) => {
+    (card: MemoryCard) => {
       if (!canFlipRef.current) return;
-      if (flipped.includes(cardId)) return;
-      if (matched.has(item.name) && flipped.length === 0) return;
+      if (flipped.includes(card.id)) return;
+      if (matched.has(card.pairId)) return;
 
-      speak(item.name);
+      speak(card.item.name);
 
-      const newFlipped = [...flipped, cardId];
+      const newFlipped = [...flipped, card.id];
       setFlipped(newFlipped);
 
       if (newFlipped.length === 2) {
         canFlipRef.current = false;
-        const first = cards.find((c) => c.id === newFlipped[0])!;
-        const second = cards.find((c) => c.id === newFlipped[1])!;
+        const first = cards.find((c) => c.id === newFlipped[0]);
+        const second = cards.find((c) => c.id === newFlipped[1]);
 
-        if (first.item.name === second.item.name) {
+        // Pojistka: kdyby se karta nenašla, radši kolo zrušíme, než abychom spadli.
+        if (!first || !second) {
+          setFlipped([]);
+          canFlipRef.current = true;
+          return;
+        }
+
+        if (first.pairId === second.pairId) {
           setTimer(() => {
-            setMatched((prev) => new Set([...prev, first.item.name]));
+            setMatched((prev) => new Set(prev).add(first.pairId));
             addScore(SCORE_CORRECT_DOUBLE);
             setMessage('🎉 Skvělé! Našel jsi pár! +20 bodů');
             playFanfare();
 
             matchedPairsRef.current++;
-            if (matchedPairsRef.current === 8) {
+            if (matchedPairsRef.current === totalPairsRef.current) {
               setTimer(() => {
                 setMessage('🎊 Level dokončen!');
                 completeLevel(levelIndex);
@@ -106,7 +131,7 @@ export default function MemoryGame({ levelIndex }: Props) {
       <div className={styles.grid}>
         {cards.map((card) => {
           const isFlipped = flipped.includes(card.id);
-          const isMatched = matched.has(card.item.name);
+          const isMatched = matched.has(card.pairId);
 
           return (
             <div
@@ -116,7 +141,7 @@ export default function MemoryGame({ levelIndex }: Props) {
                 isFlipped && styles.flipped,
                 isMatched && styles.matched,
               )}
-              onClick={() => handleCardClick(card.id, card.item)}
+              onClick={() => handleCardClick(card)}
             >
               <div className={styles.cardInner}>
                 <div className={styles.cardFront}>?</div>

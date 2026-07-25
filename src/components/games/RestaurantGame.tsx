@@ -30,9 +30,12 @@ export default function RestaurantGame({ level, levelIndex }: Props) {
   const [servedEmoji, setServedEmoji] = useState<string | null>(null);
   const [draggingDrink, setDraggingDrink] = useState<string | null>(null);
   const draggedRef = useRef<DrinkItem | null>(null);
+  // Zámek proti dvojímu dropu do okna, než naběhne další zákazník.
+  const servingRef = useRef(false);
 
   const loadCustomer = useCallback(() => {
     if (!difficulty) return;
+    servingRef.current = false;
     const filteredDrinks = filterByDifficulty(level.drinks, difficulty);
     const customer = level.customers[Math.floor(Math.random() * level.customers.length)];
     const drink = filteredDrinks[Math.floor(Math.random() * filteredDrinks.length)];
@@ -51,8 +54,10 @@ export default function RestaurantGame({ level, levelIndex }: Props) {
 
   const processDrop = useCallback((drink: DrinkItem) => {
     if (!currentDrink) return;
+    if (servingRef.current) return; // už obsluhujeme – ignoruj další drop
 
     if (drink.name === currentDrink.name) {
+      servingRef.current = true;
       const { total, bonus } = getCorrectScore();
       incrementStreak();
       addScore(total);
@@ -145,6 +150,7 @@ export default function RestaurantGame({ level, levelIndex }: Props) {
               <div
                 key={drink.name}
                 className={cn(styles.drinkItem, draggingDrink === drink.name && styles.drinkDragging)}
+                style={{ touchAction: 'none' }}
                 draggable
                 onDragStart={() => handleDragStart(drink)}
                 onDragEnd={handleDragEnd}

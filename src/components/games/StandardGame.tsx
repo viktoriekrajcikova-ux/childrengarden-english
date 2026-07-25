@@ -1,7 +1,7 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useGameSetup } from '../../hooks/useGameSetup';
 import { useTimers } from '../../hooks/useTimers';
-import { getItemsForLevel } from '../../utils/difficultyFilter';
+import { getItemsForLevel, getMaxDisplay } from '../../utils/difficultyFilter';
 import type { StandardLevel, LevelItem } from '../../types';
 import PlayButton from '../layout/PlayButton';
 import MessageDisplay from '../shared/MessageDisplay';
@@ -27,8 +27,19 @@ export default function StandardGame({ level, levelIndex }: Props) {
   const { difficulty, addScore, subtractScore, playFanfare, playErrorSound, playComboSound, speak, completeLevel } = useGameSetup();
   const setTimer = useTimers();
   const { incrementStreak, resetStreak, getCorrectScore } = useComboStreak();
-  const { adjustedMax, recordCorrect: adaptiveCorrect, recordWrong: adaptiveWrong } = useAdaptiveDifficulty(level.maxDisplay);
+  // Základ = skutečný limit obtížnosti (3/4/6), ne mrtvé level.maxDisplay (vždy 6).
+  // Adaptace pak počet možností jen snižuje (min. 2), když dítě chybuje.
+  const { adjustedMax, recordCorrect: adaptiveCorrect, recordWrong: adaptiveWrong } =
+    useAdaptiveDifficulty(difficulty ? getMaxDisplay(difficulty) : 6);
   const { checkAndUnlock } = useAchievements();
+
+  // adjustedMax čteme přes ref, aby jeho změna uprostřed levelu NEspustila
+  // znovu inicializaci (a nepřemíchala rozehranou plochu). Uplatní se až
+  // při načtení dalšího levelu.
+  const adjustedMaxRef = useRef(adjustedMax);
+  useEffect(() => {
+    adjustedMaxRef.current = adjustedMax;
+  }, [adjustedMax]);
 
   const [items, setItems] = useState<LevelItem[]>([]);
   const [remaining, setRemaining] = useState<LevelItem[]>([]);
@@ -44,7 +55,7 @@ export default function StandardGame({ level, levelIndex }: Props) {
 
   useEffect(() => {
     if (!difficulty) return;
-    const selected = getItemsForLevel(level.items, adjustedMax, difficulty);
+    const selected = getItemsForLevel(level.items, adjustedMaxRef.current, difficulty);
     setItems(selected);
     setRemaining([...selected]);
     setCurrentTarget(null);
@@ -54,7 +65,7 @@ export default function StandardGame({ level, levelIndex }: Props) {
     setCardStates({});
     setWrongCount(0);
     setHintUsed(false);
-  }, [level, difficulty, adjustedMax]);
+  }, [level, difficulty]);
 
   const handlePlay = useCallback(() => {
     if (remaining.length === 0) return;

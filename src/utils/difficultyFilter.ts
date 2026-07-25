@@ -7,16 +7,30 @@ const difficultyMap: Record<Difficulty, DifficultyKey> = {
   hard: 'lev',
 };
 
-export function filterByDifficulty<T extends { difficulties?: DifficultyKey[] }>(
+export function filterByDifficulty<T extends { difficulties?: DifficultyKey[]; name?: string }>(
   items: T[],
   difficulty: Difficulty
 ): T[] {
   if (!items || items.length === 0) return [];
   const key = difficultyMap[difficulty];
-  return items.filter((item) => {
+
+  const byDifficulty = items.filter((item) => {
     if (!item.difficulties || !Array.isArray(item.difficulties)) return true;
     return item.difficulties.includes(key);
   });
+
+  // Pravidlo "r" (CLAUDE.md): slova s písmenem "r" jsou obtížná na výslovnost,
+  // takže pro nejmenší (kuratko = easy) je vynecháme. Vynucujeme to v kódu, aby
+  // to nezáviselo na bezchybně vyplněných datech (často tam "r"-slova prosáknou).
+  // Fallback: kdyby po vyřazení nezůstala žádná položka, necháme aspoň jednu.
+  if (difficulty === 'easy') {
+    const withoutR = byDifficulty.filter(
+      (item) => !(typeof item.name === 'string' && /r/i.test(item.name))
+    );
+    return withoutR.length > 0 ? withoutR : byDifficulty.slice(0, 1);
+  }
+
+  return byDifficulty;
 }
 
 export function getMaxDisplay(difficulty: Difficulty): number {

@@ -42,6 +42,13 @@ body {
   position: relative;
 }
 
+/* Viditelný fokus pro ovládání klávesnicí / D-padem (appka jej dosud neměla).
+   :focus-visible se ukáže jen při klávesnici, ne při doteku/myši. */
+:focus-visible {
+  outline: 3px solid #FFD54F;
+  outline-offset: 2px;
+}
+
 #root {
   width: 100%;
   min-height: 100vh;

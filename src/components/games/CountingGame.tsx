@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useGameSetup } from '../../hooks/useGameSetup';
 import { useTimers } from '../../hooks/useTimers';
 import { shuffleArray } from '../../utils/shuffle';
@@ -25,6 +25,11 @@ export default function CountingGame({ level, levelIndex }: Props) {
   const { incrementStreak, resetStreak, getCorrectScore } = useComboStreak();
   const baseNumOpts = difficulty === 'easy' ? 3 : difficulty === 'medium' ? 4 : 6;
   const { adjustedMax: adjustedNumOpts, recordCorrect: adaptiveCorrect, recordWrong: adaptiveWrong } = useAdaptiveDifficulty(baseNumOpts);
+  // Přes ref, aby změna adaptivního počtu možností NErestartovala rozehrané kolo.
+  const adjustedNumOptsRef = useRef(adjustedNumOpts);
+  useEffect(() => {
+    adjustedNumOptsRef.current = adjustedNumOpts;
+  }, [adjustedNumOpts]);
 
   const [roundsCompleted, setRoundsCompleted] = useState(0);
   const [target, setTarget] = useState<CountingObject | null>(null);
@@ -64,8 +69,8 @@ export default function CountingGame({ level, levelIndex }: Props) {
     // Generate options
     const opts = new Set<number>();
     opts.add(count);
-    while (opts.size < adjustedNumOpts) {
-      let val = Math.max(0, Math.min(COUNTING_MAX_TARGET - 1, count + Math.floor(Math.random() * (COUNTING_OPTION_RANGE * 2 + 1)) - COUNTING_OPTION_RANGE));
+    while (opts.size < adjustedNumOptsRef.current) {
+      const val = Math.max(0, Math.min(COUNTING_MAX_TARGET - 1, count + Math.floor(Math.random() * (COUNTING_OPTION_RANGE * 2 + 1)) - COUNTING_OPTION_RANGE));
       opts.add(val);
     }
     setOptions(shuffleArray([...opts]));
@@ -76,11 +81,14 @@ export default function CountingGame({ level, levelIndex }: Props) {
 
     const name = count === 1 ? obj.nameSingular : obj.name;
     setTimer(() => speak(`How many ${name} can you see?`, 0.9), DELAY_SHORT);
-  }, [level.countingObjects, difficulty, adjustedNumOpts, speak, setTimer]);
+  }, [level.countingObjects, speak, setTimer]);
 
+  // Nové kolo jen při změně levelu/obtížnosti – ne při každé změně identity
+  // loadRound (hlasitost, adaptace), jinak by se kolo restartovalo uprostřed.
   useEffect(() => {
     loadRound();
-  }, [loadRound]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [level, difficulty]);
 
   const handleAnswer = (selected: number) => {
     setDisabled(true);

@@ -119,5 +119,11 @@ export function useSpeech(difficulty?: Difficulty | null) {
     }
   }, []);
 
+  // Při odchodu z obrazovky (unmount) zastav rozmluvené TTS, ať appka
+  // "nemluví" dál na další obrazovce (typické v Android WebView).
+  useEffect(() => {
+    return () => cancel();
+  }, [cancel]);
+
   return { speak, cancel, ttsReady, ttsChecked };
 }

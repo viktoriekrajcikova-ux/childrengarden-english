@@ -10,8 +10,11 @@ interface Props {
 }
 
 export default function ItemCard({ emoji, english, czech, state = 'idle', onClick }: Props) {
+  const label = english ? `${english} – ${czech}` : czech;
   return (
-    <div
+    <button
+      type="button"
+      aria-label={label}
       className={cn(
         styles.card,
         state === 'clickable' && styles.clickable,
@@ -23,9 +26,9 @@ export default function ItemCard({ emoji, english, czech, state = 'idle', onClic
       )}
       onClick={onClick}
     >
-      <div className={styles.emoji}>{emoji}</div>
+      <div className={styles.emoji} aria-hidden="true">{emoji}</div>
       {english && <div className={styles.english}>{english}</div>}
       <div className={styles.name}>{czech}</div>
-    </div>
+    </button>
   );
 }

@@ -8,6 +8,13 @@
   border: 3px solid transparent;
   min-height: 80px;
   min-width: 80px;
+  /* reset nativního <button> vzhledu (ItemCard je button kvůli přístupnosti) */
+  width: 100%;
+  font-family: inherit;
+  color: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+  display: block;
 }
 .card:hover {
   transform: scale(1.05);
@@ -71,4 +78,12 @@
   .card { padding: 12px; min-height: 64px; min-width: 64px; }
   .emoji { font-size: 3em; }
   .name { font-size: 1em; }
+}
+
+/* Tablet landscape (napr. 1024x600) - nizsi karty kvuli male vysce obrazovky. */
+@media (min-width: 768px) and (max-height: 700px) and (orientation: landscape) {
+  .card { padding: 10px; min-height: 56px; min-width: 56px; }
+  .emoji { font-size: 2.6em; margin-bottom: 4px; }
+  .english { font-size: 1.1em; }
+  .name { font-size: 0.85em; }
 }

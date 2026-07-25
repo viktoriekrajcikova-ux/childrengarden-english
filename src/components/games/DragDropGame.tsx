@@ -49,7 +49,10 @@ export default function DragDropGame({ level, levelIndex }: Props) {
     setRemainingItems([...filtered]);
     setDroppedItems({});
     loadRound([...filtered]);
-  }, [level, difficulty, loadRound]);
+    // Záměrně jen [level, difficulty]: loadRound mění identitu i při změně
+    // hlasitosti (playFanfare), a to by jinak restartovalo rozehrané kolo.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [level, difficulty]);
 
   const processDrop = useCallback((item: DragDropItem, zoneName: string) => {
     if (zoneName === item.belongsTo) {
@@ -147,6 +150,7 @@ export default function DragDropGame({ level, levelIndex }: Props) {
           <div
             key={item.name}
             className={cn(styles.draggableItem, draggingName === item.name && styles.dragging)}
+            style={{ touchAction: 'none' }}
             draggable
             onDragStart={(e) => handleDragStart(item, e)}
             onDragEnd={handleDragEnd}

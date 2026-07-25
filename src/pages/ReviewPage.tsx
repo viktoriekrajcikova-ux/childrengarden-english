@@ -68,8 +68,17 @@ export default function ReviewPage() {
         }
       });
     }
-    allItemsRef.current = items;
-    setAllItems(items);
+    // Deduplikace podle jména – stejné slovo se opakuje napříč levely
+    // (např. "orange", "star"), jinak by šly vybrat dvě identické karty
+    // (kolize React klíče i nejednoznačná odpověď).
+    const seen = new Set<string>();
+    const unique = items.filter((it) => {
+      if (seen.has(it.name)) return false;
+      seen.add(it.name);
+      return true;
+    });
+    allItemsRef.current = unique;
+    setAllItems(unique);
   }, [difficulty, mode, autoStart, autoEnd, completedLevels, navigate]);
 
   const initRound = useCallback(() => {
